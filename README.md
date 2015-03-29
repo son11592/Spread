@@ -12,7 +12,7 @@ Spread is a data flow control. It changes the way you manage your data.
 
 ## Installation
 
-#### Cocoa pods.
+#### Cocoa pods
 
 ```ruby
 
@@ -20,7 +20,8 @@ pod "Spread", "~> 1.0.1"
 
 ```
 
-#### Manual.
+#### Manual
+
  - Drag and drop Classes folder into your project.
 
 ## Usage
@@ -32,7 +33,7 @@ import Spread
 
 ```
 
-#### Create a class sub class SModel for example
+#### Create a class sub class SModel
 
 ```swift
 
@@ -43,7 +44,7 @@ class Model: SModel {
 }
 
 ```
-#### Register class.
+#### Register class
 
 ```swift
 
@@ -51,8 +52,7 @@ class Model: SModel {
 
 ```
 
-#### Register pool event.
-
+#### Register pool event
 
 ```swift
 
@@ -71,7 +71,7 @@ Spread.registerEvent("TheEvent",
 
 ```
 
-#### Add sample data model and setup reaction for property.
+#### Add sample data model and setup reaction for property
 
 ```swift
 
@@ -84,7 +84,7 @@ let model = Spread.addObject(["name": "Some name", "objectId": "123"],
 
 ```
 
-#### Perform an event.
+#### Perform an event
 
 ```swift
 
