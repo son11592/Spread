@@ -10,6 +10,10 @@ Spread is a data flow control. It changes the way you manage your data.
 - [x] React when model properties change value.
 - [x] Updating...
 
+## Comming soon...
+
+- [x] Store and restore model in pool from local database.
+
 ## Installation
 
 #### Cocoa pods
