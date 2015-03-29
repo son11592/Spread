@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/huyphams/Spread.svg)](https://travis-ci.org/huyphams/Spread)
+[![Build Status](https://travis-ci.org/huyphams/Spread.svg)](https://travis-ci.org/huyphams/Spread)[![Cocoapods Version](https://cocoapod-badges.herokuapp.com/v/Spread/badge.png)](http://cocoapods.org/?q=spread)
 
 
 Spread is a data flow control. It changes the way you manage your data.
@@ -10,9 +10,11 @@ Spread is a data flow control. It changes the way you manage your data.
 - [x] React when model properties change value.
 - [x] Updating...
 
-## Comming soon...
+## Coming soon...
 
-- [x] Store and restore model in pool from local database.
+- [x] Store and restore models in pools from local database.
+- [x] DataSouceManager fetch/push data from internet sound awesome.
+- [x] Any idea?
 
 ## Installation
 
