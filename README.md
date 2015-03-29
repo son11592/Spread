@@ -1,14 +1,14 @@
 [![Build Status](https://travis-ci.org/huyphams/Spread.svg)](https://travis-ci.org/huyphams/Spread)
 
 
-Spread is a data flow control. It change the way you manage your data.
+Spread is a data flow control. It changes the way you manage your data.
 
 ## Features
 
 - [x] Create, mapping (with NSDictionary / JSON) and manage data model automatic.
-- [x] Auto trigger event to all model in register pool.
+- [x] Auto trigger event to all models in register pools.
 - [x] React when model properties change value.
-- [x] Updaing...
+- [x] Updating...
 
 ## Installation
 
@@ -16,7 +16,7 @@ Spread is a data flow control. It change the way you manage your data.
 
 ```ruby
 
-pod "Spread", "~> 1.0.0"
+pod "Spread", "~> 1.0.1"
 
 ```
 
