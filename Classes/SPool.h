@@ -6,14 +6,14 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
-typedef NS_ENUM(NSInteger, SPoolEvent) {
-  SPoolEventOnInitModel,
-  SPoolEventOnAddModel,
-  SPoolEventOnRemoveModel,
-  SPoolEventOnChange
-};
-
 #import <Foundation/Foundation.h>
+
+typedef NS_ENUM(NSInteger, SPoolEvent) {
+    SPoolEventOnInitModel,
+    SPoolEventOnAddModel,
+    SPoolEventOnRemoveModel,
+    SPoolEventOnChange
+};
 
 @interface SPool : NSObject
 
