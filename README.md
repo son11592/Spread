@@ -35,7 +35,7 @@ pod "Spread", "~> 1.0.3"
 
 ```objc
 
-#include "Spread.h"
+#import "Spread.h"
 
 ```
 
