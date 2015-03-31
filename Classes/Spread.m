@@ -150,12 +150,19 @@
     return [pool addObject:object];
 }
 
++ (NSArray *)addObjects:(NSArray *)objects
+                 toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    return [pool addObjects:objects];
+}
+
 + (void)removeObject:(id)object
             fromPool:(NSString *)identifier {
     
     SPool *pool = [self getPool:identifier];
     if (pool) {
-        [pool removeObject:object];        
+        [pool removeObject:object];
     }
 }
 

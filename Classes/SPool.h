@@ -6,6 +6,13 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
+typedef NS_ENUM(NSInteger, SPoolEvent) {
+  SPoolEventOnInitModel,
+  SPoolEventOnAddModel,
+  SPoolEventOnRemoveModel,
+  SPoolEventOnChange
+};
+
 #import <Foundation/Foundation.h>
 
 @interface SPool : NSObject
@@ -21,6 +28,8 @@
  *  @return object to add.
  */
 - (id)addObject:(NSDictionary *)object;
+
+- (NSArray *)addObjects:(NSArray *)objects;
 
 /**
  *  Remove an object to pool.
@@ -58,5 +67,11 @@
  *  @param filter fitler condition.
  */
 - (void)removeObjectMatch:(BOOL (^)(id))filter;
+
+
+- (void)reactOnChange:(SPoolEvent)event
+                react:(void(^)(id newValue))react;
+
+@property (nonatomic, strong, readonly) NSMutableArray *data;
 
 @end

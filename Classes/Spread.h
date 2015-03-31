@@ -19,6 +19,12 @@
  */
 + (instancetype)sharedInstance;
 
+/**
+ *  Register class for pools.
+ *
+ *  @param modelClass  class for coder.
+ *  @param identifiers array list of pools identifier.
+ */
 + (void)registerClass:(Class)modelClass
     forPoolIdentifier:(NSString *)identifier;
 
@@ -74,6 +80,9 @@
 + (SModel *)addObject:(NSDictionary *)object
                toPool:(NSString *)identifier;
 
++ (NSArray *)addObjects:(NSArray *)objects
+                 toPool:(NSString *)identifier;
+
 /**
  *  Remove an object from pool with identifier.
  *
@@ -99,6 +108,6 @@
  *  @param value value parameters.
  */
 + (void)performEvent:(NSString *)event
-               value:(NSDictionary *)value;
+               value:(id)value;
 
 @end

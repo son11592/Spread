@@ -39,14 +39,14 @@ static const char *getPropertyType(objc_property_t property) {
     return "";
 }
 
-@interface Reaction : NSObject
+@interface SModelReaction : NSObject
 
 @property (nonatomic, copy) NSString *keyPath;
 @property (nonatomic, copy) void (^react)(id);
 
 @end
 
-@implementation Reaction
+@implementation SModelReaction
 
 @end
 
@@ -121,7 +121,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (NSArray *)getActions:(NSString *)property {
     
     NSMutableArray *reactions = [NSMutableArray array];
-    for (Reaction *reaction in [self reactions]) {
+    for (SModelReaction *reaction in [self reactions]) {
         if ([reaction.keyPath isEqualToString:property]) {
             [reactions addObject:reaction];
         }
@@ -137,14 +137,14 @@ static const char *getPropertyType(objc_property_t property) {
               options:NSKeyValueObservingOptionNew
               context:NULL];
     
-    Reaction *reaction = [[Reaction alloc] init];
+    SModelReaction *reaction = [[SModelReaction alloc] init];
     reaction.keyPath = property;
     reaction.react = react;
     [[self reactions] addObject:reaction];
-    
 }
 
-- (void)properties:(NSArray *)properties reactOnChange:(void (^)(id))react {
+- (void)properties:(NSArray *)properties
+     reactOnChange:(void (^)(id))react {
     
     for (NSString *property in properties) {
         [self property:property
@@ -155,7 +155,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)removeReactionForProperty:(NSString *)property {
     
     NSArray *reactions = [self getActions:property];
-    for (Reaction *reaction in reactions) {
+    for (SModelReaction *reaction in reactions) {
         [self removeObserver:self
                   forKeyPath:reaction.keyPath];
     }
@@ -171,7 +171,7 @@ static const char *getPropertyType(objc_property_t property) {
 
 - (void)removeAllReactions {
     
-    for (Reaction *reaction in [self reactions]) {
+    for (SModelReaction *reaction in [self reactions]) {
         [self removeObserver:self
                   forKeyPath:reaction.keyPath];
     }
@@ -183,7 +183,7 @@ static const char *getPropertyType(objc_property_t property) {
                         change:(NSDictionary *)change
                        context:(void *)context {
     
-    for (Reaction *reaction in [self reactions]) {
+    for (SModelReaction *reaction in [self reactions]) {
         if ([reaction.keyPath isEqualToString:keyPath]) {
             reaction.react(change[@"new"]);
         }
@@ -195,7 +195,7 @@ static const char *getPropertyType(objc_property_t property) {
 #ifdef DEBUG
     NSLog(@"Release.");
 #endif
-    for (Reaction *reaction in [self reactions]) {
+    for (SModelReaction *reaction in [self reactions]) {
         [self removeObserver:self forKeyPath:reaction.keyPath];
     }
 }
