@@ -29,6 +29,13 @@
     forPoolIdentifier:(NSString *)identifier;
 
 /**
+ *  Remove a pool and class register from memory.
+ *
+ *  @param pool              pool identifier.
+ */
++ (void)removePoolWithIdentifier:(NSString *)identifier;
+
+/**
  *  Register event for multi pool with array of identifiers.
  *
  *  @param event           event identifier.
@@ -80,6 +87,14 @@
 + (SModel *)addObject:(NSDictionary *)object
                toPool:(NSString *)identifier;
 
+/**
+ *  Add multi objecto to pool.
+ *
+ *  @param objects    array of objects.
+ *  @param identifier pool identifier.
+ *
+ *  @return array of obejcts added.
+ */
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier;
 

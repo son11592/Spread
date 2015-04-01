@@ -11,7 +11,7 @@
 @interface SPoolReaction : NSObject
 
 @property (nonatomic) SPoolEvent event;
-@property (nonatomic, copy) void (^react)(id);
+@property (nonatomic, copy) void (^react)(NSArray *);
 
 @end
 
@@ -20,8 +20,8 @@
 @end
 
 @implementation SPool {
-  
-  NSMutableArray *_reactions;
+    
+    NSMutableArray *_reactions;
 }
 
 + (instancetype)sharedInstance {
@@ -45,38 +45,40 @@
 }
 
 - (void)commonInit {
-  
+    
     _reactions = [NSMutableArray array];
     _data = [NSMutableArray array];
 }
 
 - (NSMutableArray *)reactions {
-  
-  @synchronized(self) {
-    if (!_reactions) {
-      _reactions = [NSMutableArray array];
+    
+    @synchronized(self) {
+        if (!_reactions) {
+            _reactions = [NSMutableArray array];
+        }
     }
-  }
-  return _reactions;
+    return _reactions;
 }
 
 - (id)addObject:(NSDictionary *)object {
     
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self.data addObject:model];
-    [self triggerReactions];
+    if ([self.data count] == 1) {
+        [self triggerReactionsForEvent:SPoolEventOnInitModel];
+    }
     return model;
 }
 
 - (NSArray *)addObjects:(NSArray *)objects {
- 
+    
     NSMutableArray *dataToAdd = [NSMutableArray array];
     for (NSDictionary *object in objects) {
         id model = [[self.modelClass alloc] initWithDictionary:object];
         [dataToAdd addObject:model];
     }
     [self.data addObjectsFromArray:dataToAdd];
-    [self triggerReactions];
+    [self triggerReactionsForEvent:SPoolEventOnAddModel];
     return dataToAdd;
 }
 
@@ -88,13 +90,13 @@
 - (void)removeObject:(id)object {
     
     [self.data removeObject:object];
-    [self triggerReactions];
+    [self triggerReactionsForEvent:SPoolEventOnRemoveModel];
 }
 
 - (void)removeObjects:(NSArray *)objects {
     
     [self.data removeObjectsInArray:objects];
-    [self triggerReactions];
+    [self triggerReactionsForEvent:SPoolEventOnRemoveModel];
 }
 
 - (NSArray *)filter:(BOOL (^)(id))filter {
@@ -109,19 +111,22 @@
 }
 
 - (void)reactOnChange:(SPoolEvent)event
-                react:(void(^)(id newValue))react {
-  
+                react:(void(^)(NSArray *data))react {
+    
     SPoolReaction *reaction = [[SPoolReaction alloc] init];
     reaction.event = event;
     reaction.react = react;
     [[self reactions] addObject:reaction];
 }
 
-- (void)triggerReactions {
-  
-  for (SPoolReaction *reaction in [self reactions]) {
-    reaction.react(self.data);
-  }
+- (void)triggerReactionsForEvent:(SPoolEvent)event {
+    
+    for (SPoolReaction *reaction in [self reactions]) {
+        if (reaction.event == SPoolEventOnChange
+            || reaction.event == event) {
+            reaction.react(self.data);
+        }
+    }
 }
 
 - (void)removeObjectMatch:(BOOL (^)(id))filter {
@@ -129,5 +134,14 @@
     NSArray *objectToRemove = [self filter:filter];
     [self.data removeObjectsInArray:objectToRemove];
 }
+
+#ifdef DEBUG
+
+- (void)dealloc {
+    
+    NSLog(@"Pool release.");
+}
+
+#endif
 
 @end

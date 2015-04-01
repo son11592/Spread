@@ -44,7 +44,23 @@ class ViewController: UIViewController {
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier)
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool3Indentifier)
-
+    
+    let pool3 = Spread.getPool(self.pool3Indentifier)
+    pool3.reactOnChange(SPoolEvent.OnInitModel, react: { (data) -> Void in
+        
+        NSLog("Pool reaction on init.")
+    })
+    
+    pool3.reactOnChange(SPoolEvent.OnChange, react: { (data) -> Void in
+        
+        NSLog("Pool reaction change.")
+    })
+    
+    pool3.reactOnChange(SPoolEvent.OnRemoveModel, react: { (data) -> Void in
+        
+        NSLog("Pool reaction on remove.")
+    })
+    
     // Register actions for pools.
     Spread.registerEvent(self.action1Identifier,
       poolIdentifiers: [self.pool1Indentifier, self.pool2Indentifier, self.pool3Indentifier])
@@ -90,8 +106,7 @@ class ViewController: UIViewController {
     })
     
     // Remove carrot.
-    Spread.removeObject(carrotInPool3, fromPool: self.pool3Indentifier)
-    let pool3 = Spread.getPool(self.pool3Indentifier)
+    Spread.removePoolWithIdentifier(self.pool3Indentifier)
   }
   
   func initView() {

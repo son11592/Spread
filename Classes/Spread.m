@@ -8,7 +8,7 @@
 
 #import "Spread.h"
 
-@interface Action: NSObject
+@interface SAction: NSObject
 
 @property (nonatomic, copy) NSString *event;
 @property (nonatomic, copy) NSString *poolIdentifier;
@@ -16,7 +16,7 @@
 
 @end
 
-@implementation Action
+@implementation SAction
 
 @end
 
@@ -85,6 +85,23 @@
     }
 }
 
++ (void)removePoolWithIdentifier:(NSString *)identifier {
+    
+
+    // Remove pool action.
+    NSMutableArray *actionToRemove = [NSMutableArray array];
+    for (SAction *action in [[self sharedInstance] poolActions]) {
+        if ([action.poolIdentifier isEqualToString:identifier]) {
+            [actionToRemove addObject:action];
+        }
+    }
+    [[[self sharedInstance] poolActions] removeObjectsInArray:actionToRemove];
+    
+    // Remove pool.
+    SPool *pool = [self getPool:identifier];
+    [[[self sharedInstance] pools] removeObject:pool];
+}
+
 + (NSInteger)countIndentifer:(NSString *)identifier inArray:(NSArray *)array {
     
     NSInteger count = 0;
@@ -106,7 +123,7 @@
             NSLog(@"[WARNING]: Duplicated pool identifier.");
         }
 #endif
-        Action *poolAction = [[Action alloc] init];
+        SAction *poolAction = [[SAction alloc] init];
         poolAction.event = event;
         poolAction.poolIdentifier = poolIdentifier;
         poolAction.action = action;
@@ -118,7 +135,7 @@
     poolIdentifiers:(NSArray *)poolIdentifiers {
     
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (Action *action in [[self sharedInstance] poolActions]) {
+    for (SAction *action in [[self sharedInstance] poolActions]) {
         if ([action.event isEqualToString:event]
             && [self countIndentifer:action.poolIdentifier inArray:poolIdentifiers] > 0) {
             [actionsToDelete addObject:action];
@@ -130,7 +147,7 @@
 + (void)removeEvent:(NSString *)event {
     
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (Action *action in [[self sharedInstance] poolActions]) {
+    for (SAction *action in [[self sharedInstance] poolActions]) {
         if ([action.event isEqualToString:event]) {
             [actionsToDelete addObject:action];
         }
@@ -176,7 +193,7 @@
 + (void)performEvent:(NSString *)event
                value:(NSDictionary *)value {
     
-    for (Action *poolAction in [[self sharedInstance] poolActions]) {
+    for (SAction *poolAction in [[self sharedInstance] poolActions]) {
         if ([poolAction.event isEqualToString:event]) {
             SPool *pool = [self getPool:poolAction.poolIdentifier];
             poolAction.action(value, pool);

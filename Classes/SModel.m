@@ -193,7 +193,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)dealloc {
     
 #ifdef DEBUG
-    NSLog(@"Release.");
+    NSLog(@"Model release.");
 #endif
     for (SModelReaction *reaction in [self reactions]) {
         [self removeObserver:self forKeyPath:reaction.keyPath];

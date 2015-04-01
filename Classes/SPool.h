@@ -29,6 +29,13 @@ typedef NS_ENUM(NSInteger, SPoolEvent) {
  */
 - (id)addObject:(NSDictionary *)object;
 
+/**
+ *  Add multi object to pool;
+ *
+ *  @param objects array of object.
+ *
+ *  @return array of objects added.
+ */
 - (NSArray *)addObjects:(NSArray *)objects;
 
 /**
@@ -68,10 +75,18 @@ typedef NS_ENUM(NSInteger, SPoolEvent) {
  */
 - (void)removeObjectMatch:(BOOL (^)(id))filter;
 
-
+/**
+ *  Reaction when pool change.
+ *
+ *  @param event event type.
+ *  @param react reaction.
+ */
 - (void)reactOnChange:(SPoolEvent)event
-                react:(void(^)(id newValue))react;
+                react:(void(^)(NSArray *data))react;
 
+/**
+ *  Array of objects.
+ */
 @property (nonatomic, strong, readonly) NSMutableArray *data;
 
 @end
