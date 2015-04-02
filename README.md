@@ -22,7 +22,7 @@ Spread is a data flow control. It changes the way you manage your data.
 
 ```ruby
 
-pod "Spread", "~> 1.0.3"
+pod "Spread", "~> 1.0.4"
 
 ```
 
