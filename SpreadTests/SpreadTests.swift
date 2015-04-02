@@ -155,4 +155,10 @@ class SpreadTests: XCTestCase {
         }
     }
     
+    func testRemovePool() {
+        
+        Spread.removePoolWithIdentifier(self.pool2Identifier)
+        let pool: SPool? = Spread.getPool(self.pool2Identifier)
+        XCTAssertNil(pool, "Must be nil")
+    }
 }
