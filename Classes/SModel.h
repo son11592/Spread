@@ -92,4 +92,9 @@ onChangeReactionTarget:(id)target
  */
 - (void)removeAllReactions;
 
+/**
+ *  Remove all actions.
+ */
+- (void)removeAllActions;
+
 @end

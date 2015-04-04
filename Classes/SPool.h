@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, SPoolEvent) {
-    SPoolEventOnInitModel,
-    SPoolEventOnAddModel,
-    SPoolEventOnRemoveModel,
-    SPoolEventOnChange
+  SPoolEventOnInitModel,
+  SPoolEventOnAddModel,
+  SPoolEventOnRemoveModel,
+  SPoolEventOnChange
 };
 
 @interface SPool : NSObject
@@ -81,8 +81,8 @@ typedef NS_ENUM(NSInteger, SPoolEvent) {
  *  @param event event type.
  *  @param react reaction.
  */
-- (void)reactOnChange:(SPoolEvent)event
-                react:(void(^)(NSArray *data))react;
+- (void)onEvent:(SPoolEvent)event
+       reaction:(void(^)(NSArray *data))react;
 
 /**
  *  Add target for event, automatic delete action when target become nil.
@@ -104,7 +104,7 @@ typedef NS_ENUM(NSInteger, SPoolEvent) {
  */
 - (void)removeTarget:(id)target
               action:(SEL)action
-     forPoolEvent:(SPoolEvent)poolEvent;
+        forPoolEvent:(SPoolEvent)poolEvent;
 
 /**
  *  Array of objects.

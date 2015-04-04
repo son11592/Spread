@@ -228,7 +228,7 @@ onChangeReactionTarget:(id)target
                   options:NSKeyValueObservingOptionNew
                   context:NULL];
     }
-    
+  
     SModelAction *modelAction = [[SModelAction alloc] init];
     modelAction.keyPath = property;
     modelAction.target = target;
@@ -325,13 +325,12 @@ onChangeReactionTarget:target
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-    
+  
     for (SModelReaction *reaction in [self reactions]) {
         if ([reaction.keyPath isEqualToString:keyPath]) {
             reaction.react(change[@"new"]);
         }
     }
-    
     // Automatic delete action event when target become nil.
     NSMutableArray *dataToDelete = [NSMutableArray array];
     for (SModelAction *action in [self actions]) {

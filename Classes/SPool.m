@@ -146,8 +146,8 @@
     return array;
 }
 
-- (void)reactOnChange:(SPoolEvent)event
-                react:(void(^)(NSArray *data))react {
+- (void)onEvent:(SPoolEvent)event
+       reaction:(void(^)(NSArray *data))react {
     
     SPoolReaction *reaction = [[SPoolReaction alloc] init];
     reaction.event = event;
