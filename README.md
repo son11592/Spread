@@ -88,7 +88,7 @@ let model = Spread.addObject(["name": "Some name", "objectId": "123"],
 
 ```swift
 
-  Spread.performEvent(self.poolChangeNameEvent,
+  Spread.performEvent("TheEvent",
     value: ["name": "Change the name", "objectId": "123"])
 
 ```
