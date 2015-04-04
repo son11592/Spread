@@ -19,9 +19,49 @@
 
 @end
 
+@interface SPoolAction : NSObject
+
+@property (nonatomic, weak) id target;
+@property (nonatomic) SEL selector;
+@property (nonatomic) SPoolEvent event;
+
+- (BOOL)compareWith:(SPoolAction *)action;
+- (BOOL)compareWithTarget:(id)target
+                 selector:(SEL)selector
+                    event:(SPoolEvent)event;
+
+@end
+
+@implementation SPoolAction
+
+- (BOOL)compareWith:(SPoolAction *)action {
+    
+    return [self compareWithTarget:action.target
+                          selector:action.selector
+                             event:action.event];
+}
+
+- (BOOL)compareWithTarget:(id)target
+                 selector:(SEL)selector
+                    event:(SPoolEvent)event {
+    
+    if ([self.target isEqual:target]
+        && self.selector == selector
+        && self.event == event) {
+        return YES;
+    }
+    return NO;
+}
+
+@end
+
 @implementation SPool {
     
+    // Store callback reaction.
     NSMutableArray *_reactions;
+    
+    // Store action with target.
+    NSMutableArray *_actions;
 }
 
 + (instancetype)sharedInstance {
@@ -47,16 +87,12 @@
 - (void)commonInit {
     
     _reactions = [NSMutableArray array];
+    _actions = [NSMutableArray array];
     _data = [NSMutableArray array];
 }
 
 - (NSMutableArray *)reactions {
     
-    @synchronized(self) {
-        if (!_reactions) {
-            _reactions = [NSMutableArray array];
-        }
-    }
     return _reactions;
 }
 
@@ -65,7 +101,7 @@
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self.data addObject:model];
     if ([self.data count] == 1) {
-        [self triggerReactionsForEvent:SPoolEventOnInitModel];
+        [self triggerForEvent:SPoolEventOnInitModel];
     }
     return model;
 }
@@ -78,7 +114,7 @@
         [dataToAdd addObject:model];
     }
     [self.data addObjectsFromArray:dataToAdd];
-    [self triggerReactionsForEvent:SPoolEventOnAddModel];
+    [self triggerForEvent:SPoolEventOnAddModel];
     return dataToAdd;
 }
 
@@ -90,13 +126,13 @@
 - (void)removeObject:(id)object {
     
     [self.data removeObject:object];
-    [self triggerReactionsForEvent:SPoolEventOnRemoveModel];
+    [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (void)removeObjects:(NSArray *)objects {
     
     [self.data removeObjectsInArray:objects];
-    [self triggerReactionsForEvent:SPoolEventOnRemoveModel];
+    [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (NSArray *)filter:(BOOL (^)(id))filter {
@@ -116,7 +152,30 @@
     SPoolReaction *reaction = [[SPoolReaction alloc] init];
     reaction.event = event;
     reaction.react = react;
-    [[self reactions] addObject:reaction];
+    [_reactions addObject:reaction];
+}
+
+- (void)addTarget:(id)target
+           action:(SEL)action
+     forPoolEvent:(SPoolEvent)poolEvent {
+    
+    SPoolAction *poolAction = [[SPoolAction alloc] init];
+    poolAction.target = target;
+    poolAction.selector = action;
+    poolAction.event = poolEvent;
+    
+    for (SPoolAction *action in _actions) {
+        if ([poolAction compareWith:action] ) {
+            return;
+        }
+    }
+    [_actions addObject:poolAction];
+}
+
+- (void)triggerForEvent:(SPoolEvent)event {
+    
+    [self triggerReactionsForEvent:event];
+    [self triggerTargetForEvent:event];
 }
 
 - (void)triggerReactionsForEvent:(SPoolEvent)event {
@@ -129,19 +188,54 @@
     }
 }
 
+- (void)triggerTargetForEvent:(SPoolEvent)event {
+    
+    NSMutableArray *dataToRemove = [NSMutableArray array];
+    for (SPoolAction *action in _actions) {
+        if (!action.target) {
+            [dataToRemove addObject:action];
+        } else {
+            if (action.event == SPoolEventOnChange
+                || action.event == event) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [NSThread detachNewThreadSelector:action.selector
+                                             toTarget:action.target
+                                           withObject:self];
+                });
+            }
+        }
+    }
+    [_actions removeObjectsInArray:dataToRemove];
+}
+
+- (void)removeTarget:(id)target
+              action:(SEL)action
+        forPoolEvent:(SPoolEvent)poolEvent {
+    
+    NSMutableArray *dataToRemove = [NSMutableArray array];
+    for (SPoolAction *poolAction in _actions) {
+        if ([poolAction compareWithTarget:target
+                                 selector:action
+                                    event:poolEvent]) {
+            [dataToRemove addObject:poolAction];
+        }
+    }
+    [_actions removeObjectsInArray:dataToRemove];
+}
+
 - (void)removeObjectMatch:(BOOL (^)(id))filter {
     
     NSArray *objectToRemove = [self filter:filter];
     [self.data removeObjectsInArray:objectToRemove];
 }
 
-#ifdef DEBUG
-
 - (void)dealloc {
     
+    [_actions removeAllObjects];
+    [_reactions removeAllObjects];
+#ifdef DEBUG
     NSLog(@"Pool release.");
-}
-
 #endif
+}
 
 @end

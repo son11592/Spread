@@ -8,13 +8,8 @@ Spread is a data flow control. It changes the way you manage your data.
 - [x] Create, mapping (with NSDictionary / JSON) and manage data model automatic.
 - [x] Auto trigger event to all models in register pools.
 - [x] React when model properties change value.
-- [x] Updating...
-
-## Coming soon...
-
-- [x] Store and restore models in pools from local database.
-- [x] DataSouceManager fetch/push data from internet sound awesome.
-- [x] Any idea?
+- [ ] Store and restore models in pools from local database.
+- [ ] DataSouceManager fetch/push data from internet sound awesome.
 
 ## Installation
 
@@ -31,7 +26,6 @@ pod "Spread", "~> 1.0.4"
  - Drag and drop Classes folder into your project.
 
 ## Usage
-
 
 ```objc
 
@@ -84,7 +78,7 @@ Spread.registerEvent("TheEvent",
 let model = Spread.addObject(["name": "Some name", "objectId": "123"],
   toPool: self.pool1Identifier)
 
-  model.property("name", reactOnChange: { (newValue) -> Void in
+  model.property("name", onChangeReaction: { (newValue) -> Void in
   aTextField.text = newValue as String
 })
 

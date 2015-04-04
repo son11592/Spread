@@ -26,7 +26,18 @@
  *  @param react    reaction handler.
  */
 - (void)property:(NSString *)property
-   reactOnChange:(void(^)(id newValue))react;
+onChangeReaction:(void(^)(id newValue))react;
+
+/**
+ *  Register action event when property change value.
+ *
+ *  @param property property key path.
+ *  @param target   object for trigger event.
+ *  @param action   a selector.
+ */
+- (void)property:(NSString *)property
+onChangeReactionTarget:(id)target
+        selector:(SEL)action;
 
 /**
  *  Register reaction event for multi properties.
@@ -35,7 +46,18 @@
  *  @param react      reaction handler.
  */
 - (void)properties:(NSArray *)properties
-     reactOnChange:(void(^)(id newValue))react;
+  onChangeReaction:(void(^)(id newValue))react;
+
+/**
+ *  Register action event when properties change value.
+ *
+ *  @param properties array of property key path.
+ *  @param target     object for trigger event.
+ *  @param action     a selector.
+ */
+- (void)properties:(NSArray *)properties
+onChangeReactionTarget:(id)target
+          selector:(SEL)action;
 
 /**
  *  Remove reaction handler for property.
@@ -45,11 +67,25 @@
 - (void)removeReactionForProperty:(NSString *)property;
 
 /**
- *  Remove reaction handler for multi properties.
+ *  Remove action target for property.
  *
- *  @param properties array of properties key path.
+ *  @param property property key path.
+ */
+- (void)removeActionForProperty:(NSString *)property;
+
+/**
+ *  Remove reaction handler for array of property.
+ *
+ *  @param properties array of property key path.
  */
 - (void)removeReactionsForProperties:(NSArray *)properties;
+
+/**
+ *  Remove action target for array of property.
+ *
+ *  @param properties array of property key path.
+ */
+- (void)removeActionsForProperties:(NSArray *)properties;
 
 /**
  *  Remove all reactions.

@@ -50,9 +50,47 @@ static const char *getPropertyType(objc_property_t property) {
 
 @end
 
+@interface SModelAction : NSObject
+
+@property (nonatomic, copy) NSString *keyPath;
+@property (nonatomic, weak) id target;
+@property (nonatomic) SEL selector;
+
+- (BOOL)compareWith:(SModelAction *)action;
+- (BOOL)compareWithTarget:(id)target
+                 selector:(SEL)selector
+                 property:(NSString *)property;
+@end
+
+@implementation SModelAction
+
+- (BOOL)compareWith:(SModelAction *)action {
+    
+    return [self compareWithTarget:action.target
+                          selector:action.selector
+                          property:action.keyPath];
+}
+
+- (BOOL)compareWithTarget:(id)target
+                 selector:(SEL)selector
+                 property:(NSString *)property {
+    if ([self.target isEqual:target]
+        && self.selector == selector
+        && [self.keyPath isEqualToString:property]) {
+        return YES;
+    }
+    return NO;
+}
+
+@end
+
 @implementation SModel {
     
+    // Store callback reaction.
     NSMutableArray *_reactions;
+    
+    // Store action with target.
+    NSMutableArray *_actions;
 }
 
 - (NSMutableArray *)reactions {
@@ -63,6 +101,16 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     return _reactions;
+}
+
+- (NSMutableArray *)actions {
+    
+    @synchronized(self) {
+        if (!_actions) {
+            _actions = [NSMutableArray array];
+        }
+    }
+    return _actions;
 }
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
@@ -118,7 +166,7 @@ static const char *getPropertyType(objc_property_t property) {
     return self;
 }
 
-- (NSArray *)getActions:(NSString *)property {
+- (NSArray *)getReactions:(NSString *)property {
     
     NSMutableArray *reactions = [NSMutableArray array];
     for (SModelReaction *reaction in [self reactions]) {
@@ -129,13 +177,33 @@ static const char *getPropertyType(objc_property_t property) {
     return reactions;
 }
 
-- (void)property:(NSString *)property
-   reactOnChange:(void(^)(id newValue))react {
+- (NSArray *)getActions:(NSString *)property {
     
-    [self addObserver:self
-           forKeyPath:property
-              options:NSKeyValueObservingOptionNew
-              context:NULL];
+    NSMutableArray *actions = [NSMutableArray array];
+    for (SModelAction *action in _actions) {
+        if ([action.keyPath isEqualToString:property]) {
+            [actions addObject:action];
+        }
+    }
+    return actions;
+}
+
+- (void)property:(NSString *)property
+onChangeReaction:(void(^)(id newValue))react {
+    
+    if ([[self getReactions:property] count] > 0) {
+        
+        NSLog(@"This time, we do not allow  multiple reaction register.");
+        return;
+    }
+    
+    // When keypath is already register, reuse it.
+    if ([[self getActions:property] count] == 0) {
+        [self addObserver:self
+               forKeyPath:property
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    }
     
     SModelReaction *reaction = [[SModelReaction alloc] init];
     reaction.keyPath = property;
@@ -143,23 +211,84 @@ static const char *getPropertyType(objc_property_t property) {
     [[self reactions] addObject:reaction];
 }
 
+- (void)property:(NSString *)property
+onChangeReactionTarget:(id)target
+        selector:(SEL)action {
+    
+    if ([[self getActions:property] count] > 0) {
+        
+        NSLog(@"This time, we do not allow  multiple action register.");
+        return;
+    }
+    
+    // When keypath is already register, reuse it.
+    if ([[self getReactions:property] count] == 0) {
+        [self addObserver:self
+               forKeyPath:property
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
+    }
+    
+    SModelAction *modelAction = [[SModelAction alloc] init];
+    modelAction.keyPath = property;
+    modelAction.target = target;
+    modelAction.selector = action;
+    [[self actions] addObject:modelAction];
+}
+
 - (void)properties:(NSArray *)properties
-     reactOnChange:(void (^)(id))react {
+  onChangeReaction:(void (^)(id))react {
     
     for (NSString *property in properties) {
         [self property:property
-         reactOnChange:react];
+      onChangeReaction:react];
+    }
+}
+
+- (void)properties:(NSArray *)properties
+onChangeReactionTarget:(id)target
+          selector:(SEL)action {
+    for (NSString *property in properties) {
+        [self property:property
+onChangeReactionTarget:target
+              selector:action];
+    }
+}
+
+- (void)removeReactionObserverForKeyPath:(NSString *)keyPath {
+    
+    // Remove when property have no target lister.
+    if ([[self getActions:keyPath] count] == 0) {
+        [self removeObserver:self
+                  forKeyPath:keyPath];
+    }
+}
+
+- (void)removeActionObserverForKeyPath:(NSString *)keyPath {
+    
+    // Remove when property have no target lister.
+    if ([[self getReactions:keyPath] count] == 0) {
+        [self removeObserver:self
+                  forKeyPath:keyPath];
     }
 }
 
 - (void)removeReactionForProperty:(NSString *)property {
     
-    NSArray *reactions = [self getActions:property];
+    NSArray *reactions = [self getReactions:property];
     for (SModelReaction *reaction in reactions) {
-        [self removeObserver:self
-                  forKeyPath:reaction.keyPath];
+        [self removeReactionObserverForKeyPath:reaction.keyPath];
     }
     [[self reactions] removeObjectsInArray:reactions];
+}
+
+- (void)removeActionForProperty:(NSString *)property {
+    
+    NSArray *actions = [self getActions:property];
+    for ( SModelAction *action in actions) {
+        [self removeActionObserverForKeyPath:action.keyPath];
+    }
+    [[self actions] removeObjectsInArray:actions];
 }
 
 - (void)removeReactionsForProperties:(NSArray *)properties {
@@ -169,13 +298,27 @@ static const char *getPropertyType(objc_property_t property) {
     }
 }
 
+- (void)removeActionsForProperties:(NSArray *)properties {
+    
+    for (NSString *property in properties) {
+        [self removeActionForProperty:property];
+    }
+}
+
 - (void)removeAllReactions {
     
     for (SModelReaction *reaction in [self reactions]) {
-        [self removeObserver:self
-                  forKeyPath:reaction.keyPath];
+        [self removeReactionObserverForKeyPath:reaction.keyPath];
     }
     [[self reactions] removeAllObjects];
+}
+
+- (void)removeAllActions {
+    
+    for (SModelAction *action in [self actions]) {
+        [self removeActionObserverForKeyPath:action.keyPath];
+    }
+    [[self actions] removeAllObjects];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -188,16 +331,35 @@ static const char *getPropertyType(objc_property_t property) {
             reaction.react(change[@"new"]);
         }
     }
+    
+    // Automatic delete action event when target become nil.
+    NSMutableArray *dataToDelete = [NSMutableArray array];
+    for (SModelAction *action in [self actions]) {
+        if (action.target) {
+            if ([action.keyPath isEqualToString:keyPath]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [NSThread detachNewThreadSelector:action.selector
+                                             toTarget:action.target
+                                           withObject:self];
+                });
+            }
+        } else {
+            [dataToDelete addObject:action];
+        }
+    }
+    [[self actions] removeObjectsInArray:dataToDelete];
+    for (SModelAction *action in dataToDelete) {
+        [self removeActionForProperty:action.keyPath];
+    }
 }
 
 - (void)dealloc {
     
+    [self removeAllReactions];
+    [self removeAllActions];
 #ifdef DEBUG
-    NSLog(@"Model release.");
+    NSLog(@"[%@] - Release.", [self class]);
 #endif
-    for (SModelReaction *reaction in [self reactions]) {
-        [self removeObserver:self forKeyPath:reaction.keyPath];
-    }
 }
 
 @end

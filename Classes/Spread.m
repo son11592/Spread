@@ -8,7 +8,7 @@
 
 #import "Spread.h"
 
-@interface SAction: NSObject
+@interface SpreadAction: NSObject
 
 @property (nonatomic, copy) NSString *event;
 @property (nonatomic, copy) NSString *poolIdentifier;
@@ -16,7 +16,7 @@
 
 @end
 
-@implementation SAction
+@implementation SpreadAction
 
 @end
 
@@ -90,7 +90,7 @@
 
     // Remove pool action.
     NSMutableArray *actionToRemove = [NSMutableArray array];
-    for (SAction *action in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *action in [[self sharedInstance] poolActions]) {
         if ([action.poolIdentifier isEqualToString:identifier]) {
             [actionToRemove addObject:action];
         }
@@ -123,7 +123,7 @@
             NSLog(@"[WARNING]: Duplicated pool identifier.");
         }
 #endif
-        SAction *poolAction = [[SAction alloc] init];
+        SpreadAction *poolAction = [[SpreadAction alloc] init];
         poolAction.event = event;
         poolAction.poolIdentifier = poolIdentifier;
         poolAction.action = action;
@@ -135,7 +135,7 @@
     poolIdentifiers:(NSArray *)poolIdentifiers {
     
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (SAction *action in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *action in [[self sharedInstance] poolActions]) {
         if ([action.event isEqualToString:event]
             && [self countIndentifer:action.poolIdentifier inArray:poolIdentifiers] > 0) {
             [actionsToDelete addObject:action];
@@ -147,7 +147,7 @@
 + (void)removeEvent:(NSString *)event {
     
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (SAction *action in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *action in [[self sharedInstance] poolActions]) {
         if ([action.event isEqualToString:event]) {
             [actionsToDelete addObject:action];
         }
@@ -193,7 +193,7 @@
 + (void)performEvent:(NSString *)event
                value:(NSDictionary *)value {
     
-    for (SAction *poolAction in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *poolAction in [[self sharedInstance] poolActions]) {
         if ([poolAction.event isEqualToString:event]) {
             SPool *pool = [self getPool:poolAction.poolIdentifier];
             poolAction.action(value, pool);

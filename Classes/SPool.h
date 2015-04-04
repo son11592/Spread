@@ -85,6 +85,28 @@ typedef NS_ENUM(NSInteger, SPoolEvent) {
                 react:(void(^)(NSArray *data))react;
 
 /**
+ *  Add target for event, automatic delete action when target become nil.
+ *
+ *  @param target     object target.
+ *  @param action     a selector event.
+ *  @param poolEvent  event type.
+ */
+- (void)addTarget:(id)target
+           action:(SEL)action
+     forPoolEvent:(SPoolEvent)poolEvent;
+
+/**
+ *  Remove target for event.
+ *
+ *  @param target     object target..
+ *  @param action     a selector event.
+ *  @param poolEvent  event type.
+ */
+- (void)removeTarget:(id)target
+              action:(SEL)action
+     forPoolEvent:(SPoolEvent)poolEvent;
+
+/**
  *  Array of objects.
  */
 @property (nonatomic, strong, readonly) NSMutableArray *data;
