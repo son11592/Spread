@@ -46,17 +46,17 @@ class ViewController: UIViewController {
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool3Indentifier)
     
     let pool3 = Spread.getPool(self.pool3Indentifier)
-    pool3.reactOnChange(SPoolEvent.OnInitModel, react: { (data) -> Void in
+    pool3.onEvent(SPoolEvent.OnInitModel, reaction: { (data) -> Void in
         
         NSLog("Pool reaction on init.")
     })
     
-    pool3.reactOnChange(SPoolEvent.OnChange, react: { (data) -> Void in
+    pool3.onEvent(SPoolEvent.OnChange, reaction: { (data) -> Void in
         
         NSLog("Pool reaction change.")
     })
     
-    pool3.reactOnChange(SPoolEvent.OnRemoveModel, react: { (data) -> Void in
+    pool3.onEvent(SPoolEvent.OnRemoveModel, reaction: { (data) -> Void in
         
         NSLog("Pool reaction on remove.")
     })
