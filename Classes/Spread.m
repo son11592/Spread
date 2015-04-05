@@ -69,7 +69,6 @@
     forPoolIdentifier:(NSString *)identifier {
     
     SPool *pool = [self getPool:identifier];
-    
     @synchronized(self) {
         if (!pool) {
             pool = [[SPool alloc] init];
@@ -87,7 +86,7 @@
 
 + (void)removePoolWithIdentifier:(NSString *)identifier {
     
-
+    
     // Remove pool action.
     NSMutableArray *actionToRemove = [NSMutableArray array];
     for (SpreadAction *action in [[self sharedInstance] poolActions]) {
@@ -190,8 +189,8 @@
     [pool removeObjects:objects];
 }
 
-+ (void)performEvent:(NSString *)event
-               value:(NSDictionary *)value {
++ (void)outEvent:(NSString *)event
+           value:(NSDictionary *)value {
     
     for (SpreadAction *poolAction in [[self sharedInstance] poolActions]) {
         if ([poolAction.event isEqualToString:event]) {

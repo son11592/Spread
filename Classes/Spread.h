@@ -122,7 +122,7 @@
  *  @param event event identifier.
  *  @param value value parameters.
  */
-+ (void)performEvent:(NSString *)event
-               value:(id)value;
++ (void)outEvent:(NSString *)event
+           value:(id)value;
 
 @end
