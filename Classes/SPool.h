@@ -17,7 +17,14 @@ typedef NS_ENUM(NSInteger, SPoolEvent) {
 
 @interface SPool : NSObject
 
+/**
+ *  Pool identifier.
+ */
 @property (nonatomic, copy) NSString *identifier;
+
+/**
+ *  Registered class.
+ */
 @property (nonatomic, copy) Class modelClass;
 
 /**

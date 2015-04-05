@@ -36,7 +36,7 @@
 + (void)removePoolWithIdentifier:(NSString *)identifier;
 
 /**
- *  Register event for multi pool with array of identifiers.
+ *  Register event for pools with array of identifiers.
  *
  *  @param event           event identifier.
  *  @param poolIdentifiers array of pools indetifier.
