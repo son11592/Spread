@@ -134,7 +134,7 @@ class ViewController: UIViewController {
   func textViewDidChange(textField: UITextField) {
   
     let text = textField.text
-    Spread.performEvent(self.action1Identifier,
+    Spread.outEvent(self.action1Identifier,
       value: ["name": text, "objectId": "one"])
   }
 }

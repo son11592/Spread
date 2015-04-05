@@ -102,10 +102,10 @@ class SpreadTests: XCTestCase {
     
     func testReactionWhenMatchObjectId() {
         
-        Spread.performEvent(self.poolChangeNameEvent,
+        Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "Change all name", "objectId": "match all object id"])
         
-        Spread.performEvent(self.poolChangeNameEvent,
+        Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "Change all name again", "objectId": "match all object id"])
         
         // All name of models should be changed.
@@ -116,10 +116,10 @@ class SpreadTests: XCTestCase {
     
     func testReactionNotMatchObjectId() {
         
-        Spread.performEvent(self.poolChangeNameEvent,
+        Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "A new name", "objectId": "match all object id"])
         
-        Spread.performEvent(self.poolChangeNameEvent,
+        Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "Whatever", "objectId": "not match any object id"])
         
         // All name of models should not be changed.
@@ -130,13 +130,13 @@ class SpreadTests: XCTestCase {
     
     func testRemoveReact() {
         
-        Spread.performEvent(self.poolChangeNameEvent,
+        Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "Name before remove", "objectId": "match all object id"])
         
         Spread.removeEvent(self.poolChangeNameEvent,
             poolIdentifiers: [self.pool1Identifier])
         
-        Spread.performEvent(self.poolChangeNameEvent,
+        Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "Name after remove", "objectId": "match all object id"])
         
         XCTAssertEqual(self.model1Name, "Name before remove")
@@ -149,7 +149,7 @@ class SpreadTests: XCTestCase {
                 Spread.addObject(self.model4Data, toPool: self.pool4Identifier)
             }
             for i in 1...2 {
-                Spread.performEvent(self.poolChangeNameEvent,
+                Spread.outEvent(self.poolChangeNameEvent,
                     value: ["name": "A new name", "objectId": "match all object id"])
             }
         }
