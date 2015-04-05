@@ -88,7 +88,7 @@ let model = Spread.addObject(["name": "Some name", "objectId": "123"],
 
 ```swift
 
-  Spread.performEvent("TheEvent",
+  Spread.outEvent("TheEvent",
     value: ["name": "Change the name", "objectId": "123"])
 
 ```
