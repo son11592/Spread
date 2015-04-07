@@ -11,7 +11,7 @@
 @interface SPoolReaction : NSObject
 
 @property (nonatomic) SPoolEvent event;
-@property (nonatomic, copy) void (^react)(NSArray *);
+@property (nonatomic, copy) void (^reaction)(NSArray *);
 
 @end
 
@@ -62,6 +62,10 @@
     
     // Store action with target.
     NSMutableArray *_actions;
+    
+    // Store pool's data.
+    NSMutableArray *_data;
+    
 }
 
 + (instancetype)sharedInstance {
@@ -99,8 +103,8 @@
 - (id)addObject:(NSDictionary *)object {
     
     id model = [[self.modelClass alloc] initWithDictionary:object];
-    [self.data addObject:model];
-    if ([self.data count] == 1) {
+    [_data addObject:model];
+    if ([_data count] == 1) {
         [self triggerForEvent:SPoolEventOnInitModel];
     }
     return model;
@@ -113,25 +117,25 @@
         id model = [[self.modelClass alloc] initWithDictionary:object];
         [dataToAdd addObject:model];
     }
-    [self.data addObjectsFromArray:dataToAdd];
+    [_data addObjectsFromArray:dataToAdd];
     [self triggerForEvent:SPoolEventOnAddModel];
     return dataToAdd;
 }
 
 - (NSArray *)allObjects {
     
-    return [[self data] mutableCopy];
+    return [_data mutableCopy];
 }
 
 - (void)removeObject:(id)object {
     
-    [self.data removeObject:object];
+    [_data removeObject:object];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (void)removeObjects:(NSArray *)objects {
     
-    [self.data removeObjectsInArray:objects];
+    [_data removeObjectsInArray:objects];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
@@ -147,22 +151,22 @@
 }
 
 - (void)onEvent:(SPoolEvent)event
-       reaction:(void(^)(NSArray *data))react {
+       reaction:(void(^)(NSArray *data))reaction {
     
-    SPoolReaction *reaction = [[SPoolReaction alloc] init];
-    reaction.event = event;
-    reaction.react = react;
-    [_reactions addObject:reaction];
+    SPoolReaction *poolReaction = [[SPoolReaction alloc] init];
+    poolReaction.event = event;
+    poolReaction.reaction = reaction;
+    [_reactions addObject:poolReaction];
 }
 
 - (void)addTarget:(id)target
-           action:(SEL)action
-     forPoolEvent:(SPoolEvent)poolEvent {
+         selector:(SEL)selector
+          onEvent:(SPoolEvent)event {
     
     SPoolAction *poolAction = [[SPoolAction alloc] init];
     poolAction.target = target;
-    poolAction.selector = action;
-    poolAction.event = poolEvent;
+    poolAction.selector = selector;
+    poolAction.event = event;
     
     for (SPoolAction *action in _actions) {
         if ([poolAction compareWith:action] ) {
@@ -183,7 +187,7 @@
     for (SPoolReaction *reaction in [self reactions]) {
         if (reaction.event == SPoolEventOnChange
             || reaction.event == event) {
-            reaction.react(self.data);
+            reaction.reaction([_data mutableCopy]);
         }
     }
 }
@@ -209,14 +213,14 @@
 }
 
 - (void)removeTarget:(id)target
-              action:(SEL)action
-        forPoolEvent:(SPoolEvent)poolEvent {
+            selector:(SEL)selector
+             onEvent:(SPoolEvent)event {
     
     NSMutableArray *dataToRemove = [NSMutableArray array];
     for (SPoolAction *poolAction in _actions) {
         if ([poolAction compareWithTarget:target
-                                 selector:action
-                                    event:poolEvent]) {
+                                 selector:selector
+                                    event:event]) {
             [dataToRemove addObject:poolAction];
         }
     }
@@ -226,7 +230,7 @@
 - (void)removeObjectMatch:(BOOL (^)(id))filter {
     
     NSArray *objectToRemove = [self filter:filter];
-    [self.data removeObjectsInArray:objectToRemove];
+    [_data removeObjectsInArray:objectToRemove];
 }
 
 - (void)dealloc {

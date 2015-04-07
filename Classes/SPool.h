@@ -47,48 +47,48 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 /**
  *  Add object to pool.
  *
- *  @param object object to add.
+ *  @param object Object to add.
  *
- *  @return object to add.
+ *  @return       Object added.
  */
 - (id)addObject:(NSDictionary *)object;
 
 /**
  *  Add multi object to pool;
  *
- *  @param objects array of object.
+ *  @param objects Array of object.
  *
- *  @return array of objects added.
+ *  @return        Array of objects added.
  */
 - (NSArray *)addObjects:(NSArray *)objects;
 
 /**
  *  Remove an object to pool.
  *
- *  @param object object to remove.
+ *  @param object Object to remove.
  */
 - (void)removeObject:(id)object;
 
 /**
  *  Remove multi objects in pool.
  *
- *  @param objects array of objects to remove.
+ *  @param objects Array of objects to remove.
  */
 - (void)removeObjects:(NSArray *)objects;
 
 /**
  *  Get all object in from.
  *
- *  @return array of objects.
+ *  @return Array of objects.
  */
 - (NSArray *)allObjects;
 
 /**
  *  Return object match filter.
  *
- *  @param filter filer condition.
+ *  @param filter Filer condition.
  *
- *  @return array of objects.
+ *  @return       Array of objects.
  */
 - (NSArray *)filter:(BOOL (^)(id))filter;
 
@@ -102,37 +102,32 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 /**
  *  Reaction when pool change.
  *
- *  @param event event type.
- *  @param react reaction.
+ *  @param event    Event description.
+ *  @param reaction Pool reaction.
  */
 - (void)onEvent:(SPoolEvent)event
-       reaction:(void(^)(NSArray *data))react;
+       reaction:(void(^)(NSArray *data))reaction;
 
 /**
  *  Add target for event, automatic delete action when target become nil.
  *
- *  @param target     object target.
- *  @param action     a selector event.
- *  @param poolEvent  event type.
+ *  @param target   Object target.
+ *  @param selector Selector for event.
+ *  @param event    Event description.
  */
 - (void)addTarget:(id)target
-           action:(SEL)action
-     forPoolEvent:(SPoolEvent)poolEvent;
+         selector:(SEL)selector
+          onEvent:(SPoolEvent)event;
 
 /**
  *  Remove target for event.
  *
- *  @param target     object target..
- *  @param action     a selector event.
- *  @param poolEvent  event type.
+ *  @param target   Object target..
+ *  @param selector Selector for event.
+ *  @param event    Event description.
  */
 - (void)removeTarget:(id)target
-              action:(SEL)action
-        forPoolEvent:(SPoolEvent)poolEvent;
-
-/**
- *  Array of objects.
- */
-@property (nonatomic, strong, readonly) NSMutableArray *data;
+            selector:(SEL)selector
+             onEvent:(SPoolEvent)event;
 
 @end
