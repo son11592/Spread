@@ -55,7 +55,7 @@ class SpreadTests: XCTestCase {
                     
                     let objectId = (value as NSDictionary).valueForKey("objectId") as String
                     let newName = (value as NSDictionary).valueForKey("name") as String
-                    let models = spool.filter({ (model) -> Bool in
+                    let models = spool.allObjects().filter({ (model) -> Bool in
                         return (model as Model).objectId == objectId
                     })
                     for item in models {
@@ -66,19 +66,19 @@ class SpreadTests: XCTestCase {
         
         // Add data to pool and binding data.
         let model1 = Spread.addObject(model1Data, toPool: self.pool1Identifier)
-        model1.property("name", onChangeReaction: { (newValue) -> Void in
+        model1.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
             self.model1Name = newValue as String
-        })
+        }
         Spread.addObject(model5Data, toPool: self.pool1Identifier)
         
         let model2 = Spread.addObject(model2Data, toPool: self.pool2Identifier)
-        model2.property("name", onChangeReaction: { (newValue) -> Void in
+        model2.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
             self.model2Name = newValue as String
-        })
+        }
         let model3 = Spread.addObject(model3Data, toPool: self.pool3Identifier)
-        model3.property("name", onChangeReaction: { (newValue) -> Void in
+        model3.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
             self.model3Name = newValue as String
-        })
+        }
     }
     
     override func tearDown() {

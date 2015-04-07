@@ -120,7 +120,7 @@
 
 - (NSArray *)allObjects {
     
-    return [self data];
+    return [[self data] mutableCopy];
 }
 
 - (void)removeObject:(id)object {

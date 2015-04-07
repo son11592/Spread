@@ -16,6 +16,7 @@
 		11004B421AC45CF500013372 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B411AC45CF500013372 /* Networking.swift */; };
 		11004B451AC4608700013372 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B441AC4608700013372 /* Carrot.swift */; };
 		1147AC511AC72C30009C8BF2 /* SpreadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B2B1AC4252100013372 /* SpreadTests.swift */; };
+		11B1E1981AD22E9100765C35 /* NSArray+Spread.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B1E1971AD22E9100765C35 /* NSArray+Spread.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,8 @@
 		11004B3E1AC43D8200013372 /* SModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SModel.m; path = Classes/SModel.m; sourceTree = "<group>"; };
 		11004B411AC45CF500013372 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Networking.swift; path = Spread/Utils/Networking.swift; sourceTree = "<group>"; };
 		11004B441AC4608700013372 /* Carrot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Carrot.swift; path = Models/Carrot.swift; sourceTree = "<group>"; };
+		11B1E1961AD22E9100765C35 /* NSArray+Spread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Spread.h"; path = "Classes/NSArray+Spread.h"; sourceTree = "<group>"; };
+		11B1E1971AD22E9100765C35 /* NSArray+Spread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Spread.m"; path = "Classes/NSArray+Spread.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +136,8 @@
 				11004B3B1AC42FBC00013372 /* SPool.m */,
 				11004B3D1AC43D8200013372 /* SModel.h */,
 				11004B3E1AC43D8200013372 /* SModel.m */,
+				11B1E1961AD22E9100765C35 /* NSArray+Spread.h */,
+				11B1E1971AD22E9100765C35 /* NSArray+Spread.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -257,6 +262,7 @@
 				11004B161AC4252100013372 /* AppDelegate.swift in Sources */,
 				11004B421AC45CF500013372 /* Networking.swift in Sources */,
 				11004B451AC4608700013372 /* Carrot.swift in Sources */,
+				11B1E1981AD22E9100765C35 /* NSArray+Spread.m in Sources */,
 				11004B391AC4255300013372 /* Spread.m in Sources */,
 				11004B3C1AC42FBC00013372 /* SPool.m in Sources */,
 			);

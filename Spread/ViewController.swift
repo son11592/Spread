@@ -71,7 +71,7 @@ class ViewController: UIViewController {
         let objctId = (data as NSDictionary).valueForKey("objectId") as String
        
         // Select carrots in pool.
-        let carrots = pool.filter({ (item) -> Bool in
+        let carrots = pool.allObjects().filter({ (item) -> Bool in
             let carrot = item as Carrot
             return (carrot.objectId == objctId)
         })
@@ -88,25 +88,21 @@ class ViewController: UIViewController {
     
     // Add object to pool and setup reaction.
     let carrotInPool1 = Spread.addObject(carrotData, toPool: self.pool1Indentifier)
-    carrotInPool1.property("name", onChangeReaction: { (newValue) -> Void in
-      
-      self.carrot1Label.text = newValue as? String
-    })
+    carrotInPool1.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+        self.carrot1Label.text = newValue as? String
+    }
 
     let carrotInPool2 = Spread.addObject(carrotData, toPool: self.pool2Indentifier)
-    carrotInPool2.property("name", onChangeReaction: { (newValue) -> Void in
-      
+    carrotInPool2.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
       self.carrot2Label.text = newValue as? String
-    })
+    }
     
     let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier)
-    carrotInPool3.property("name", onChangeReaction: { (newValue) -> Void in
-      
-      self.carrot3Label.text = newValue as? String
-    })
+    carrotInPool3.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
+  }
     
-    // Remove carrot.
-    Spread.removePoolWithIdentifier(self.pool3Indentifier)
+  func textChange() {
+    self.carrot3Label.text = self.textField.text
   }
   
   func initView() {

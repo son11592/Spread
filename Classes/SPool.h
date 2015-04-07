@@ -8,11 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, SPoolEvent) {
-  SPoolEventOnInitModel,
-  SPoolEventOnAddModel,
-  SPoolEventOnRemoveModel,
-  SPoolEventOnChange
+#import "NSArray+Spread.h"
+
+/**
+ *  Spool event.
+ */
+typedef NS_ENUM(NSInteger, SPoolEvent){
+    /**
+     *  Pool calls event when initial data.
+     */
+    SPoolEventOnInitModel,
+    /**
+     * Pool calls event when add new model.
+     */
+    SPoolEventOnAddModel,
+    /**
+     *  Pool calls event when remove a model.
+     */
+    SPoolEventOnRemoveModel,
+    /**
+     *  Pool calls event when data is changed.
+     */
+    SPoolEventOnChange
 };
 
 @interface SPool : NSObject
