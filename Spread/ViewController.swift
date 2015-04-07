@@ -99,6 +99,9 @@ class ViewController: UIViewController {
     
     let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier)
     carrotInPool3.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
+    
+    carrotInPool3.removeActionsForProperty("name")
+    carrotInPool2.removeReactionsForProperty("name")
   }
     
   func textChange() {

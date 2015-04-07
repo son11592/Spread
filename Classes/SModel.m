@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
+static void * SPreadContext = &SPreadContext;
+
 #import "SModel.h"
 
 #import <objc/runtime.h>
@@ -253,7 +255,7 @@ static const char *getPropertyType(objc_property_t property) {
         [self addObserver:self
                forKeyPath:keyPath
                   options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
-                  context:NULL];
+                  context:SPreadContext];
     }
 }
 
@@ -261,9 +263,10 @@ static const char *getPropertyType(objc_property_t property) {
     
     if ([[self getActionsOfProperty:keyPath] count] == 0
         && [[self getReactionsOfProperty:keyPath] count] == 0) {
+        
         [self removeObserver:self
                   forKeyPath:keyPath
-                     context:NULL];
+                     context:SPreadContext];
     }
 }
 
@@ -334,6 +337,7 @@ static const char *getPropertyType(objc_property_t property) {
     
     NSArray *reactions = [self getReactionsOfProperty:property
                                               onEvent:event];
+    if ([reactions count] == 0) return;
     [_reactions removeObjectsInArray:reactions];
     [self removeObserverForKeyPath:property];
 }
@@ -341,6 +345,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)removeReactionsForProperty:(NSString *)property {
     
     NSArray *reactions = [self getReactionsOfProperty:property];
+    if ([reactions count] == 0) return;
     [_reactions removeObjectsInArray:reactions];
     [self removeObserverForKeyPath:property];
 }
@@ -377,6 +382,7 @@ static const char *getPropertyType(objc_property_t property) {
                                            target:target
                                          selector:selector
                                           onEvent:event];
+    if ([actions count] == 0) return;
     [_actions removeObjectsInArray:actions];
     [self removeObserverForKeyPath:property];
 }
@@ -386,6 +392,7 @@ static const char *getPropertyType(objc_property_t property) {
     
     NSArray *actions = [self getActionsOfProperty:property
                                            target:target];
+    if ([actions count] == 0) return;
     [_actions removeObjectsInArray:actions];
     [self removeObserverForKeyPath:property];
 }
@@ -393,6 +400,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)removeActionsForProperty:(NSString *)property {
     
     NSArray *actions = [self getActionsOfProperty:property];
+    if ([actions count] == 0) return;
     [_actions removeObjectsInArray:actions];
     [self removeObserverForKeyPath:property];
 }
@@ -440,6 +448,10 @@ static const char *getPropertyType(objc_property_t property) {
     
     id oldValue = change[@"old"];
     id newValue = change[@"new"];
+    
+    if (context != SPreadContext) {
+        return;
+    }
     
     SModelEvent event = SModelEventOnChange;
     
