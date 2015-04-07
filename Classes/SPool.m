@@ -124,7 +124,7 @@
 
 - (NSArray *)allObjects {
     
-    return [_data mutableCopy];
+    return [_data copy];
 }
 
 - (void)removeObject:(id)object {
@@ -187,7 +187,7 @@
     for (SPoolReaction *reaction in [self reactions]) {
         if (reaction.event == SPoolEventOnChange
             || reaction.event == event) {
-            reaction.reaction([_data mutableCopy]);
+            reaction.reaction([_data copy]);
         }
     }
 }

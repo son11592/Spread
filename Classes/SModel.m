@@ -367,8 +367,9 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllReactions {
-    
-    for (SModelReaction *reaction in _reactions) {
+  
+    NSArray *reactions = [_reactions copy];
+    for (SModelReaction *reaction in reactions) {
         [self removeReactionsForProperty:reaction.keyPath];
     }
 }
@@ -435,8 +436,9 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllActions {
-    
-    for (SModelAction *action in _actions) {
+  
+    NSArray *actions = [_actions copy];
+    for (SModelAction *action in actions) {
         [self removeActionsForProperty:action.keyPath];
     }
 }

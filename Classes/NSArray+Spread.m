@@ -18,7 +18,7 @@
             [array addObject:model];
         }
     }
-    return [array mutableCopy];
+    return [array copy];
 }
 
 @end
