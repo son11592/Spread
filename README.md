@@ -9,7 +9,7 @@ Spread is a data flow control. It changes the way you manage your data.
 - [x] Auto trigger event to all models in register pools.
 - [x] React when model properties change value.
 - [ ] Store and restore models in pools from local database.
-- [ ] DataSouceManager fetch/push data from internet sound awesome.
+- [x] DataSouceManager fetch/push data from internet sound awesome. In progress....
 
 ## Installation
 
@@ -17,7 +17,7 @@ Spread is a data flow control. It changes the way you manage your data.
 
 ```ruby
 
-pod "Spread", "~> 1.0.4"
+pod "Spread", "~> 1.0.5"
 
 ```
 
