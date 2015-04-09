@@ -186,4 +186,42 @@ typedef NS_ENUM(NSInteger, SModelEvent){
  */
 - (void)removeAllActions;
 
+/**
+ *  Set source url for model.
+ *
+ *  @param sourceUrl The source url.
+ */
+- (void)setSourceUrl:(NSString *)sourceUrl;
+
+/**
+ *  Get source url.
+ *
+ *  @return The source url.
+ */
+- (NSString *)getSourceUrl;
+
+/**
+ *  Set key path for data source fetch from source url.
+ *
+ *  @param sourceKeyPath The source key path.
+ */
+- (void)setSourceKeyPath:(NSString *)sourceKeyPath;
+
+/**
+ *  Get data key path.
+ *
+ *  @return The source key path.
+ */
+- (NSString *)getSourceKeyPath;
+
+/**
+ *  Fetch data in background.
+ */
+- (void)fetchInBackgroud;
+
+/**
+ *  Fetch data in background and handle data when fetch data completed.
+ */
+- (void)fetchInBackgroud:(void(^)(id response, NSError *error))completion;
+
 @end

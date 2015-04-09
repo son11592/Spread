@@ -10,6 +10,7 @@ static void * SPreadContext = &SPreadContext;
 
 #import "SModel.h"
 
+#import "Utils.h"
 #import <objc/runtime.h>
 
 // Magic, do not touch.
@@ -66,6 +67,13 @@ static const char *getPropertyType(objc_property_t property) {
 
 @end
 
+@interface SModel()
+
+@property (nonatomic, copy) NSString *sourceUrl;
+@property (nonatomic, copy) NSString *sourceKeyPath;
+
+@end
+
 @implementation SModel {
     
     // Store callback reaction.
@@ -97,35 +105,44 @@ static const char *getPropertyType(objc_property_t property) {
     return _actions;
 }
 
+
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     
     self = [super init];
     if (!self) {
         return nil;
     }
-    
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]]) {
         return self;
     }
+    [self commonInit];
+    [self initData:dictionary];
+    return self;
+}
+
+- (void)commonInit {
+    
+    _sourceKeyPath = @"";
+    _sourceUrl = nil;
+}
+
+- (void)initData:(NSDictionary *)dictionary {
+    
     unsigned int outCount;
     objc_property_t *properties = class_copyPropertyList([self class], &outCount);
-    
     for(int i = 0; i < outCount; i++) {
         objc_property_t property = properties[i];
         const char *propName = property_getName(property);
         if (propName) {
             const char *propType = getPropertyType(property);
-            
             NSString *propertyName = [NSString stringWithCString:propName
                                                         encoding:NSUTF8StringEncoding];
             NSString *propertyType = [NSString stringWithCString:propType
                                                         encoding:NSUTF8StringEncoding];
-            
             id instanceType = [NSClassFromString(propertyType) alloc];
             
             id value = [dictionary valueForKey:([propertyName characterAtIndex:0] == '_' ?
                                                 [propertyName substringFromIndex:1] : propertyName)];
-            
             if (value && value != [NSNull null]) {
                 if ([instanceType respondsToSelector:@selector(initWithDictionary:)]) {
                     [self setValue:[instanceType initWithDictionary:value] forKey:propertyName];
@@ -147,8 +164,8 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     free(properties);
-    return self;
 }
+
 
 // HELPER FUNCTION.
 
@@ -367,7 +384,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllReactions {
-  
+    
     NSArray *reactions = [_reactions copy];
     for (SModelReaction *reaction in reactions) {
         [self removeReactionsForProperty:reaction.keyPath];
@@ -436,7 +453,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllActions {
-  
+    
     NSArray *actions = [_actions copy];
     for (SModelAction *action in actions) {
         [self removeActionsForProperty:action.keyPath];
@@ -471,11 +488,11 @@ static const char *getPropertyType(objc_property_t property) {
                                           onEvent:event];
     for (SModelAction *action in actions) {
         if (action.target) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [NSThread detachNewThreadSelector:action.selector
-                                             toTarget:action.target
-                                           withObject:self];
-                });
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSThread detachNewThreadSelector:action.selector
+                                         toTarget:action.target
+                                       withObject:self];
+            });
         } else {
             [actionsToDelete addObject:action];
         }
@@ -483,6 +500,54 @@ static const char *getPropertyType(objc_property_t property) {
     for (SModelAction *action in actionsToDelete) {
         [self removeActionsForProperty:action.keyPath];
     }
+}
+
+
+
+- (void)fetchInBackgroud {
+    
+    __weak SModel *weakSelf = self;
+    [Utils getRequest:[self getSourceUrl]
+           parameters:nil
+    completionHandler:^(id response, NSError *error) {
+        [weakSelf initData:[Utils getDataFrom:response
+                                  WithKeyPath:[weakSelf getSourceKeyPath]]];
+    }];
+}
+
+- (void)fetchInBackgroud:(void (^)(id, NSError *))completion {
+    
+    __weak SModel *weakSelf = self;
+    [Utils getRequest:[self getSourceUrl]
+           parameters:nil
+    completionHandler:^(id response, NSError *error) {
+        NSDictionary *data = [Utils getDataFrom:response
+                                    WithKeyPath:[weakSelf getSourceKeyPath]];
+        [weakSelf initData:data];
+        if (completion) {
+            completion(data, error);
+        }
+    }];
+}
+
+- (void)setSourceKeyPath:(NSString *)sourceKeyPath {
+    
+    _sourceKeyPath = sourceKeyPath;
+}
+
+- (void)setSourceUrl:(NSString *)sourceUrl {
+    
+    _sourceUrl = sourceUrl;
+}
+
+- (NSString *)getSourceKeyPath {
+    
+    return _sourceKeyPath;
+}
+
+- (NSString *)getSourceUrl {
+    
+    return _sourceUrl;
 }
 
 - (void)dealloc {

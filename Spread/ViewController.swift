@@ -23,6 +23,7 @@ class ViewController: UIViewController {
   private let carrot1Label = UILabel()
   private let carrot2Label = UILabel()
   private let carrot3Label = UILabel()
+  private let milkCarrot = Carrot()
   
   override func loadView() {
     
@@ -67,18 +68,18 @@ class ViewController: UIViewController {
       { (data, pool) -> Void in
         
         // Get new name and id.
-        let newName = (data as NSDictionary).valueForKey("name") as String
-        let objctId = (data as NSDictionary).valueForKey("objectId") as String
+        let newName = (data as! NSDictionary).valueForKey("name") as! String
+        let objctId = (data as! NSDictionary).valueForKey("objectId") as! String
         
         // Select carrots in pool.
         let carrots = pool.allObjects().filter({ (item) -> Bool in
-          let carrot = item as Carrot
+          let carrot = item as! Carrot
           return (carrot.objectId == objctId)
         })
         
         // Change carrots name.
         for item in carrots {
-          let carrot = item as Carrot
+          let carrot = item as! Carrot
           carrot.name = newName
         }
     }
@@ -100,7 +101,7 @@ class ViewController: UIViewController {
     let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier)
     carrotInPool3.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
   }
-  
+    
   func textChange() {
     self.carrot3Label.text = self.textField.text
   }

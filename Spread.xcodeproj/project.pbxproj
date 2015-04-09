@@ -16,6 +16,7 @@
 		11004B421AC45CF500013372 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B411AC45CF500013372 /* Networking.swift */; };
 		11004B451AC4608700013372 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B441AC4608700013372 /* Carrot.swift */; };
 		1147AC511AC72C30009C8BF2 /* SpreadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B2B1AC4252100013372 /* SpreadTests.swift */; };
+		1170D2111AD6D3E900924E72 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1170D2101AD6D3E900924E72 /* Utils.m */; };
 		11B1E1981AD22E9100765C35 /* NSArray+Spread.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B1E1971AD22E9100765C35 /* NSArray+Spread.m */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,8 @@
 		11004B3E1AC43D8200013372 /* SModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SModel.m; path = Classes/SModel.m; sourceTree = "<group>"; };
 		11004B411AC45CF500013372 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Networking.swift; path = Spread/Utils/Networking.swift; sourceTree = "<group>"; };
 		11004B441AC4608700013372 /* Carrot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Carrot.swift; path = Models/Carrot.swift; sourceTree = "<group>"; };
+		1170D20F1AD6D3E900924E72 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = Classes/Utils.h; sourceTree = "<group>"; };
+		1170D2101AD6D3E900924E72 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Utils.m; path = Classes/Utils.m; sourceTree = "<group>"; };
 		11B1E1961AD22E9100765C35 /* NSArray+Spread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Spread.h"; path = "Classes/NSArray+Spread.h"; sourceTree = "<group>"; };
 		11B1E1971AD22E9100765C35 /* NSArray+Spread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Spread.m"; path = "Classes/NSArray+Spread.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +141,8 @@
 				11004B3E1AC43D8200013372 /* SModel.m */,
 				11B1E1961AD22E9100765C35 /* NSArray+Spread.h */,
 				11B1E1971AD22E9100765C35 /* NSArray+Spread.m */,
+				1170D20F1AD6D3E900924E72 /* Utils.h */,
+				1170D2101AD6D3E900924E72 /* Utils.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -257,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1170D2111AD6D3E900924E72 /* Utils.m in Sources */,
 				11004B181AC4252100013372 /* ViewController.swift in Sources */,
 				11004B3F1AC43D8200013372 /* SModel.m in Sources */,
 				11004B161AC4252100013372 /* AppDelegate.swift in Sources */,

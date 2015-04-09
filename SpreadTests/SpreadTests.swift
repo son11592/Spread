@@ -53,13 +53,13 @@ class SpreadTests: XCTestCase {
                 self.pool3Identifier,
                 self.pool4Identifier]) { (value, spool) -> Void in
                     
-                    let objectId = (value as NSDictionary).valueForKey("objectId") as String
-                    let newName = (value as NSDictionary).valueForKey("name") as String
+                    let objectId = (value as! NSDictionary).valueForKey("objectId") as! String
+                    let newName = (value as! NSDictionary).valueForKey("name") as! String
                     let models = spool.allObjects().filter({ (model) -> Bool in
-                        return (model as Model).objectId == objectId
+                        return (model as! Model).objectId == objectId
                     })
                     for item in models {
-                        let model = item as Model
+                        let model = item as! Model
                         model.name = newName
                     }
         }
@@ -67,17 +67,17 @@ class SpreadTests: XCTestCase {
         // Add data to pool and binding data.
         let model1 = Spread.addObject(model1Data, toPool: self.pool1Identifier)
         model1.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
-            self.model1Name = newValue as String
+            self.model1Name = newValue as! String
         }
         Spread.addObject(model5Data, toPool: self.pool1Identifier)
         
         let model2 = Spread.addObject(model2Data, toPool: self.pool2Identifier)
         model2.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
-            self.model2Name = newValue as String
+            self.model2Name = newValue as! String
         }
         let model3 = Spread.addObject(model3Data, toPool: self.pool3Identifier)
         model3.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
-            self.model3Name = newValue as String
+            self.model3Name = newValue as! String
         }
     }
     

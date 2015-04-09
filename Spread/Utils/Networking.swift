@@ -15,7 +15,7 @@ class Networking {
     let url = NSURL(string: "http://latte.lozi.vn/albums/5437779d72cc6b292f8fc9dd/blocks")
     let task = NSURLSession.sharedSession().dataTaskWithURL(url!) {(data, response, error) in
       let response = NSJSONSerialization.JSONObjectWithData(data,
-        options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
+        options: NSJSONReadingOptions.MutableLeaves, error: nil) as! NSDictionary
       handler(response: response)
     }
     task.resume()
