@@ -29,13 +29,20 @@ typedef NS_ENUM(NSInteger, SModelEvent){
 @interface SModel : NSObject
 
 /**
- *  Auto mapping properties object with dictrionary/json.
+ *  Auto mapping properties object with dictionary/json.
  *
  *  @param dictionary Data to mapping.
  *
  *  @return Object mapping.
  */
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+
+/**
+ *  Auto mapping properties object with dictionary/json.
+ *
+ *  @param dictionary Data to mapping.
+ */
+- (void)initData:(NSDictionary *)dictionary;
 
 /**
  *  Register reaction for property on an event.
@@ -223,5 +230,12 @@ typedef NS_ENUM(NSInteger, SModelEvent){
  *  Fetch data in background and handle data when fetch data completed.
  */
 - (void)fetchInBackgroud:(void(^)(id response, NSError *error))completion;
+
+/**
+ *  Object initial status.
+ *
+ *  @return Initial state.
+ */
+- (BOOL)isInitiated;
 
 @end

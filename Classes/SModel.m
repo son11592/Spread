@@ -71,6 +71,7 @@ static const char *getPropertyType(objc_property_t property) {
 
 @property (nonatomic, copy) NSString *sourceUrl;
 @property (nonatomic, copy) NSString *sourceKeyPath;
+@property (nonatomic, getter=isInitiated) BOOL initiated;
 
 @end
 
@@ -124,10 +125,12 @@ static const char *getPropertyType(objc_property_t property) {
     
     _sourceKeyPath = @"";
     _sourceUrl = nil;
+    _initiated = NO;
 }
 
 - (void)initData:(NSDictionary *)dictionary {
-    
+  
+    _initiated = YES;
     unsigned int outCount;
     objc_property_t *properties = class_copyPropertyList([self class], &outCount);
     for(int i = 0; i < outCount; i++) {
@@ -548,6 +551,11 @@ static const char *getPropertyType(objc_property_t property) {
 - (NSString *)getSourceUrl {
     
     return _sourceUrl;
+}
+
+- (BOOL)isInitiated {
+  
+    return _initiated;
 }
 
 - (void)dealloc {
