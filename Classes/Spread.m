@@ -8,6 +8,8 @@
 
 #import "Spread.h"
 
+#import "Utils.h"
+
 @interface SpreadAction: NSObject
 
 @property (nonatomic, copy) NSString *event;
@@ -198,6 +200,12 @@
             poolAction.action(value, pool);
         }
     }
+}
+
++ (void)setMaxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount {
+  
+    NSOperationQueue *sharedOperationQueue = [[Utils sharedInstance] operationQueue];
+    [sharedOperationQueue setMaxConcurrentOperationCount:maxConcurrentOperationCount];
 }
 
 @end

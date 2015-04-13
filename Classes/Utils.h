@@ -10,6 +10,10 @@
 
 @interface Utils : NSObject
 
+@property (nonatomic, strong) NSOperationQueue *operationQueue;
+
++ (instancetype)sharedInstance;
+
 + (void)getRequest:(NSString *)url
         parameters:(NSDictionary *)parameters
  completionHandler:(void(^)(id response, NSError *error))completion;

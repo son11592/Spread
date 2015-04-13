@@ -126,4 +126,11 @@
 + (void)outEvent:(NSString *)event
            value:(id)value;
 
+/**
+ *  Set maximum number of model can fetching data at the same time.
+ *
+ *  @param maxConcurrentOperationCount Number of operation executing in background.
+ */
++ (void)setMaxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount;
+
 @end

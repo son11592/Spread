@@ -6,15 +6,9 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
-#define API_TIMEOUT_INTERVAL            20.0
+#define API_TIMEOUT_INTERVAL 20.0
 
 #import "Utils.h"
-
-@interface Utils()
-
-@property (nonatomic, strong) NSOperationQueue *queue;
-
-@end
 
 @implementation Utils
 
@@ -24,8 +18,14 @@
     if (!self) {
         return nil;
     }
-    _queue = [[NSOperationQueue alloc] init];
+    [self commonInit];
     return self;
+}
+
+- (void)commonInit {
+  
+    _operationQueue = [[NSOperationQueue alloc] init];
+    [_operationQueue setMaxConcurrentOperationCount:10];
 }
 
 + (instancetype)sharedInstance {
@@ -62,7 +62,7 @@
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset] forHTTPHeaderField:@"Content-Type"];
     [request setHTTPMethod:@"GET"];
     [request setTimeoutInterval:API_TIMEOUT_INTERVAL];
-    [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] queue]
+    [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] operationQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                                if (connectionError) {
                                    completion(nil, connectionError);

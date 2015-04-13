@@ -40,7 +40,7 @@ class ViewController: UIViewController {
   func initData() {
     
     NSLog("Magic is here...")
-    
+        
     // Config Spread pools.
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier)
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
