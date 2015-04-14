@@ -17,7 +17,7 @@
 
 - (NSDictionary *)getRequestParameters {
     
-    return _parameters;
+    return nil;
 }
 
 - (void)addHanlder:(void (^)(id, NSError *))handler {

@@ -10,6 +10,7 @@ import UIKit
 
 class Task: SRemoteTask {
   
+  var objectId: String!
   var nameSpace: String!
   
   init(objectId: String, nameSpace: String) {
@@ -31,7 +32,12 @@ class Task: SRemoteTask {
   
   override func dequeueCondtion(executingTask: SRemoteTask!) -> Bool {
     
-    return self.objectId != executingTask.objectId
+    if executingTask.isKindOfClass(Task) {
+      let task = executingTask as! Task
+      return self.objectId != task.objectId
+    } else {
+      return true
+    }
   }
   
   override func enqueueCondtion(penddingTask: SRemoteTask!) -> Bool {

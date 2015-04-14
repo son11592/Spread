@@ -10,15 +10,13 @@
 
 @interface SRemoteTask : NSObject
 
-@property (nonatomic, copy) NSString *objectId;
-@property (nonatomic, strong) NSDictionary *parameters;
 @property (nonatomic, copy) void (^handler)(id, NSError *);
 @property (nonatomic, strong) SModel *model;
 
-- (void)addHanlder:(void (^)(id, NSError *))handler;
 - (BOOL)dequeueCondtion:(SRemoteTask *)executingTask;
 - (BOOL)enqueueCondtion:(SRemoteTask *)penddingTask;
 
+- (void)addHanlder:(void (^)(id, NSError *))handler;
 - (NSString *)getRequestUrl;
 - (NSDictionary *)getRequestParameters;
 
