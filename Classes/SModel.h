@@ -224,12 +224,12 @@ typedef NS_ENUM(NSInteger, SModelEvent){
 /**
  *  Fetch data in background.
  */
-- (void)fetchInBackgroud;
+- (void)fetchInBackground;
 
 /**
  *  Fetch data in background and handle data when fetch data completed.
  */
-- (void)fetchInBackgroud:(void(^)(id response, NSError *error))completion;
+- (void)fetchInBackground:(void(^)(id response, NSError *error))completion;
 
 /**
  *  Object initial status.

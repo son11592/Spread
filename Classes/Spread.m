@@ -8,7 +8,7 @@
 
 #import "Spread.h"
 
-#import "Utils.h"
+#import "SUtils.h"
 
 @interface SpreadAction: NSObject
 
@@ -204,7 +204,8 @@
 
 + (void)setMaxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount {
   
-    NSOperationQueue *sharedOperationQueue = [[Utils sharedInstance] operationQueue];
+    NSAssert(maxConcurrentOperationCount <= 0, @"Max concurrent must be geater than zero.");
+    NSOperationQueue *sharedOperationQueue = [[SUtils sharedInstance] operationQueue];
     [sharedOperationQueue setMaxConcurrentOperationCount:maxConcurrentOperationCount];
 }
 

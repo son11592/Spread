@@ -40,7 +40,42 @@ class ViewController: UIViewController {
   func initData() {
     
     NSLog("Magic is here...")
-        
+    
+    let task1 = Task(objectId: "1", nameSpace: "Carrot 1")
+    let task2 = Task(objectId: "1", nameSpace: "Carrot 2")
+    
+    // This one will be cancel.
+    let task3 = Task(objectId: "1", nameSpace: "Carrot 2")
+    
+    let task4 = Task(objectId: "1", nameSpace: "Carrot 4")
+    let task5 = Task(objectId: "1", nameSpace: "Carrot 5")
+    let task6 = Task(objectId: "1", nameSpace: "Carrot 6")
+    task1.addHanlder { (response, error) -> Void in
+      NSLog("Task 1 complete")
+    }
+    task2.addHanlder { (response, error) -> Void in
+      NSLog("Task 2 complete")
+    }
+    task3.addHanlder { (response, error) -> Void in
+      NSLog("Task 3 complete")
+    }
+    task4.addHanlder { (response, error) -> Void in
+      NSLog("Task 4 complete")
+    }
+    task5.addHanlder { (response, error) -> Void in
+      NSLog("Task 5 complete")
+    }
+    task6.addHanlder { (response, error) -> Void in
+      NSLog("Task 6 complete")
+    }
+    
+    SRemoteTaskManager.addTask(task1)
+    SRemoteTaskManager.addTask(task2)
+    SRemoteTaskManager.addTask(task3)
+    SRemoteTaskManager.addTask(task4)
+    SRemoteTaskManager.addTask(task5)
+    SRemoteTaskManager.addTask(task6)
+    
     // Config Spread pools.
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier)
     Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
@@ -101,7 +136,7 @@ class ViewController: UIViewController {
     let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier)
     carrotInPool3.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
   }
-    
+  
   func textChange() {
     self.carrot3Label.text = self.textField.text
   }

@@ -1,5 +1,5 @@
 //
-//  Utils.h
+//  SUtils.h
 //  Spread
 //
 //  Created by Huy Pham on 4/9/15.
@@ -8,15 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Utils : NSObject
+@interface SUtils : NSObject
 
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 
 + (instancetype)sharedInstance;
 
-+ (void)getRequest:(NSString *)url
-        parameters:(NSDictionary *)parameters
- completionHandler:(void(^)(id response, NSError *error))completion;
++ (void)request:(NSString *)url
+         method:(NSString *)method
+     parameters:(NSDictionary *)parameters
+completionHandler:(void(^)(id, NSError *))completion;
 
 + (NSDictionary *)getDataFrom:(NSDictionary *)data
                   WithKeyPath:(NSString *)keyPath;

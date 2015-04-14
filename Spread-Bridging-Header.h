@@ -3,3 +3,4 @@
 //
 
 #import "Spread.h"
+#import "SRemoteTaskManager.h"

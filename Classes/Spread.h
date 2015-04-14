@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 #import "SModel.h"
 #import "SPool.h"
 
@@ -127,7 +125,7 @@
            value:(id)value;
 
 /**
- *  Set maximum number of model can fetching data at the same time.
+ *  Set maximum number of task (fetch model/interaction...) can execting at the same time.
  *
  *  @param maxConcurrentOperationCount Number of operation executing in background.
  */

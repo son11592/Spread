@@ -1,5 +1,5 @@
 //
-//  Utils.m
+//  SUtils.m
 //  Spread
 //
 //  Created by Huy Pham on 4/9/15.
@@ -8,9 +8,9 @@
 
 #define API_TIMEOUT_INTERVAL 20.0
 
-#import "Utils.h"
+#import "SUtils.h"
 
-@implementation Utils
+@implementation SUtils
 
 - (instancetype)init {
     
@@ -23,7 +23,7 @@
 }
 
 - (void)commonInit {
-  
+    
     _operationQueue = [[NSOperationQueue alloc] init];
     [_operationQueue setMaxConcurrentOperationCount:10];
 }
@@ -38,9 +38,10 @@
     return sharedInstance;
 }
 
-+ (void)getRequest:(NSString *)url
-        parameters:(NSDictionary *)parameters
- completionHandler:(void(^)(id, NSError *))completion {
++ (void)request:(NSString *)url
+         method:(NSString *)method
+     parameters:(NSDictionary *)parameters
+completionHandler:(void(^)(id, NSError *))completion {
     
     // Create url with parameteres.
     NSString *stringParameters = @"";
@@ -60,7 +61,7 @@
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestUrl];
     NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset] forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPMethod:@"GET"];
+    [request setHTTPMethod:method];
     [request setTimeoutInterval:API_TIMEOUT_INTERVAL];
     [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] operationQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {

@@ -10,7 +10,7 @@ static void * SPreadContext = &SPreadContext;
 
 #import "SModel.h"
 
-#import "Utils.h"
+#import "SUtils.h"
 #import <objc/runtime.h>
 
 // Magic, do not touch.
@@ -129,8 +129,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)initData:(NSDictionary *)dictionary {
-  
-    _initiated = YES;
+    
     unsigned int outCount;
     objc_property_t *properties = class_copyPropertyList([self class], &outCount);
     for(int i = 0; i < outCount; i++) {
@@ -167,6 +166,7 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     free(properties);
+    _initiated = YES;
 }
 
 
@@ -505,32 +505,32 @@ static const char *getPropertyType(objc_property_t property) {
     }
 }
 
-
-
-- (void)fetchInBackgroud {
+- (void)fetchInBackground {
     
     __weak SModel *weakSelf = self;
-    [Utils getRequest:[self getSourceUrl]
-           parameters:nil
-    completionHandler:^(id response, NSError *error) {
-        [weakSelf initData:[Utils getDataFrom:response
-                                  WithKeyPath:[weakSelf getSourceKeyPath]]];
-    }];
+    [SUtils request:[self getSourceUrl]
+             method:@"GET"
+         parameters:nil
+  completionHandler:^(id response, NSError *error) {
+      [weakSelf initData:[SUtils getDataFrom:response
+                                 WithKeyPath:[weakSelf getSourceKeyPath]]];
+  }];
 }
 
-- (void)fetchInBackgroud:(void (^)(id, NSError *))completion {
+- (void)fetchInBackground:(void (^)(id, NSError *))completion {
     
     __weak SModel *weakSelf = self;
-    [Utils getRequest:[self getSourceUrl]
-           parameters:nil
-    completionHandler:^(id response, NSError *error) {
-        NSDictionary *data = [Utils getDataFrom:response
-                                    WithKeyPath:[weakSelf getSourceKeyPath]];
-        [weakSelf initData:data];
-        if (completion) {
-            completion(data, error);
-        }
-    }];
+    [SUtils request:[self getSourceUrl]
+             method:@"GET"
+         parameters:nil
+  completionHandler:^(id response, NSError *error) {
+      NSDictionary *data = [SUtils getDataFrom:response
+                                   WithKeyPath:[weakSelf getSourceKeyPath]];
+      [weakSelf initData:data];
+      if (completion) {
+          completion(data, error);
+      }
+  }];
 }
 
 - (void)setSourceKeyPath:(NSString *)sourceKeyPath {
@@ -554,7 +554,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (BOOL)isInitiated {
-  
+    
     return _initiated;
 }
 
