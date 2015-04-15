@@ -33,12 +33,19 @@ class Task: SRemoteTask {
   override func dequeueCondtion(executingTask: SRemoteTask!) -> Bool {
     
     let task = executingTask as! Task
-    return self.objectId != task.objectId
+    if self.objectId != task.objectId {
+      return true
+    }
+    return false
   }
   
   override func enqueueCondtion(penddingTask: SRemoteTask!) -> Bool {
     
     let task = penddingTask as! Task
-    return self.objectId != task.objectId || self.nameSpace != task.nameSpace
+    if self.objectId == task.objectId
+      && self.nameSpace == task.nameSpace {
+        return false
+    }
+    return true
   }
 }

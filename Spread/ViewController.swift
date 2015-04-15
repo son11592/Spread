@@ -69,9 +69,14 @@ class ViewController: UIViewController {
       NSLog("Task 6 complete")
     }
     
-    let otherTask1 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
+    let otherTask1 = OtherTask(objectId: "1", nameSpace: "Carrot 2")
+    
+    // This one will be remove.
     let otherTask2 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
     let otherTask3 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
+    
+    let otherTask4 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
+
     otherTask1.addHanlder { (response, error) -> Void in
       NSLog("Other task 1 complete")
     }
@@ -81,12 +86,16 @@ class ViewController: UIViewController {
     otherTask3.addHanlder { (response, error) -> Void in
       NSLog("Other task 3 complete")
     }
+    otherTask4.addHanlder { (response, error) -> Void in
+      NSLog("Other task 4 complete")
+    }
     
     SRemoteTaskManager.addTask(task1)
     SRemoteTaskManager.addTask(task2)
     SRemoteTaskManager.addTask(otherTask1)
     SRemoteTaskManager.addTask(otherTask2)
     SRemoteTaskManager.addTask(otherTask3)
+    SRemoteTaskManager.addTask(otherTask4)
     SRemoteTaskManager.addTask(task3)
     SRemoteTaskManager.addTask(task4)
     SRemoteTaskManager.addTask(task5)

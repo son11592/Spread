@@ -13,7 +13,7 @@
 
 @interface SRemoteTaskManager ()
 
-@property (nonatomic, strong) NSMutableArray *penddingTasks;
+@property (nonatomic, strong) NSMutableArray *pendingTasks;
 @property (nonatomic, strong) NSMutableArray *executingTasks;
 
 @end
@@ -32,7 +32,7 @@
 
 - (void)commonInit {
     
-    _penddingTasks = [[NSMutableArray alloc] init];
+    _pendingTasks = [[NSMutableArray alloc] init];
     _executingTasks = [[NSMutableArray alloc] init];
     
     NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
@@ -68,34 +68,43 @@
 
 - (void)processOperation {
     
-    // There are no task in queue.
-    if ([_penddingTasks count] == 0) {
-        return;
-    }
-    NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
-    
-    // Queue is max concurrent.
-    if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
-        return;
-    }
-    for (SRemoteTask *penddingTask in [_penddingTasks copy]) {
-        if ([self checkDequeueCondtion:penddingTask]) {
-            [_executingTasks addObject:penddingTask];
-            [_penddingTasks removeObject:penddingTask];
-            [self processTask:penddingTask];
+    @synchronized(self) {
+        
+        // There are no task in queue.
+        if ([_pendingTasks count] == 0) {
+            return;
+        }
+        NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
+        
+        // Queue is max concurrent.
+        if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
+            return;
+        }
+        
+        for (SRemoteTask *pendingTask in [_pendingTasks copy]) {
+            if ([self checkDequeueCondtion:pendingTask]) {
+                [_executingTasks addObject:pendingTask];
+                [_pendingTasks removeObject:pendingTask];
+                [self processTask:pendingTask];
+            }
         }
     }
 }
 
 - (BOOL)checkDequeueCondtion:(SRemoteTask *)task {
-  
-    NSArray *executingTasksForSkind = [[_executingTasks copy] filter:^BOOL(id element) {
+
+    if ([_executingTasks count] == 0) {
+        return YES;
+    }
+    NSArray *executingTasksWithKind = [[_executingTasks copy] filter:^BOOL(id element) {
         return [task isKindOfClass:[element class]];
     }];
-    NSArray *tasks = [executingTasksForSkind filter:^BOOL(SRemoteTask *element) {
+    if ([executingTasksWithKind count] == 0) {
+        return YES;
+    }
+    NSArray *tasks = [executingTasksWithKind filter:^BOOL(SRemoteTask *element) {
         return ![task dequeueCondtion:element];
     }];
-    
     if ([tasks count] == 0) {
         return YES;
     }
@@ -104,16 +113,16 @@
 
 + (void)addTask:(SRemoteTask *)task {
     
-    NSMutableArray *penddingTasks = [[self sharedInstance] penddingTasks];
-    NSArray *pendingTasksForSkind = [[penddingTasks copy] filter:^BOOL(id element) {
-      return [task isKindOfClass:[element class]];
-    }];
-    for (SRemoteTask *penddingTask in pendingTasksForSkind) {
-        if ([task isKindOfClass:[penddingTask class]] && ![task enqueueCondtion:penddingTask]) {
-            [penddingTasks removeObject:penddingTask];
-        }
-    }
-    [penddingTasks addObject:task];
+    NSMutableArray *pendingTasks = [[self sharedInstance] pendingTasks];
+    NSArray *tasksToRemove = [[[pendingTasks copy]
+                               filter:^BOOL(id element) {
+                                   return [task isKindOfClass:[element class]];
+                               }]
+                              filter:^BOOL(id element) {
+                                  return ![task enqueueCondtion:element];
+                              }];
+    [pendingTasks removeObjectsInArray:tasksToRemove];
+    [pendingTasks addObject:task];
     [[self sharedInstance] processOperation];
 }
 
