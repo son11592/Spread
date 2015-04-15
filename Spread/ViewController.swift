@@ -69,8 +69,24 @@ class ViewController: UIViewController {
       NSLog("Task 6 complete")
     }
     
+    let otherTask1 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
+    let otherTask2 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
+    let otherTask3 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
+    otherTask1.addHanlder { (response, error) -> Void in
+      NSLog("Other task 1 complete")
+    }
+    otherTask2.addHanlder { (response, error) -> Void in
+      NSLog("Other task 2 complete")
+    }
+    otherTask3.addHanlder { (response, error) -> Void in
+      NSLog("Other task 3 complete")
+    }
+    
     SRemoteTaskManager.addTask(task1)
     SRemoteTaskManager.addTask(task2)
+    SRemoteTaskManager.addTask(otherTask1)
+    SRemoteTaskManager.addTask(otherTask2)
+    SRemoteTaskManager.addTask(otherTask3)
     SRemoteTaskManager.addTask(task3)
     SRemoteTaskManager.addTask(task4)
     SRemoteTaskManager.addTask(task5)

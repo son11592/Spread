@@ -1,5 +1,5 @@
 //
-//  Task.swift
+//  OtherTask.swift
 //  Spread
 //
 //  Created by Huy Pham on 4/15/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Task: SRemoteTask {
+class OtherTask: SRemoteTask {
   
   var objectId: String!
   var nameSpace: String!
@@ -32,13 +32,13 @@ class Task: SRemoteTask {
   
   override func dequeueCondtion(executingTask: SRemoteTask!) -> Bool {
     
-    let task = executingTask as! Task
+    let task = executingTask as! OtherTask
     return self.objectId != task.objectId
   }
   
   override func enqueueCondtion(penddingTask: SRemoteTask!) -> Bool {
     
-    let task = penddingTask as! Task
+    let task = penddingTask as! OtherTask
     return self.objectId != task.objectId || self.nameSpace != task.nameSpace
   }
 }

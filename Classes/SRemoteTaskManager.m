@@ -78,21 +78,19 @@
     if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
         return;
     }
-    NSMutableArray *taskToRemove = [NSMutableArray array];
-    for (SRemoteTask *penddingTask in _penddingTasks) {
+    for (SRemoteTask *penddingTask in [_penddingTasks copy]) {
         if ([self checkDequeueCondtion:penddingTask]) {
             [_executingTasks addObject:penddingTask];
-            [taskToRemove addObject:penddingTask];
+            [_penddingTasks removeObject:penddingTask];
             [self processTask:penddingTask];
         }
     }
-    [_penddingTasks removeObjectsInArray:taskToRemove];
 }
 
 - (BOOL)checkDequeueCondtion:(SRemoteTask *)task {
     
-    NSArray *tasks = [_executingTasks filter:^BOOL(SRemoteTask *element) {
-        return ![task dequeueCondtion:element];
+    NSArray *tasks = [[_executingTasks copy] filter:^BOOL(SRemoteTask *element) {
+        return [task isKindOfClass:[element class]] && ![task dequeueCondtion:element];
     }];
     
     if ([tasks count] == 0) {
@@ -104,13 +102,11 @@
 + (void)addTask:(SRemoteTask *)task {
     
     NSMutableArray *penddingTasks = [[self sharedInstance] penddingTasks];
-    NSMutableArray *taskToRemove = [NSMutableArray array];
-    for (SRemoteTask *penddingTask in penddingTasks) {
-        if (![task enqueueCondtion:penddingTask]) {
-            [taskToRemove addObject:penddingTask];
+    for (SRemoteTask *penddingTask in [penddingTasks copy]) {
+        if ([task isKindOfClass:[penddingTask class]] && ![task enqueueCondtion:penddingTask]) {
+            [penddingTasks removeObject:penddingTask];
         }
     }
-    [penddingTasks removeObjectsInArray:taskToRemove];
     [penddingTasks addObject:task];
     [[self sharedInstance] processOperation];
 }
