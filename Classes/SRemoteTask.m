@@ -10,6 +10,21 @@
 
 @implementation SRemoteTask
 
+- (instancetype)init {
+    
+    self =[super init];
+    if (!self) {
+        return nil;
+    }
+    [self commonInit];
+    return self;
+}
+
+- (void)commonInit {
+    
+    _method = SRemoteTaskMethodPOST;
+}
+
 - (NSString *)getRequestUrl {
     
     return @"";
@@ -20,10 +35,27 @@
     return nil;
 }
 
+- (NSString *)getMethodString {
+    
+    switch (self.method) {
+        case SRemoteTaskMethodGET:
+            return @"GET";
+        case SRemoteTaskMethodPOST:
+            return @"POST";
+        case SRemoteTaskMethodPUT:
+            return @"PUT";
+        case SRemoteTaskMethodDELETE:
+            return @"DELETE";
+        default:
+            return @"";
+    }
+}
+
 - (void)addHanlder:(void (^)(id, NSError *))handler {
-  
+    
     _handler = handler;
 }
+
 
 - (BOOL)dequeueCondtion:(SRemoteTask *)executingTask {
     

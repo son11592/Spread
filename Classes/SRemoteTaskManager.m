@@ -92,7 +92,7 @@
 }
 
 - (BOOL)checkDequeueCondtion:(SRemoteTask *)task {
-
+    
     if ([_executingTasks count] == 0) {
         return YES;
     }
@@ -129,7 +129,7 @@
 - (void)processTask:(SRemoteTask *)task {
     
     [SUtils request:[task getRequestUrl]
-             method:@"POST"
+             method:[task getMethodString]
          parameters:[task getRequestParameters]
   completionHandler:^(id response, NSError *error) {
       if (task.handler) {
