@@ -75,6 +75,11 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 - (void)removeObjects:(NSArray *)objects;
 
 /**
+ *  Remove all objects in pool.
+*/
+- (void)removeAllObjects;
+
+/**
  *  Get all object in from.
  *
  *  @return Array of objects.

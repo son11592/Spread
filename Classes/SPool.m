@@ -139,6 +139,11 @@
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
+- (void)removeAllObjects {
+  
+    [_data removeAllObjects];
+}
+
 - (NSArray *)filter:(BOOL (^)(id))filter {
     
     NSMutableArray *array = [NSMutableArray array];
