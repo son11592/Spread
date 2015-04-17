@@ -42,14 +42,16 @@ class ViewController: UIViewController {
     NSLog("Magic is here...")
     
     let task1 = Task(objectId: "1", nameSpace: "Carrot 1")
-    let task2 = Task(objectId: "1", nameSpace: "Carrot 2")
     
     // This one will be cancel.
-    let task3 = Task(objectId: "1", nameSpace: "Carrot 2")
+    let task2 = Task(objectId: "1", nameSpace: "Carrot 2")
     
+    let task3 = Task(objectId: "1", nameSpace: "Carrot 2")
+  
     let task4 = Task(objectId: "1", nameSpace: "Carrot 4")
     let task5 = Task(objectId: "1", nameSpace: "Carrot 5")
     let task6 = Task(objectId: "1", nameSpace: "Carrot 6")
+    
     task1.addHanlder { (response, error) -> Void in
       NSLog("Task 1 complete")
     }
