@@ -45,6 +45,13 @@ typedef NS_ENUM(NSInteger, SModelEvent){
 - (void)initData:(NSDictionary *)dictionary;
 
 /**
+ *  Convert object to dictionary.
+ *
+ *  @return Object dictionary.
+ */
+- (NSDictionary *)toDictionary;
+
+/**
  *  Register reaction for property on an event.
  *
  *  @param property Property key path.

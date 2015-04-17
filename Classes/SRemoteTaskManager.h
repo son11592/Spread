@@ -10,6 +10,11 @@
 
 @interface SRemoteTaskManager : NSObject
 
+/**
+ *  Add remote task to queue.
+ *
+ *  @param task Task obejct.
+ */
 + (void)addTask:(SRemoteTask *)task;
 
 @end

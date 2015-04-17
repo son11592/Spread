@@ -169,6 +169,38 @@ static const char *getPropertyType(objc_property_t property) {
     _initiated = YES;
 }
 
+- (NSDictionary *)toDictionary {
+    
+    NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionary];
+    if (![NSStringFromClass(self.superclass) isEqualToString:NSStringFromClass([SModel class])]) {
+        return nil;
+    }
+    unsigned int outCount;
+    objc_property_t *properties = class_copyPropertyList([self class], &outCount);
+    for(int i = 0; i < outCount; i++) {
+        objc_property_t property = properties[i];
+        const char *propName = property_getName(property);
+        NSString *propertyName = [NSString stringWithCString:propName encoding:NSUTF8StringEncoding];
+        id value = [self valueForKey:propertyName];
+        if (value) {
+            if ([NSStringFromClass([value superclass]) isEqualToString:NSStringFromClass([SModel class])]) {
+                NSDictionary *dictionary = [value toDictionary];
+                [mutableDictionary setValue:dictionary
+                                     forKey:([propertyName characterAtIndex:0]=='_' ?
+                                             [propertyName substringFromIndex:1]: propertyName)];
+            } else {
+                if (![value respondsToSelector:@selector(isEqualToString:)]
+                    || ![value isEqualToString:@""]) {
+                    [mutableDictionary setValue:value
+                                         forKey:([propertyName characterAtIndex:0]=='_' ?
+                                                 [propertyName substringFromIndex:1]: propertyName)];
+                }
+            }
+        }
+    }
+    free(properties);
+    return [mutableDictionary copy];
+}
 
 // HELPER FUNCTION.
 

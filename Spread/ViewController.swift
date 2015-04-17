@@ -161,6 +161,9 @@ class ViewController: UIViewController {
     }
     
     let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier)
+    
+    NSLog("\(carrotInPool3.toDictionary())")
+    
     carrotInPool3.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
   }
   
