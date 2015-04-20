@@ -128,6 +128,21 @@ static const char *getPropertyType(objc_property_t property) {
     _initiated = NO;
 }
 
+// Return name tripped underscore
+- (NSString *)getPropertyNameStrippedUnderscore:(NSString *)property {
+    
+    if (!property) {
+        return nil;
+    }
+    if ([property length] == 0) {
+        return @"";
+    }
+    if ([property characterAtIndex:0] == '_') {
+        return [property substringFromIndex:1];
+    }
+    return property;
+}
+
 - (void)initData:(NSDictionary *)dictionary {
     
     unsigned int outCount;
@@ -142,9 +157,7 @@ static const char *getPropertyType(objc_property_t property) {
             NSString *propertyType = [NSString stringWithCString:propType
                                                         encoding:NSUTF8StringEncoding];
             id instanceType = [NSClassFromString(propertyType) alloc];
-            
-            id value = [dictionary valueForKey:([propertyName characterAtIndex:0] == '_' ?
-                                                [propertyName substringFromIndex:1] : propertyName)];
+            id value = [dictionary valueForKey:[self getPropertyNameStrippedUnderscore:propertyName]];
             if (value && value != [NSNull null]) {
                 if ([instanceType respondsToSelector:@selector(initWithDictionary:)]) {
                     [self setValue:[instanceType initWithDictionary:value] forKey:propertyName];
@@ -172,9 +185,6 @@ static const char *getPropertyType(objc_property_t property) {
 - (NSDictionary *)toDictionary {
     
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionary];
-    if (![NSStringFromClass(self.superclass) isEqualToString:NSStringFromClass([SModel class])]) {
-        return nil;
-    }
     unsigned int outCount;
     objc_property_t *properties = class_copyPropertyList([self class], &outCount);
     for(int i = 0; i < outCount; i++) {
@@ -183,23 +193,63 @@ static const char *getPropertyType(objc_property_t property) {
         NSString *propertyName = [NSString stringWithCString:propName encoding:NSUTF8StringEncoding];
         id value = [self valueForKey:propertyName];
         if (value) {
-            if ([NSStringFromClass([value superclass]) isEqualToString:NSStringFromClass([SModel class])]) {
-                NSDictionary *dictionary = [value toDictionary];
-                [mutableDictionary setValue:dictionary
-                                     forKey:([propertyName characterAtIndex:0]=='_' ?
-                                             [propertyName substringFromIndex:1]: propertyName)];
+            NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
+            if ([[value class] isSubclassOfClass:[SModel class]]) {
+                [mutableDictionary setObject:[value toDictionary]
+                                      forKey:propertyNameStrippedUnderscore];
+            } else if ([value isKindOfClass:[NSArray class]]) {
+                [mutableDictionary setObject:[self arraySerialization:value]
+                                      forKey:propertyNameStrippedUnderscore];
+            } else if ([value isKindOfClass:[NSDictionary class]]) {
+                [mutableDictionary setObject:[self dictionarySerialization:value]
+                                      forKey:propertyNameStrippedUnderscore];
             } else {
-                if (![value respondsToSelector:@selector(isEqualToString:)]
-                    || ![value isEqualToString:@""]) {
-                    [mutableDictionary setValue:value
-                                         forKey:([propertyName characterAtIndex:0]=='_' ?
-                                                 [propertyName substringFromIndex:1]: propertyName)];
-                }
+                [mutableDictionary setValue:value
+                                     forKey:propertyNameStrippedUnderscore];
             }
         }
     }
     free(properties);
     return [mutableDictionary copy];
+}
+
+- (NSDictionary *)dictionarySerialization:(NSDictionary *)dictionary {
+    
+    NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionary];
+    for (NSString *key in [dictionary allKeys]) {
+        id value = [dictionary valueForKey:key];
+        if ([[value class] isSubclassOfClass:[SModel class]]) {
+            [mutableDictionary setObject:[value toDictionary]
+                                  forKey:key];
+        } else if ([value isKindOfClass:[NSArray class]]){
+            [mutableDictionary setObject:[self arraySerialization:value]
+                                  forKey:key];
+        } else if ([value isKindOfClass:[NSDictionary class]]) {
+            [mutableDictionary setObject:[self dictionarySerialization:value]
+                                  forKey:key];
+        } else {
+            [mutableDictionary setObject:value
+                                  forKey:key];
+        }
+    }
+    return [mutableDictionary copy];
+}
+
+- (NSArray *)arraySerialization:(NSArray *)array {
+    
+    NSMutableArray *mutableArray = [NSMutableArray array];
+    for (id value in array) {
+        if ([[value class] isSubclassOfClass:[SModel class]]) {
+            [mutableArray addObject:[value toDictionary]];
+        } else if ([value isKindOfClass:[NSArray class]]){
+            [mutableArray addObject:[self arraySerialization:value]];
+        } else if ([value isKindOfClass:[NSDictionary class]]) {
+            [mutableArray addObject:[self dictionarySerialization:value]];
+        } else {
+            [mutableArray addObject:value];
+        }
+    }
+    return [mutableArray copy];
 }
 
 // HELPER FUNCTION.
