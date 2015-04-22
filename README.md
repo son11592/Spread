@@ -49,7 +49,7 @@ class Model: SModel {
 
 ```swift
 
-  Spread.registerClass(Model.classForCoder(), forPoolIdentifier:"PoolIdentifier")
+Spread.registerClass(Model.classForCoder(), forPoolIdentifier:"PoolIdentifier")
 
 ```
 
@@ -89,8 +89,8 @@ model.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> 
 
 ```swift
 
-  Spread.outEvent("TheEvent",
-    value: ["name": "Change the name", "objectId": "123"])
+Spread.outEvent("TheEvent",
+  value: ["name": "Change the name", "objectId": "123"])
 
 ```
 
