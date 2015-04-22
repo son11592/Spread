@@ -5,11 +5,12 @@ Spread is a data flow control. It changes the way you manage your data.
 
 ## Features
 
-- [x] Create, mapping (with NSDictionary / JSON) and manage data model automatic.
+- [x] Create, mapping dictionary to model and model to dictionary, manage data model automatic.
 - [x] Auto trigger event to all models in register pools.
-- [x] React when model properties change value.
+- [x] React when model properties, pool change value.
 - [ ] Store and restore models in pools from local database.
-- [x] DataSouceManager fetch/push data from internet sound awesome. In progress....
+- [x] Fetch/push data for model from internet.
+- [x] Remote event manager with queue.
 
 ## Installation
 
@@ -17,7 +18,7 @@ Spread is a data flow control. It changes the way you manage your data.
 
 ```ruby
 
-pod "Spread", "~> 1.0.5"
+pod "Spread", "~> 1.1.0"
 
 ```
 
@@ -78,9 +79,9 @@ Spread.registerEvent("TheEvent",
 let model = Spread.addObject(["name": "Some name", "objectId": "123"],
   toPool: self.pool1Identifier)
 
-  model.property("name", onChangeReaction: { (newValue) -> Void in
+model.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
   aTextField.text = newValue as String
-})
+}
 
 ```
 
@@ -95,7 +96,7 @@ let model = Spread.addObject(["name": "Some name", "objectId": "123"],
 
 ## Contact
 
-- [@duchuykun@gmail.com](http://facebook.com/huyphams)
+- [duchuykun@gmail.com](http://facebook.com/huyphams)
 
 If you use/enjoy `Spread`, let me know!
 
