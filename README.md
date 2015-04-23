@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/huyphams/Spread.svg)](https://travis-ci.org/huyphams/Spread)[![Cocoapods Version](https://cocoapod-badges.herokuapp.com/v/Spread/badge.png)](http://cocoapods.org/?q=spread)
+[![Build Status](https://travis-ci.org/huyphams/Spread.svg)](https://travis-ci.org/huyphams/Spread)[![CocoaPods Version](https://cocoapod-badges.herokuapp.com/v/Spread/badge.png)](http://cocoapods.org/?q=spread)
 
 
 Spread is a data flow control. It changes the way you manage your data.
@@ -14,7 +14,7 @@ Spread is a data flow control. It changes the way you manage your data.
 
 ## Installation
 
-#### Cocoa pods
+#### CocoaPods
 
 ```ruby
 
