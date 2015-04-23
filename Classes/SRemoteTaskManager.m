@@ -112,7 +112,11 @@
 }
 
 + (void)addTask:(SRemoteTask *)task {
-    
+
+    NSAssert([task.class isSubclassOfClass:[SRemoteTask class]], @"Task must be SRemoteTask or sub class of SRemoteTask.");
+    if (![task.class isSubclassOfClass:[SRemoteTask class]]) {
+        return;
+    }
     NSMutableArray *pendingTasks = [[self sharedInstance] pendingTasks];
     NSArray *tasksToRemove = [[[pendingTasks copy]
                                filter:^BOOL(id element) {
