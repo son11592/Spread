@@ -142,6 +142,7 @@
 - (void)removeAllObjects {
   
     [_data removeAllObjects];
+    [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (NSArray *)filter:(BOOL (^)(id))filter {
