@@ -13,10 +13,6 @@
  */
 typedef NS_ENUM(NSInteger, SPoolEvent){
     /**
-     *  Pool calls event when initial data.
-     */
-    SPoolEventOnInitModel,
-    /**
      * Pool calls event when add new model.
      */
     SPoolEventOnAddModel,
@@ -50,7 +46,14 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
  *  @return       Object added.
  */
 - (id)addObject:(NSDictionary *)object;
+
 - (void)addModel:(id)model;
+
+- (id)insertObject:(NSDictionary *)object
+           atIndex:(NSUInteger)index;
+
+- (void)insertModel:(id)model
+            atIndex:(NSInteger)index;
 
 /**
  *  Add multi object to pool;
@@ -60,7 +63,14 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
  *  @return        Array of objects added.
  */
 - (NSArray *)addObjects:(NSArray *)objects;
+
 - (void)addModels:(NSArray *)models;
+
+- (NSArray *)insertObjects:(NSArray *)objects
+                 atIndexes:(NSIndexSet *)indexes;
+
+- (void)insertModels:(NSArray *)models
+           atIndexes:(NSIndexSet *)indexes;
 
 /**
  *  Remove an model from pool.
@@ -78,7 +88,7 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 
 /**
  *  Remove all models in pool.
-*/
+ */
 - (void)removeAllModels;
 
 /**

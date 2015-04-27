@@ -189,6 +189,42 @@
     [pool addModels:models];
 }
 
++ (SModel *)insertObject:(NSDictionary *)object
+                 atIndex:(NSInteger)index
+                  toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    return [pool insertObject:object
+                      atIndex:index];
+}
+
++ (void)insertModel:(id)model
+            atIndex:(NSInteger)index
+             toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool insertModel:model
+              atIndex:index];
+}
+
++ (NSArray *)insertObjects:(NSArray *)objects
+                 atIndexes:(NSIndexSet *)indexes
+                    toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    return [pool insertObjects:objects
+                     atIndexes:indexes];
+}
+
++ (void)insertModels:(NSArray *)models
+           atIndexes:(NSIndexSet *)indexes
+              toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool insertModels:models
+             atIndexes:indexes];
+}
+
 + (void)removeModel:(id)model
            fromPool:(NSString *)identifier {
     

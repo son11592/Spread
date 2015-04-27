@@ -118,13 +118,19 @@
     return dataToAdd;
 }
 
+- (id)insertObject:(NSDictionary *)object
+           atIndex:(NSUInteger)index {
+    id model = [[self.modelClass alloc] initWithDictionary:object];
+    [self insertModel:model
+              atIndex:index];
+    return model;
+}
+
 - (void)addModel:(id)model {
     
     NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     [_data addObject:model];
-    if ([_data count] == 1) {
-        [self triggerForEvent:SPoolEventOnInitModel];
-    }
+    [self triggerForEvent:SPoolEventOnAddModel];
 }
 
 - (void)addModels:(NSArray *)models {
@@ -133,6 +139,37 @@
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     }
     [_data addObjectsFromArray:models];
+    [self triggerForEvent:SPoolEventOnAddModel];
+}
+
+- (NSArray *)insertObjects:(NSArray *)objects
+                atIndexes:(NSIndexSet *)indexes {
+    NSMutableArray *dataToAdd = [NSMutableArray array];
+    for (NSDictionary *object in objects) {
+        id model = [[self.modelClass alloc] initWithDictionary:object];
+        [dataToAdd addObject:model];
+    }
+    [self insertModels:dataToAdd
+             atIndexes:indexes];
+    return dataToAdd;
+}
+
+- (void)insertModels:(NSArray *)models
+          atIndexes:(NSIndexSet *)indexes {
+    
+    for (id model in models) {
+        NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+    }
+    [_data insertObjects:models
+               atIndexes:indexes];
+}
+
+- (void)insertModel:(id)model
+            atIndex:(NSInteger)index {
+    
+    NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+    [_data insertObject:model
+                atIndex:index];
     [self triggerForEvent:SPoolEventOnAddModel];
 }
 
