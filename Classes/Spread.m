@@ -168,11 +168,25 @@
     return [pool addObject:object];
 }
 
++ (void)addModel:(id)model
+          toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool addModel:model];
+}
+
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier {
     
     SPool *pool = [self getPool:identifier];
     return [pool addObjects:objects];
+}
+
++ (void)addModels:(NSArray *)models
+           toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool addModels:models];
 }
 
 + (void)removeModel:(id)model

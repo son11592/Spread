@@ -85,6 +85,8 @@
  */
 + (SModel *)addObject:(NSDictionary *)object
                toPool:(NSString *)identifier;
++ (void)addModel:(id)model
+          toPool:(NSString *)identifier;
 
 /**
  *  Add multi objecto to pool.
@@ -96,6 +98,8 @@
  */
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier;
++ (void)addModels:(NSArray *)models
+           toPool:(NSString *)identifier;
 
 /**
  *  Remove an object from pool with identifier.
