@@ -103,10 +103,7 @@
 - (id)addObject:(NSDictionary *)object {
     
     id model = [[self.modelClass alloc] initWithDictionary:object];
-    [_data addObject:model];
-    if ([_data count] == 1) {
-        [self triggerForEvent:SPoolEventOnInitModel];
-    }
+    [self addModel:model];
     return model;
 }
 
@@ -117,30 +114,47 @@
         id model = [[self.modelClass alloc] initWithDictionary:object];
         [dataToAdd addObject:model];
     }
-    [_data addObjectsFromArray:dataToAdd];
-    [self triggerForEvent:SPoolEventOnAddModel];
+    [self addModels:dataToAdd];
     return dataToAdd;
 }
 
-- (NSArray *)allObjects {
+- (void)addModel:(id)model {
+    
+    NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+    [_data addObject:model];
+    if ([_data count] == 1) {
+        [self triggerForEvent:SPoolEventOnInitModel];
+    }
+}
+
+- (void)addModels:(NSArray *)models {
+    
+    for (id model in models) {
+        NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+    }
+    [_data addObjectsFromArray:models];
+    [self triggerForEvent:SPoolEventOnAddModel];
+}
+
+- (NSArray *)allModels {
     
     return [_data copy];
 }
 
-- (void)removeObject:(id)object {
+- (void)removeModel:(id)model {
     
-    [_data removeObject:object];
+    [_data removeObject:model];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
-- (void)removeObjects:(NSArray *)objects {
+- (void)removeModels:(NSArray *)models {
     
-    [_data removeObjectsInArray:objects];
+    [_data removeObjectsInArray:models];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
-- (void)removeAllObjects {
-  
+- (void)removeAllModels {
+    
     [_data removeAllObjects];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
@@ -148,7 +162,7 @@
 - (NSArray *)filter:(BOOL (^)(id))filter {
     
     NSMutableArray *array = [NSMutableArray array];
-    for (id model in [self allObjects]) {
+    for (id model in [self allModels]) {
         if (filter(model)) {
             [array addObject:model];
         }
@@ -233,7 +247,7 @@
     [_actions removeObjectsInArray:dataToRemove];
 }
 
-- (void)removeObjectMatch:(BOOL (^)(id))filter {
+- (void)removeModelMatch:(BOOL (^)(id))filter {
     
     NSArray *objectToRemove = [self filter:filter];
     [_data removeObjectsInArray:objectToRemove];

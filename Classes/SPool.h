@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
  *  @return       Object added.
  */
 - (id)addObject:(NSDictionary *)object;
+- (void)addModel:(id)model;
 
 /**
  *  Add multi object to pool;
@@ -59,32 +60,33 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
  *  @return        Array of objects added.
  */
 - (NSArray *)addObjects:(NSArray *)objects;
+- (void)addModels:(NSArray *)models;
 
 /**
- *  Remove an object to pool.
+ *  Remove an model from pool.
  *
- *  @param object Object to remove.
+ *  @param model Model to remove.
  */
-- (void)removeObject:(id)object;
+- (void)removeModel:(id)model;
 
 /**
- *  Remove multi objects in pool.
+ *  Remove multi models in pool.
  *
- *  @param objects Array of objects to remove.
+ *  @param models Array of models to remove.
  */
-- (void)removeObjects:(NSArray *)objects;
+- (void)removeModels:(NSArray *)models;
 
 /**
- *  Remove all objects in pool.
+ *  Remove all models in pool.
 */
-- (void)removeAllObjects;
+- (void)removeAllModels;
 
 /**
- *  Get all object in from.
+ *  Get all model in from.
  *
- *  @return Array of objects.
+ *  @return Array of models.
  */
-- (NSArray *)allObjects;
+- (NSArray *)allModels;
 
 /**
  *  Return object match filter.
@@ -96,11 +98,11 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 - (NSArray *)filter:(BOOL (^)(id))filter;
 
 /**
- *  Remove object matched filter.
+ *  Remove model matched filter.
  *
  *  @param filter fitler condition.
  */
-- (void)removeObjectMatch:(BOOL (^)(id))filter;
+- (void)removeModelMatch:(BOOL (^)(id))filter;
 
 /**
  *  Reaction when pool change.

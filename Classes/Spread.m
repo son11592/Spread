@@ -80,7 +80,7 @@
         } else {
             NSAssert([modelClass isSubclassOfClass:[SModel class]],
                      @"Model register must be SModel or subclass of SModel.");
-            NSAssert([pool allObjects].count == 0 || pool.modelClass == modelClass,
+            NSAssert([pool allModels].count == 0 || pool.modelClass == modelClass,
                      @"Pool contains model and has been registered with another model class.");
         }
     }
@@ -175,20 +175,20 @@
     return [pool addObjects:objects];
 }
 
-+ (void)removeObject:(id)object
-            fromPool:(NSString *)identifier {
++ (void)removeModel:(id)model
+           fromPool:(NSString *)identifier {
     
     SPool *pool = [self getPool:identifier];
     if (pool) {
-        [pool removeObject:object];
+        [pool removeModel:model];
     }
 }
 
-+ (void)removeObjects:(NSArray *)objects
-             fromPool:(NSString *)identifier {
++ (void)removeModels:(NSArray *)models
+            fromPool:(NSString *)identifier {
     
     SPool *pool = [self getPool:identifier];
-    [pool removeObjects:objects];
+    [pool removeModels:models];
 }
 
 + (void)outEvent:(NSString *)event
@@ -203,7 +203,7 @@
 }
 
 + (void)setMaxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount {
-  
+    
     NSAssert(maxConcurrentOperationCount <= 0, @"Max concurrent must be geater than zero.");
     NSOperationQueue *sharedOperationQueue = [[SUtils sharedInstance] operationQueue];
     [sharedOperationQueue setMaxConcurrentOperationCount:maxConcurrentOperationCount];

@@ -103,8 +103,8 @@
  *  @param object     Object to remove.
  *  @param identifier Pool identifer.
  */
-+ (void)removeObject:(id)object
-            fromPool:(NSString *)identifier;
++ (void)removeModel:(id)model
+           fromPool:(NSString *)identifier;
 
 /**
  *  Remove multi object in pool.
@@ -112,8 +112,8 @@
  *  @param objects    Array of objects.
  *  @param identifier Pool identifier.
  */
-+ (void)removeObjects:(NSArray *)objects
-             fromPool:(NSString *)identifier;
++ (void)removeModels:(NSArray *)models
+            fromPool:(NSString *)identifier;
 
 /**
  *  Trigger event and send event to every pool had registed.

@@ -55,7 +55,7 @@ class SpreadTests: XCTestCase {
                     
                     let objectId = (value as! NSDictionary).valueForKey("objectId") as! String
                     let newName = (value as! NSDictionary).valueForKey("name") as! String
-                    let models = spool.allObjects().filter({ (model) -> Bool in
+                    let models = spool.allModels().filter({ (model) -> Bool in
                         return (model as! Model).objectId == objectId
                     })
                     for item in models {
@@ -89,14 +89,14 @@ class SpreadTests: XCTestCase {
     func testCountingAddAndRemoveObejct() {
         
         let pool4 = Spread.getPool(self.pool4Identifier)
-        let numberObjectBeforeAdd = pool4.allObjects().count
+        let numberObjectBeforeAdd = pool4.allModels().count
         
         let model = Spread.addObject(model4Data, toPool: self.pool4Identifier)
-        let numberObjectAfterAdded = pool4.allObjects().count
+        let numberObjectAfterAdded = pool4.allModels().count
         XCTAssertEqual(numberObjectBeforeAdd, numberObjectAfterAdded - 1)
 
-        Spread.removeObject(model, fromPool: self.pool4Identifier)
-        let numberObjectAfterRemove = pool4.allObjects().count
+        Spread.removeModel(model, fromPool: self.pool4Identifier)
+        let numberObjectAfterRemove = pool4.allModels().count
         XCTAssertEqual(numberObjectAfterAdded, numberObjectAfterRemove + 1)
     }
     

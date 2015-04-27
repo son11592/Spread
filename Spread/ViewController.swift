@@ -134,7 +134,7 @@ class ViewController: UIViewController {
         let objctId = (data as! NSDictionary).valueForKey("objectId") as! String
         
         // Select carrots in pool.
-        let carrots = pool.allObjects().filter({ (item) -> Bool in
+        let carrots = pool.allModels().filter({ (item) -> Bool in
           let carrot = item as! Carrot
           return (carrot.objectId == objctId)
         })
