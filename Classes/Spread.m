@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
+#define KEEP NO
+
 #import "Spread.h"
 
 #import "SUtils.h"
@@ -26,6 +28,7 @@
 
 @property (nonatomic, strong) NSMutableArray *pools;
 @property (nonatomic, strong) NSMutableArray *poolActions;
+@property (nonatomic) NSInteger capacity;
 
 @end
 
@@ -53,13 +56,29 @@
 
 - (void)commonInit {
     
+    _capacity = INT_MAX;
     _pools = [NSMutableArray array];
     _poolActions = [NSMutableArray array];
 }
 
+- (void)addPool:(SPool *)pool {
+    
+    NSArray *pools = [[self pools] copy];
+    if ([pools count] > self.capacity - 1) {
+        for (SPool *spool in pools) {
+            if (!spool.keep) {
+                [[self pools] removeObject:spool];
+                break;
+            }
+        }
+    }
+    [[self pools] addObject:pool];
+}
+
 + (SPool *)getPool:(NSString *)identifier {
     
-    for (SPool *pool in [[self sharedInstance] pools]) {
+    NSArray *pools = [[[self sharedInstance] pools] copy];
+    for (SPool *pool in pools) {
         if ([pool.identifier isEqualToString:identifier]) {
             return pool;
         }
@@ -67,8 +86,17 @@
     return nil;
 }
 
-+ (void)registerClass:(Class)modelClass
-    forPoolIdentifier:(NSString *)identifier {
++ (SPool *)registerClass:(Class)modelClass
+       forPoolIdentifier:(NSString *)identifier {
+    
+    return [self registerClass:modelClass
+             forPoolIdentifier:identifier
+                          keep:KEEP];
+}
+
++ (SPool *)registerClass:(Class)modelClass
+       forPoolIdentifier:(NSString *)identifier
+                    keep:(BOOL)keep {
     
     SPool *pool = [self getPool:identifier];
     @synchronized(self) {
@@ -76,13 +104,16 @@
             pool = [[SPool alloc] init];
             pool.identifier = identifier;
             pool.modelClass = modelClass;
-            [[[self sharedInstance] pools] addObject:pool];
+            pool.keep = keep;
+            [[self sharedInstance] addPool:pool];
+            return pool;
         } else {
             NSAssert([modelClass isSubclassOfClass:[SModel class]],
                      @"Model register must be SModel or subclass of SModel.");
             NSAssert([pool allModels].count == 0 || pool.modelClass == modelClass,
                      @"Pool contains model and has been registered with another model class.");
         }
+        return pool;
     }
 }
 
@@ -90,8 +121,9 @@
     
     
     // Remove pool action.
+    NSArray *actions = [[[self sharedInstance] poolActions] copy];
     NSMutableArray *actionToRemove = [NSMutableArray array];
-    for (SpreadAction *action in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *action in actions) {
         if ([action.poolIdentifier isEqualToString:identifier]) {
             [actionToRemove addObject:action];
         }
@@ -135,8 +167,9 @@
 + (void)removeEvent:(NSString *)event
     poolIdentifiers:(NSArray *)poolIdentifiers {
     
+    NSArray *actions = [[[self sharedInstance] poolActions] copy];
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (SpreadAction *action in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *action in actions) {
         if ([action.event isEqualToString:event]
             && [self countIndentifer:action.poolIdentifier inArray:poolIdentifiers] > 0) {
             [actionsToDelete addObject:action];
@@ -147,8 +180,9 @@
 
 + (void)removeEvent:(NSString *)event {
     
+    NSArray *actions = [[[self sharedInstance] poolActions] copy];
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (SpreadAction *action in [[self sharedInstance] poolActions]) {
+    for (SpreadAction *action in actions) {
         if ([action.event isEqualToString:event]) {
             [actionsToDelete addObject:action];
         }
@@ -168,25 +202,11 @@
     return [pool addObject:object];
 }
 
-+ (void)addModel:(id)model
-          toPool:(NSString *)identifier {
-    
-    SPool *pool = [self getPool:identifier];
-    [pool addModel:model];
-}
-
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier {
     
     SPool *pool = [self getPool:identifier];
     return [pool addObjects:objects];
-}
-
-+ (void)addModels:(NSArray *)models
-           toPool:(NSString *)identifier {
-    
-    SPool *pool = [self getPool:identifier];
-    [pool addModels:models];
 }
 
 + (SModel *)insertObject:(NSDictionary *)object
@@ -198,15 +218,6 @@
                       atIndex:index];
 }
 
-+ (void)insertModel:(id)model
-            atIndex:(NSInteger)index
-             toPool:(NSString *)identifier {
-    
-    SPool *pool = [self getPool:identifier];
-    [pool insertModel:model
-              atIndex:index];
-}
-
 + (NSArray *)insertObjects:(NSArray *)objects
                  atIndexes:(NSIndexSet *)indexes
                     toPool:(NSString *)identifier {
@@ -214,6 +225,29 @@
     SPool *pool = [self getPool:identifier];
     return [pool insertObjects:objects
                      atIndexes:indexes];
+}
+
++ (void)addModels:(NSArray *)models
+           toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool addModels:models];
+}
+
++ (void)addModel:(id)model
+          toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool addModel:model];
+}
+
++ (void)insertModel:(id)model
+            atIndex:(NSInteger)index
+             toPool:(NSString *)identifier {
+    
+    SPool *pool = [self getPool:identifier];
+    [pool insertModel:model
+              atIndex:index];
 }
 
 + (void)insertModels:(NSArray *)models
@@ -244,19 +278,30 @@
 + (void)outEvent:(NSString *)event
            value:(NSDictionary *)value {
     
-    for (SpreadAction *poolAction in [[self sharedInstance] poolActions]) {
+    NSArray *actions = [[[self sharedInstance] poolActions] copy];
+    for (SpreadAction *poolAction in actions) {
         if ([poolAction.event isEqualToString:event]) {
             SPool *pool = [self getPool:poolAction.poolIdentifier];
-            poolAction.action(value, pool);
+            if (pool) {
+                poolAction.action(value, pool);
+            } else {
+                [[[self sharedInstance] poolActions] removeObject:poolAction];
+            }
         }
     }
 }
 
 + (void)setMaxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount {
     
-    NSAssert(maxConcurrentOperationCount <= 0, @"Max concurrent must be geater than zero.");
+    NSAssert(maxConcurrentOperationCount >= 0, @"Max concurrent must be geater than zero.");
     NSOperationQueue *sharedOperationQueue = [[SUtils sharedInstance] operationQueue];
     [sharedOperationQueue setMaxConcurrentOperationCount:maxConcurrentOperationCount];
+}
+
++ (void)setCapacity:(NSInteger)capacity {
+    
+    NSAssert(capacity >= 0, @"Max capacity must be geater than zero.");
+    [[self sharedInstance] setCapacity:capacity];
 }
 
 @end

@@ -24,8 +24,12 @@
  *  @param modelClass  Class for coder.
  *  @param identifiers Array list of pools identifier.
  */
-+ (void)registerClass:(Class)modelClass
-    forPoolIdentifier:(NSString *)identifier;
++ (SPool *)registerClass:(Class)modelClass
+       forPoolIdentifier:(NSString *)identifier;
+
++ (SPool *)registerClass:(Class)modelClass
+       forPoolIdentifier:(NSString *)identifier
+                    keep:(BOOL)keep;
 
 /**
  *  Remove a pool and class register from memory.
@@ -97,13 +101,6 @@
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier;
 
-+ (void)addModel:(id)model
-          toPool:(NSString *)identifier;
-
-
-+ (void)addModels:(NSArray *)models
-           toPool:(NSString *)identifier;
-
 + (SModel *)insertObject:(NSDictionary *)object
                  atIndex:(NSInteger)index
                   toPool:(NSString *)identifier;
@@ -111,6 +108,12 @@
 + (NSArray *)insertObjects:(NSArray *)objects
                  atIndexes:(NSIndexSet *)indexes
                     toPool:(NSString *)identifier;
+
++ (void)addModel:(id)model
+          toPool:(NSString *)identifier;
+
++ (void)addModels:(NSArray *)models
+           toPool:(NSString *)identifier;
 
 + (void)insertModel:(id)model
             atIndex:(NSInteger)index
@@ -153,5 +156,7 @@
  *  @param maxConcurrentOperationCount Number of operation executing in background.
  */
 + (void)setMaxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount;
+
++ (void)setCapacity:(NSInteger)capacity;
 
 @end

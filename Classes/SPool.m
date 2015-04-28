@@ -90,6 +90,7 @@
 
 - (void)commonInit {
     
+    _keep = NO;
     _reactions = [NSMutableArray array];
     _actions = [NSMutableArray array];
     _data = [NSMutableArray array];
@@ -120,10 +121,24 @@
 
 - (id)insertObject:(NSDictionary *)object
            atIndex:(NSUInteger)index {
+    
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self insertModel:model
               atIndex:index];
     return model;
+}
+
+- (NSArray *)insertObjects:(NSArray *)objects
+                 atIndexes:(NSIndexSet *)indexes {
+    
+    NSMutableArray *dataToAdd = [NSMutableArray array];
+    for (NSDictionary *object in objects) {
+        id model = [[self.modelClass alloc] initWithDictionary:object];
+        [dataToAdd addObject:model];
+    }
+    [self insertModels:dataToAdd
+             atIndexes:indexes];
+    return dataToAdd;
 }
 
 - (void)addModel:(id)model {
@@ -140,18 +155,6 @@
     }
     [_data addObjectsFromArray:models];
     [self triggerForEvent:SPoolEventOnAddModel];
-}
-
-- (NSArray *)insertObjects:(NSArray *)objects
-                atIndexes:(NSIndexSet *)indexes {
-    NSMutableArray *dataToAdd = [NSMutableArray array];
-    for (NSDictionary *object in objects) {
-        id model = [[self.modelClass alloc] initWithDictionary:object];
-        [dataToAdd addObject:model];
-    }
-    [self insertModels:dataToAdd
-             atIndexes:indexes];
-    return dataToAdd;
 }
 
 - (void)insertModels:(NSArray *)models

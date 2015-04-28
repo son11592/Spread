@@ -104,12 +104,14 @@ class ViewController: UIViewController {
     SRemoteTaskManager.addTask(task6)
     
     // Config Spread pools.
-    Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier)
-    Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
-    Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool3Indentifier)
+    let pool1 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier, keep: true)
+
+    let pool2 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
+    pool2.keep = false
     
-    let pool3 = Spread.getPool(self.pool3Indentifier)
-    pool3.onEvent(SPoolEvent.OnInitModel, reaction: { (data) -> Void in
+    let pool3 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool3Indentifier)
+        
+    pool3.onEvent(SPoolEvent.OnChange, reaction: { (data) -> Void in
       
       NSLog("Pool reaction on init.")
     })
@@ -150,21 +152,22 @@ class ViewController: UIViewController {
     let carrotData = ["name": "One", "objectId": "one"]
     
     // Add object to pool and setup reaction.
-    let carrotInPool1 = Spread.addObject(carrotData, toPool: self.pool1Indentifier)
-    carrotInPool1.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+    let carrotInPool1: Carrot? = Spread.addObject(carrotData, toPool: self.pool1Indentifier) as? Carrot
+
+    carrotInPool1?.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
       self.carrot1Label.text = newValue as? String
     }
     
-    let carrotInPool2 = Spread.addObject(carrotData, toPool: self.pool2Indentifier)
-    carrotInPool2.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+    let carrotInPool2: Carrot? = Spread.addObject(carrotData, toPool: self.pool2Indentifier) as? Carrot
+    carrotInPool2?.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
       self.carrot2Label.text = newValue as? String
     }
     
-    let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier)
+    let carrotInPool3: Carrot? = Spread.addObject(carrotData, toPool: self.pool3Indentifier) as? Carrot
     
-    NSLog("\(carrotInPool3.toDictionary())")
+    NSLog("\(carrotInPool3?.toDictionary())")
     
-    carrotInPool3.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
+    carrotInPool3?.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
   }
   
   func textChange() {
