@@ -86,17 +86,6 @@
 + (SModel *)addObject:(NSDictionary *)object
                toPool:(NSString *)identifier;
 
-+ (void)addModel:(id)model
-          toPool:(NSString *)identifier;
-
-+ (SModel *)insertObject:(NSDictionary *)object
-                 atIndex:(NSInteger)index
-                  toPool:(NSString *)identifier;
-
-+ (void)insertModel:(id)model
-            atIndex:(NSInteger)index
-             toPool:(NSString *)identifier;
-
 /**
  *  Add multi objecto to pool.
  *
@@ -108,12 +97,24 @@
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier;
 
++ (void)addModel:(id)model
+          toPool:(NSString *)identifier;
+
+
 + (void)addModels:(NSArray *)models
            toPool:(NSString *)identifier;
+
++ (SModel *)insertObject:(NSDictionary *)object
+                 atIndex:(NSInteger)index
+                  toPool:(NSString *)identifier;
 
 + (NSArray *)insertObjects:(NSArray *)objects
                  atIndexes:(NSIndexSet *)indexes
                     toPool:(NSString *)identifier;
+
++ (void)insertModel:(id)model
+            atIndex:(NSInteger)index
+             toPool:(NSString *)identifier;
 
 + (void)insertModels:(NSArray *)models
            atIndexes:(NSIndexSet *)indexes

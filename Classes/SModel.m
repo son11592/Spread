@@ -644,9 +644,6 @@ static const char *getPropertyType(objc_property_t property) {
     
     [self removeAllActions];
     [self removeAllReactions];
-#ifdef DEBUG
-    NSLog(@"[%@] - Release.", [self class]);
-#endif
 }
 
 @end
