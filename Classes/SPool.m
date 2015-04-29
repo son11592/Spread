@@ -149,20 +149,24 @@
 }
 
 - (void)addModels:(NSArray *)models {
-    
+  
+#ifdef DEBUG
     for (id model in models) {
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     }
+#endif
     [_data addObjectsFromArray:models];
     [self triggerForEvent:SPoolEventOnAddModel];
 }
 
 - (void)insertModels:(NSArray *)models
           atIndexes:(NSIndexSet *)indexes {
-    
+  
+#ifdef DEBUG
     for (id model in models) {
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     }
+#endif
     [_data insertObjects:models
                atIndexes:indexes];
 }
