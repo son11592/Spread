@@ -7,6 +7,7 @@
 //
 
 #import "SPool.h"
+#import "SModel.h"
 
 @interface SPoolReaction : NSObject
 
@@ -101,6 +102,16 @@
     return _reactions;
 }
 
+- (NSArray *)modelSerializer:(NSArray *)objects {
+    
+    NSMutableArray *models = [NSMutableArray array];
+    for (NSDictionary *object in objects) {
+        id model = [[self.modelClass alloc] initWithDictionary:object];
+        [models addObject:model];
+    }
+    return models;
+}
+
 - (id)addObject:(NSDictionary *)object {
     
     id model = [[self.modelClass alloc] initWithDictionary:object];
@@ -110,11 +121,7 @@
 
 - (NSArray *)addObjects:(NSArray *)objects {
     
-    NSMutableArray *dataToAdd = [NSMutableArray array];
-    for (NSDictionary *object in objects) {
-        id model = [[self.modelClass alloc] initWithDictionary:object];
-        [dataToAdd addObject:model];
-    }
+    NSArray *dataToAdd = [self modelSerializer:objects];
     [self addModels:dataToAdd];
     return dataToAdd;
 }
@@ -131,11 +138,7 @@
 - (NSArray *)insertObjects:(NSArray *)objects
                  atIndexes:(NSIndexSet *)indexes {
     
-    NSMutableArray *dataToAdd = [NSMutableArray array];
-    for (NSDictionary *object in objects) {
-        id model = [[self.modelClass alloc] initWithDictionary:object];
-        [dataToAdd addObject:model];
-    }
+    NSArray *dataToAdd = [self modelSerializer:objects];
     [self insertModels:dataToAdd
              atIndexes:indexes];
     return dataToAdd;
@@ -149,7 +152,7 @@
 }
 
 - (void)addModels:(NSArray *)models {
-  
+    
 #ifdef DEBUG
     for (id model in models) {
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
@@ -160,8 +163,8 @@
 }
 
 - (void)insertModels:(NSArray *)models
-          atIndexes:(NSIndexSet *)indexes {
-  
+           atIndexes:(NSIndexSet *)indexes {
+    
 #ifdef DEBUG
     for (id model in models) {
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
@@ -203,15 +206,47 @@
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
-- (NSArray *)filter:(BOOL (^)(id))filter {
+- (NSArray *)diffModels:(NSArray *)models keys:(NSArray *)keys {
     
-    NSMutableArray *array = [NSMutableArray array];
-    for (id model in [self allModels]) {
-        if (filter(model)) {
-            [array addObject:model];
+    NSArray *result = [models filter:^BOOL(SModel *model) {
+        for (SModel *element in self.allModels) {
+            if ([self compareModel:model
+                         withModel:element
+                            byKeys:keys]) {
+                return false;
+            }
+        }
+        return true;
+    }];
+    return result;
+}
+
+- (NSArray *)diffObjects:(NSArray *)objects keys:(NSArray *)keys {
+    
+    NSArray *models = [self modelSerializer:objects];
+    return [self diffModels:models
+                       keys:keys];
+}
+
+- (BOOL)compareModel:(SModel *)targetModel withModel:(SModel *)model byKeys:(NSArray *)keys {
+    
+    for (NSString *key in keys) {
+        id targetModelValue = [targetModel valueForKey:key];
+        id destinationModel = [model valueForKey:key];
+        
+        if ([targetModelValue respondsToSelector:@selector(isKindOfClass:)]) {
+            if ([targetModelValue isKindOfClass:[NSString class]]) {
+                if (![targetModelValue isEqualToString:destinationModel]) {
+                    return false;
+                }
+            } else {
+                if (targetModelValue != destinationModel) {
+                    return false;
+                }
+            }
         }
     }
-    return array;
+    return true;
 }
 
 - (void)onEvent:(SPoolEvent)event
@@ -293,7 +328,7 @@
 
 - (void)removeModelMatch:(BOOL (^)(id))filter {
     
-    NSArray *objectToRemove = [self filter:filter];
+    NSArray *objectToRemove = [_data filter:filter];
     [_data removeObjectsInArray:objectToRemove];
 }
 
