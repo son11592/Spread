@@ -599,8 +599,11 @@ static const char *getPropertyType(objc_property_t property) {
              method:@"GET"
          parameters:nil
   completionHandler:^(id response, NSError *error) {
-      [weakSelf initData:[SUtils getDataFrom:response
-                                 WithKeyPath:[weakSelf getSourceKeyPath]]];
+      NSDictionary *data = [SUtils getDataFrom:response
+                                   WithKeyPath:[weakSelf getSourceKeyPath]];
+      if (data) {
+          [weakSelf initData:data];
+      }
   }];
 }
 
@@ -613,7 +616,9 @@ static const char *getPropertyType(objc_property_t property) {
   completionHandler:^(id response, NSError *error) {
       NSDictionary *data = [SUtils getDataFrom:response
                                    WithKeyPath:[weakSelf getSourceKeyPath]];
-      [weakSelf initData:data];
+      if (data) {
+          [weakSelf initData:data];
+      }
       if (completion) {
           completion(data, error);
       }
