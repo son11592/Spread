@@ -13,7 +13,6 @@
 @implementation SUtils
 
 - (instancetype)init {
-    
     self = [super init];
     if (!self) {
         return nil;
@@ -23,13 +22,11 @@
 }
 
 - (void)commonInit {
-    
     _operationQueue = [[NSOperationQueue alloc] init];
     [_operationQueue setMaxConcurrentOperationCount:10];
 }
 
 + (instancetype)sharedInstance {
-    
     static dispatch_once_t once;
     static id sharedInstance;
     dispatch_once(&once, ^{
@@ -39,7 +36,6 @@
 }
 
 + (NSString *)getGETParametersString:(NSDictionary *)dictionary {
-    
     NSString *stringParameters = @"";
     if (dictionary) {
         NSArray *allKey = [dictionary allKeys];
@@ -57,7 +53,6 @@
 }
 
 + (NSData *)getPOSTParameters:(NSDictionary *)dictionary {
-    
     NSData *postdata = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:NULL];
@@ -68,8 +63,6 @@
          method:(NSString *)method
      parameters:(NSDictionary *)parameters
 completionHandler:(void(^)(id, NSError *))completion {
-    
-    // Make request.
     NSURL *requestUrl = nil;
     if ([method isEqualToString:@"GET"] && parameters) {
         requestUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@?%@", url, [self getGETParametersString:parameters]]];
@@ -103,7 +96,6 @@ completionHandler:(void(^)(id, NSError *))completion {
 
 + (NSDictionary *)getDataFrom:(NSDictionary *)data
                   WithKeyPath:(NSString *)keyPath {
-    
     if (!keyPath || [keyPath isEqualToString:@""]) {
         return data;
     }

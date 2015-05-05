@@ -21,7 +21,6 @@
 @implementation SRemoteTaskManager
 
 - (instancetype)init {
-    
     self = [super init];
     if (!self) {
         return nil;
@@ -31,7 +30,6 @@
 }
 
 - (void)commonInit {
-    
     _pendingTasks = [[NSMutableArray alloc] init];
     _executingTasks = [[NSMutableArray alloc] init];
     
@@ -43,7 +41,6 @@
 }
 
 + (instancetype)sharedInstance {
-    
     static dispatch_once_t once;
     static id sharedInstance;
     dispatch_once(&once, ^{
@@ -67,7 +64,6 @@
 }
 
 - (void)processOperation {
-    
     @synchronized(self) {
         
         // There are no task in queue.
@@ -92,7 +88,6 @@
 }
 
 - (BOOL)checkDequeueCondtion:(SRemoteTask *)task {
-    
     if ([_executingTasks count] == 0) {
         return YES;
     }
@@ -112,7 +107,6 @@
 }
 
 + (void)addTask:(SRemoteTask *)task {
-
     NSAssert([task.class isSubclassOfClass:[SRemoteTask class]], @"Task must be SRemoteTask or sub class of SRemoteTask.");
     if (![task.class isSubclassOfClass:[SRemoteTask class]]) {
         return;
@@ -131,7 +125,6 @@
 }
 
 - (void)processTask:(SRemoteTask *)task {
-    
     [SUtils request:[task getRequestUrl]
              method:[task getMethodString]
          parameters:[task getRequestParameters]

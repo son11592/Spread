@@ -14,24 +14,20 @@ class Task: SRemoteTask {
   var nameSpace: String!
   
   init(objectId: String, nameSpace: String) {
-    
     super.init()
     self.objectId = objectId
     self.nameSpace = nameSpace
   }
   
   override func getRequestParameters() -> [NSObject : AnyObject]! {
-    
     return ["type": "block"]
   }
   
   override func getRequestUrl() -> String! {
-    
     return "www.google.com"
   }
   
   override func dequeueCondtion(executingTask: SRemoteTask!) -> Bool {
-    
     let task = executingTask as! Task
     if self.objectId != task.objectId {
       return true
@@ -40,7 +36,6 @@ class Task: SRemoteTask {
   }
   
   override func enqueueCondtion(penddingTask: SRemoteTask!) -> Bool {
-    
     let task = penddingTask as! Task
     if self.objectId == task.objectId
       && self.nameSpace == task.nameSpace {

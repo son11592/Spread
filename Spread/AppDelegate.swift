@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(application: UIApplication, didFinishLaunchingWithOptions
     launchOptions: [NSObject: AnyObject]?) -> Bool {
-      
       let rootViewController = ViewController()
       let window = UIWindow(frame: UIScreen.mainScreen().bounds)
       window.rootViewController = rootViewController

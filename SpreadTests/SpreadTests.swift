@@ -17,7 +17,6 @@ class Model: SModel {
 }
 
 class SpreadTests: XCTestCase {
-    
     private let pool1Identifier = "pool1Identifier"
     private let pool2Identifier = "pool2Identifier"
     private let pool3Identifier = "pool3Identifier"
@@ -37,7 +36,6 @@ class SpreadTests: XCTestCase {
     private let poolChangeNameEvent = "ChangeName"
     
     override func setUp() {
-        
         super.setUp()
         
         // Register class.
@@ -82,12 +80,10 @@ class SpreadTests: XCTestCase {
     }
     
     override func tearDown() {
-        
         super.tearDown()
     }
     
     func testCountingAddAndRemoveObejct() {
-        
         let pool4 = Spread.getPool(self.pool4Identifier)
         let numberObjectBeforeAdd = pool4.allModels().count
         
@@ -115,7 +111,6 @@ class SpreadTests: XCTestCase {
     }
     
     func testReactionNotMatchObjectId() {
-        
         Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "A new name", "objectId": "match all object id"])
         
@@ -129,7 +124,6 @@ class SpreadTests: XCTestCase {
     }
     
     func testRemoveReact() {
-        
         Spread.outEvent(self.poolChangeNameEvent,
             value: ["name": "Name before remove", "objectId": "match all object id"])
         
@@ -143,7 +137,6 @@ class SpreadTests: XCTestCase {
     }
     
     func testPerformance() {
-        
         self.measureBlock() {
             for i in 1...1000 {
                 Spread.addObject(self.model4Data, toPool: self.pool4Identifier)
@@ -156,7 +149,6 @@ class SpreadTests: XCTestCase {
     }
     
     func testRemovePool() {
-        
         Spread.removePoolWithIdentifier(self.pool2Identifier)
         let pool: SPool? = Spread.getPool(self.pool2Identifier)
         XCTAssertNil(pool, "Must be nil")

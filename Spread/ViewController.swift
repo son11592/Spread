@@ -26,7 +26,6 @@ class ViewController: UIViewController {
   private let milkCarrot = Carrot()
   
   override func loadView() {
-    
     super.loadView()
     self.view.backgroundColor = UIColor.whiteColor()
     
@@ -38,7 +37,6 @@ class ViewController: UIViewController {
   }
   
   func initData() {
-    
     NSLog("Magic is here...")
     
     let task1 = Task(objectId: "1", nameSpace: "Carrot 1")
@@ -175,7 +173,6 @@ class ViewController: UIViewController {
   }
   
   func initView() {
-    
     self.textField.frame = CGRectMake(10, 40, 300, 40)
     self.textField.addTarget(self, action: "textViewDidChange:",
       forControlEvents: UIControlEvents.EditingChanged)
@@ -197,7 +194,6 @@ class ViewController: UIViewController {
   }
   
   func textViewDidChange(textField: UITextField) {
-    
     let text = textField.text
     Spread.outEvent(self.action1Identifier,
       value: ["name": text, "objectId": "one"])

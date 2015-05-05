@@ -11,7 +11,6 @@
 @implementation SRemoteTask
 
 - (instancetype)init {
-    
     self =[super init];
     if (!self) {
         return nil;
@@ -21,22 +20,18 @@
 }
 
 - (void)commonInit {
-    
     _method = SRemoteTaskMethodPOST;
 }
 
 - (NSString *)getRequestUrl {
-    
     return @"";
 }
 
 - (NSDictionary *)getRequestParameters {
-    
     return nil;
 }
 
 - (NSString *)getMethodString {
-    
     switch (self.method) {
         case SRemoteTaskMethodGET:
             return @"GET";
@@ -52,18 +47,15 @@
 }
 
 - (void)addHanlder:(void (^)(id, NSError *))handler {
-    
     _handler = handler;
 }
 
 
 - (BOOL)dequeueCondtion:(SRemoteTask *)executingTask {
-    
     return YES;
 }
 
 - (BOOL)enqueueCondtion:(SRemoteTask *)penddingTask {
-    
     return YES;
 }
 

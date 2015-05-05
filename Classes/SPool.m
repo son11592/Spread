@@ -36,7 +36,6 @@
 @implementation SPoolAction
 
 - (BOOL)compareWith:(SPoolAction *)action {
-    
     return [self compareWithTarget:action.target
                           selector:action.selector
                              event:action.event];
@@ -45,7 +44,6 @@
 - (BOOL)compareWithTarget:(id)target
                  selector:(SEL)selector
                     event:(SPoolEvent)event {
-    
     if ([self.target isEqual:target]
         && self.selector == selector
         && self.event == event) {
@@ -70,7 +68,6 @@
 }
 
 + (instancetype)sharedInstance {
-    
     static dispatch_once_t once;
     static id sharedInstance;
     dispatch_once(&once, ^{
@@ -80,7 +77,6 @@
 }
 
 - (instancetype)init {
-    
     self = [super init];
     if (!self) {
         return nil;
@@ -90,7 +86,6 @@
 }
 
 - (void)commonInit {
-    
     _keep = NO;
     _reactions = [NSMutableArray array];
     _actions = [NSMutableArray array];
@@ -98,12 +93,10 @@
 }
 
 - (NSMutableArray *)reactions {
-    
     return _reactions;
 }
 
 - (NSArray *)modelSerializer:(NSArray *)objects {
-    
     NSMutableArray *models = [NSMutableArray array];
     for (NSDictionary *object in objects) {
         id model = [[self.modelClass alloc] initWithDictionary:object];
@@ -113,14 +106,12 @@
 }
 
 - (id)addObject:(NSDictionary *)object {
-    
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self addModel:model];
     return model;
 }
 
 - (NSArray *)addObjects:(NSArray *)objects {
-    
     NSArray *dataToAdd = [self modelSerializer:objects];
     [self addModels:dataToAdd];
     return dataToAdd;
@@ -128,7 +119,6 @@
 
 - (id)insertObject:(NSDictionary *)object
            atIndex:(NSUInteger)index {
-    
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self insertModel:model
               atIndex:index];
@@ -137,7 +127,6 @@
 
 - (NSArray *)insertObjects:(NSArray *)objects
                  atIndexes:(NSIndexSet *)indexes {
-    
     NSArray *dataToAdd = [self modelSerializer:objects];
     [self insertModels:dataToAdd
              atIndexes:indexes];
@@ -145,14 +134,12 @@
 }
 
 - (void)addModel:(id)model {
-    
     NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     [_data addObject:model];
     [self triggerForEvent:SPoolEventOnAddModel];
 }
 
 - (void)addModels:(NSArray *)models {
-    
 #ifdef DEBUG
     for (id model in models) {
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
@@ -164,7 +151,6 @@
 
 - (void)insertModels:(NSArray *)models
            atIndexes:(NSIndexSet *)indexes {
-    
 #ifdef DEBUG
     for (id model in models) {
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
@@ -176,7 +162,6 @@
 
 - (void)insertModel:(id)model
             atIndex:(NSInteger)index {
-    
     NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     [_data insertObject:model
                 atIndex:index];
@@ -184,30 +169,25 @@
 }
 
 - (NSArray *)allModels {
-    
     return [_data copy];
 }
 
 - (void)removeModel:(id)model {
-    
     [_data removeObject:model];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (void)removeModels:(NSArray *)models {
-    
     [_data removeObjectsInArray:models];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (void)removeAllModels {
-    
     [_data removeAllObjects];
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
 - (NSArray *)diffModels:(NSArray *)models keys:(NSArray *)keys {
-    
     NSArray *result = [models filter:^BOOL(SModel *model) {
         for (SModel *element in self.allModels) {
             if ([self compareModel:model
@@ -222,14 +202,12 @@
 }
 
 - (NSArray *)diffObjects:(NSArray *)objects keys:(NSArray *)keys {
-    
     NSArray *models = [self modelSerializer:objects];
     return [self diffModels:models
                        keys:keys];
 }
 
 - (BOOL)compareModel:(SModel *)targetModel withModel:(SModel *)model byKeys:(NSArray *)keys {
-    
     for (NSString *key in keys) {
         id targetModelValue = [targetModel valueForKey:key];
         id destinationModel = [model valueForKey:key];
@@ -251,7 +229,6 @@
 
 - (void)onEvent:(SPoolEvent)event
        reaction:(void(^)(NSArray *data))reaction {
-    
     SPoolReaction *poolReaction = [[SPoolReaction alloc] init];
     poolReaction.event = event;
     poolReaction.reaction = reaction;
@@ -261,7 +238,6 @@
 - (void)addTarget:(id)target
          selector:(SEL)selector
           onEvent:(SPoolEvent)event {
-    
     SPoolAction *poolAction = [[SPoolAction alloc] init];
     poolAction.target = target;
     poolAction.selector = selector;
@@ -276,13 +252,11 @@
 }
 
 - (void)triggerForEvent:(SPoolEvent)event {
-    
     [self triggerReactionsForEvent:event];
     [self triggerTargetForEvent:event];
 }
 
 - (void)triggerReactionsForEvent:(SPoolEvent)event {
-    
     for (SPoolReaction *reaction in [self reactions]) {
         if (reaction.event == SPoolEventOnChange
             || reaction.event == event) {
@@ -292,7 +266,6 @@
 }
 
 - (void)triggerTargetForEvent:(SPoolEvent)event {
-    
     NSMutableArray *dataToRemove = [NSMutableArray array];
     for (SPoolAction *action in _actions) {
         if (!action.target) {
@@ -314,7 +287,6 @@
 - (void)removeTarget:(id)target
             selector:(SEL)selector
              onEvent:(SPoolEvent)event {
-    
     NSMutableArray *dataToRemove = [NSMutableArray array];
     for (SPoolAction *poolAction in _actions) {
         if ([poolAction compareWithTarget:target
@@ -327,13 +299,11 @@
 }
 
 - (void)removeModelMatch:(BOOL (^)(id))filter {
-    
     NSArray *objectToRemove = [_data filter:filter];
     [_data removeObjectsInArray:objectToRemove];
 }
 
 - (void)dealloc {
-    
     [_actions removeAllObjects];
     [_reactions removeAllObjects];
 #ifdef DEBUG

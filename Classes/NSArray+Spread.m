@@ -11,7 +11,6 @@
 @implementation NSArray (Spread)
 
 - (NSArray *)filter:(BOOL (^)(id))filter {
-    
     NSMutableArray *array = [NSMutableArray array];
     for (id model in self) {
         if (filter(model)) {
