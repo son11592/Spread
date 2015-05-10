@@ -187,7 +187,8 @@
     [self triggerForEvent:SPoolEventOnRemoveModel];
 }
 
-- (NSArray *)diffModels:(NSArray *)models keys:(NSArray *)keys {
+- (NSArray *)diffModels:(NSArray *)models
+                   keys:(NSArray *)keys {
     NSArray *result = [models filter:^BOOL(SModel *model) {
         for (SModel *element in self.allModels) {
             if ([self compareModel:model
@@ -201,17 +202,19 @@
     return result;
 }
 
-- (NSArray *)diffObjects:(NSArray *)objects keys:(NSArray *)keys {
+- (NSArray *)diffObjects:(NSArray *)objects
+                    keys:(NSArray *)keys {
     NSArray *models = [self modelSerializer:objects];
     return [self diffModels:models
                        keys:keys];
 }
 
-- (BOOL)compareModel:(SModel *)targetModel withModel:(SModel *)model byKeys:(NSArray *)keys {
+- (BOOL)compareModel:(SModel *)targetModel
+           withModel:(SModel *)model
+              byKeys:(NSArray *)keys {
     for (NSString *key in keys) {
         id targetModelValue = [targetModel valueForKey:key];
         id destinationModel = [model valueForKey:key];
-        
         if ([targetModelValue respondsToSelector:@selector(isKindOfClass:)]) {
             if ([targetModelValue isKindOfClass:[NSString class]]) {
                 if (![targetModelValue isEqualToString:destinationModel]) {

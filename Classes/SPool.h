@@ -99,8 +99,11 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
  *  @return Array of models.
  */
 - (NSArray *)allModels;
-- (NSArray *)diffModels:(NSArray *)models keys:(NSArray *)keys;
-- (NSArray *)diffObjects:(NSArray *)objects keys:(NSArray *)keys;
+- (NSArray *)modelSerializer:(NSArray *)objects;
+- (NSArray *)diffModels:(NSArray *)models
+                   keys:(NSArray *)keys;
+- (NSArray *)diffObjects:(NSArray *)objects
+                    keys:(NSArray *)keys;
 
 /**
  *  Remove model matched filter.
