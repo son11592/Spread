@@ -109,15 +109,15 @@ static const char *getPropertyType(objc_property_t property) {
     if (!self) {
         return nil;
     }
+    [self commonInit];
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]]) {
-        
         SEL selector = NSSelectorFromString([NSString stringWithFormat:@"_%@:", NSStringFromClass(self.class)]);
         if ([self respondsToSelector:selector]) {
             ((void (*)(id, SEL, id))[self methodForSelector:selector])(self, selector, dictionary);
         }
+        [self initData:@{}];
         return self;
     }
-    [self commonInit];
     [self initData:dictionary];
     return self;
 }
