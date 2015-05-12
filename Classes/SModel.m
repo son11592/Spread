@@ -112,11 +112,11 @@ static const char *getPropertyType(objc_property_t property) {
     }
     [self commonInit];
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]]) {
+        [self initData:@{}];
         SEL selector = NSSelectorFromString([NSString stringWithFormat:@"_%@:", NSStringFromClass(self.class)]);
         if ([self respondsToSelector:selector]) {
             ((void (*)(id, SEL, id))[self methodForSelector:selector])(self, selector, dictionary);
         }
-        [self initData:@{}];
         return self;
     }
     [self initData:dictionary];
@@ -557,22 +557,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)fetchInBackground {
-    if (self.isFetching) {
-        return;
-    }
-    _fetching = YES;
-    __weak SModel *weakSelf = self;
-    [SUtils request:[self getSourceUrl]
-             method:@"GET"
-         parameters:nil
-  completionHandler:^(id response, NSError *error) {
-      _fetching = NO;
-      NSDictionary *data = [SUtils getDataFrom:response
-                                   WithKeyPath:[weakSelf getSourceKeyPath]];
-      if (data) {
-          [weakSelf initData:data];
-      }
-  }];
+    [self fetchInBackground:nil];
 }
 
 - (void)fetchInBackground:(void (^)(id, NSError *))completion {
