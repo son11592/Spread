@@ -70,6 +70,7 @@ static const char *getPropertyType(objc_property_t property) {
 
 @property (nonatomic, copy) NSString *sourceUrl;
 @property (nonatomic, copy) NSString *sourceKeyPath;
+@property (nonatomic, getter=isFetching) BOOL fetching;
 @property (nonatomic, getter=isInitiated) BOOL initiated;
 
 @end
@@ -125,6 +126,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)commonInit {
     _sourceKeyPath = @"";
     _sourceUrl = nil;
+    _fetching = NO;
     _initiated = NO;
 }
 
@@ -555,11 +557,16 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)fetchInBackground {
+    if (self.isFetching) {
+        return;
+    }
+    _fetching = YES;
     __weak SModel *weakSelf = self;
     [SUtils request:[self getSourceUrl]
              method:@"GET"
          parameters:nil
   completionHandler:^(id response, NSError *error) {
+      _fetching = NO;
       NSDictionary *data = [SUtils getDataFrom:response
                                    WithKeyPath:[weakSelf getSourceKeyPath]];
       if (data) {
@@ -569,11 +576,16 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)fetchInBackground:(void (^)(id, NSError *))completion {
+    if (self.isFetching) {
+        return;
+    }
+    _fetching = YES;
     __weak SModel *weakSelf = self;
     [SUtils request:[self getSourceUrl]
              method:@"GET"
          parameters:nil
   completionHandler:^(id response, NSError *error) {
+      _fetching = NO;
       NSDictionary *data = [SUtils getDataFrom:response
                                    WithKeyPath:[weakSelf getSourceKeyPath]];
       if (data) {
