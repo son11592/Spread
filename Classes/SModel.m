@@ -255,7 +255,8 @@ static const char *getPropertyType(objc_property_t property) {
 - (NSArray *)getReactionsOfProperty:(NSString *)property
                             onEvent:(SModelEvent)event {
     NSMutableArray *reactions = [NSMutableArray array];
-    for (SModelReaction *reaction in [self reactions]) {
+    NSArray *allReactions = [_reactions copy];
+    for (SModelReaction *reaction in allReactions) {
         if ([reaction.keyPath isEqualToString:property]
             && reaction.event == event) {
             [reactions addObject:reaction];
@@ -267,7 +268,8 @@ static const char *getPropertyType(objc_property_t property) {
 // Get reactions of property.
 - (NSArray *)getReactionsOfProperty:(NSString *)property {
     NSMutableArray *reactions = [NSMutableArray array];
-    for (SModelReaction *reaction in [self reactions]) {
+    NSArray *allReactions = [_reactions copy];
+    for (SModelReaction *reaction in allReactions) {
         if ([reaction.keyPath isEqualToString:property]) {
             [reactions addObject:reaction];
         }
@@ -280,7 +282,8 @@ static const char *getPropertyType(objc_property_t property) {
                          selector:(SEL)selector
                           onEvent:(SModelEvent)event {
     NSMutableArray *actions = [NSMutableArray array];
-    for (SModelAction *action in _actions) {
+    NSArray *allActions = [_actions copy];
+    for (SModelAction *action in allActions) {
         if ([action.keyPath isEqualToString:property]
             && [action.target isEqual:target]
             && action.selector == selector
@@ -295,7 +298,8 @@ static const char *getPropertyType(objc_property_t property) {
                            target:(id)target
                          selector:(SEL)selector {
     NSMutableArray *actions = [NSMutableArray array];
-    for (SModelAction *action in _actions) {
+    NSArray *allActions = [_actions copy];
+    for (SModelAction *action in allActions) {
         if ([action.keyPath isEqualToString:property]
             && [action.target isEqual:target]
             && action.selector == selector) {
@@ -308,7 +312,8 @@ static const char *getPropertyType(objc_property_t property) {
 - (NSArray *)getActionsOfProperty:(NSString *)property
                            target:(id)target {
     NSMutableArray *actions = [NSMutableArray array];
-    for (SModelAction *action in _actions) {
+    NSArray *allActions = [_actions copy];
+    for (SModelAction *action in allActions) {
         if (!action.target || ([action.keyPath isEqualToString:property]
             && [action.target isEqual:target])) {
             [actions addObject:action];
@@ -320,7 +325,8 @@ static const char *getPropertyType(objc_property_t property) {
 - (NSArray *)getActionsOfProperty:(NSString *)property
                           onEvent:(SModelEvent)event {
     NSMutableArray *actions = [NSMutableArray array];
-    for (SModelAction *action in _actions) {
+    NSArray *allActions = [_actions copy];
+    for (SModelAction *action in allActions) {
         if ([action.keyPath isEqualToString:property]
             && action.event == event) {
             [actions addObject:action];
@@ -332,7 +338,8 @@ static const char *getPropertyType(objc_property_t property) {
 // Get action of property.
 - (NSArray *)getActionsOfProperty:(NSString *)property {
     NSMutableArray *actions = [NSMutableArray array];
-    for (SModelAction *action in _actions) {
+    NSArray *allActions = [_actions copy];
+    for (SModelAction *action in allActions) {
         if ([action.keyPath isEqualToString:property]) {
             [actions addObject:action];
         }
