@@ -309,8 +309,8 @@ static const char *getPropertyType(objc_property_t property) {
                            target:(id)target {
     NSMutableArray *actions = [NSMutableArray array];
     for (SModelAction *action in _actions) {
-        if ([action.keyPath isEqualToString:property]
-            && [action.target isEqual:target]) {
+        if (!action.target || ([action.keyPath isEqualToString:property]
+            && [action.target isEqual:target])) {
             [actions addObject:action];
         }
     }
@@ -353,7 +353,6 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)removeObserverForKeyPath:(NSString *)keyPath {
     if ([[self getActionsOfProperty:keyPath] count] == 0
         && [[self getReactionsOfProperty:keyPath] count] == 0) {
-        
         [self removeObserver:self
                   forKeyPath:keyPath
                      context:SPreadContext];
@@ -521,23 +520,18 @@ static const char *getPropertyType(objc_property_t property) {
                        context:(void *)context {
     id oldValue = change[@"old"];
     id newValue = change[@"new"];
-    
     if (context != SPreadContext) {
         return;
     }
-    
     SModelEvent event = SModelEventOnChange;
-    
     NSArray *reactions = [self getReactionsOfProperty:keyPath
                                               onEvent:event];
-    
     for (SModelReaction *reaction in reactions) {
         reaction.react(oldValue, newValue);
     }
     
     // Automatic delete action when target become nil.
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    
     NSArray *actions = [self getActionsOfProperty:keyPath
                                           onEvent:event];
     for (SModelAction *action in actions) {
@@ -552,7 +546,8 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     for (SModelAction *action in actionsToDelete) {
-        [self removeActionsForProperty:action.keyPath];
+        [self removeActionsForProperty:action.keyPath
+                                target:action.target];
     }
 }
 
