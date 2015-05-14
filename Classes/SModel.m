@@ -315,7 +315,7 @@ static const char *getPropertyType(objc_property_t property) {
     NSArray *allActions = [_actions copy];
     for (SModelAction *action in allActions) {
         if (!action.target || ([action.keyPath isEqualToString:property]
-            && [action.target isEqual:target])) {
+                               && [action.target isEqual:target])) {
             [actions addObject:action];
         }
     }
@@ -357,12 +357,35 @@ static const char *getPropertyType(objc_property_t property) {
     }
 }
 
-- (void)removeObserverForKeyPath:(NSString *)keyPath {
-    if ([[self getActionsOfProperty:keyPath] count] == 0
-        && [[self getReactionsOfProperty:keyPath] count] == 0) {
-        [self removeObserver:self
-                  forKeyPath:keyPath
-                     context:SPreadContext];
+- (void)removeActions:(NSArray *)actions
+   observerForKeyPath:(NSString *)keyPath {
+    @synchronized(self) {
+        NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
+        [[self getReactionsOfProperty:keyPath] count];
+        if (observerCount == 0) return;
+        [_actions removeObjectsInArray:actions];
+        if ([[self getActionsOfProperty:keyPath] count] == 0
+            && [[self getReactionsOfProperty:keyPath] count] == 0) {
+            [self removeObserver:self
+                      forKeyPath:keyPath
+                         context:SPreadContext];
+        }
+    }
+}
+
+- (void)removeReactions:(NSArray *)reactions
+     observerForKeyPath:(NSString *)keyPath {
+    @synchronized(self) {
+        NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
+        [[self getReactionsOfProperty:keyPath] count];
+        if (observerCount == 0) return;
+        [_reactions removeObjectsInArray:reactions];
+        if ([[self getActionsOfProperty:keyPath] count] == 0
+            && [[self getReactionsOfProperty:keyPath] count] == 0) {
+            [self removeObserver:self
+                      forKeyPath:keyPath
+                         context:SPreadContext];
+        }
     }
 }
 
@@ -427,15 +450,15 @@ static const char *getPropertyType(objc_property_t property) {
     NSArray *reactions = [self getReactionsOfProperty:property
                                               onEvent:event];
     if ([reactions count] == 0) return;
-    [_reactions removeObjectsInArray:reactions];
-    [self removeObserverForKeyPath:property];
+    [self removeReactions:reactions
+       observerForKeyPath:property];
 }
 
 - (void)removeReactionsForProperty:(NSString *)property {
     NSArray *reactions = [self getReactionsOfProperty:property];
     if ([reactions count] == 0) return;
-    [_reactions removeObjectsInArray:reactions];
-    [self removeObserverForKeyPath:property];
+    [self removeReactions:reactions
+       observerForKeyPath:property];
 }
 
 - (void)removeReactionsForProperties:(NSArray *)properties
@@ -468,8 +491,8 @@ static const char *getPropertyType(objc_property_t property) {
                                          selector:selector
                                           onEvent:event];
     if ([actions count] == 0) return;
-    [_actions removeObjectsInArray:actions];
-    [self removeObserverForKeyPath:property];
+    [self removeActions:actions
+     observerForKeyPath:property];
 }
 
 - (void)removeActionsForProperty:(NSString *)property
@@ -478,14 +501,15 @@ static const char *getPropertyType(objc_property_t property) {
                                            target:target];
     if ([actions count] == 0) return;
     [_actions removeObjectsInArray:actions];
-    [self removeObserverForKeyPath:property];
+    [self removeActions:actions
+     observerForKeyPath:property];
 }
 
 - (void)removeActionsForProperty:(NSString *)property {
     NSArray *actions = [self getActionsOfProperty:property];
     if ([actions count] == 0) return;
-    [_actions removeObjectsInArray:actions];
-    [self removeObserverForKeyPath:property];
+    [self removeActions:actions
+     observerForKeyPath:property];
 }
 
 - (void)removeActionsForProperties:(NSArray *)properties
