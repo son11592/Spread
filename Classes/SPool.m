@@ -106,12 +106,14 @@
 }
 
 - (id)addObject:(NSDictionary *)object {
+    if (!object) return nil;
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self addModel:model];
     return model;
 }
 
 - (NSArray *)addObjects:(NSArray *)objects {
+    if ([objects count] == 0) return @[];
     NSArray *dataToAdd = [self modelSerializer:objects];
     [self addModels:dataToAdd];
     return dataToAdd;
@@ -119,6 +121,7 @@
 
 - (id)insertObject:(NSDictionary *)object
            atIndex:(NSUInteger)index {
+    if (!object) return nil;
     id model = [[self.modelClass alloc] initWithDictionary:object];
     [self insertModel:model
               atIndex:index];
@@ -127,6 +130,7 @@
 
 - (NSArray *)insertObjects:(NSArray *)objects
                  atIndexes:(NSIndexSet *)indexes {
+    if ([objects count] == 0) return @[];
     NSArray *dataToAdd = [self modelSerializer:objects];
     [self insertModels:dataToAdd
              atIndexes:indexes];
@@ -135,6 +139,7 @@
 
 - (void)addModel:(id)model {
     NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+    if (!model) return;
     [_data addObject:model];
     [self triggerForEvent:SPoolEventOnAddModel];
 }
@@ -145,6 +150,7 @@
         NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     }
 #endif
+    if ([models count] == 0) return;
     [_data addObjectsFromArray:models];
     [self triggerForEvent:SPoolEventOnAddModel];
 }
@@ -158,6 +164,7 @@
 #endif
     [_data insertObjects:models
                atIndexes:indexes];
+    [self triggerForEvent:SPoolEventOnAddModel];
 }
 
 - (void)insertModel:(id)model
@@ -245,8 +252,8 @@
     poolAction.target = target;
     poolAction.selector = selector;
     poolAction.event = event;
-    
-    for (SPoolAction *action in _actions) {
+    NSArray *actions = [_actions copy];
+    for (SPoolAction *action in actions) {
         if ([poolAction compareWith:action] ) {
             return;
         }
@@ -260,7 +267,8 @@
 }
 
 - (void)triggerReactionsForEvent:(SPoolEvent)event {
-    for (SPoolReaction *reaction in [self reactions]) {
+    NSArray *reactions = [_reactions copy];
+    for (SPoolReaction *reaction in reactions) {
         if (reaction.event == SPoolEventOnChange
             || reaction.event == event) {
             reaction.reaction([_data copy]);
@@ -270,10 +278,9 @@
 
 - (void)triggerTargetForEvent:(SPoolEvent)event {
     NSMutableArray *dataToRemove = [NSMutableArray array];
-    for (SPoolAction *action in _actions) {
-        if (!action.target) {
-            [dataToRemove addObject:action];
-        } else {
+    NSArray *actions = [_actions copy];
+    for (SPoolAction *action in actions) {
+        if (action.target) {
             if (action.event == SPoolEventOnChange
                 || action.event == event) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -282,6 +289,8 @@
                                            withObject:self];
                 });
             }
+        } else {
+            [dataToRemove addObject:action];
         }
     }
     [_actions removeObjectsInArray:dataToRemove];
@@ -291,7 +300,8 @@
             selector:(SEL)selector
              onEvent:(SPoolEvent)event {
     NSMutableArray *dataToRemove = [NSMutableArray array];
-    for (SPoolAction *poolAction in _actions) {
+    NSArray *actions = [_actions copy];
+    for (SPoolAction *poolAction in actions) {
         if ([poolAction compareWithTarget:target
                                  selector:selector
                                     event:event]) {
