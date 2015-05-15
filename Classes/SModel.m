@@ -476,9 +476,11 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllReactions {
-    NSArray *reactions = [_reactions copy];
-    for (SModelReaction *reaction in reactions) {
-        [self removeReactionsForProperty:reaction.keyPath];
+    while ([_reactions count] > 0) {
+        SModelReaction *reaction = [_reactions firstObject];
+        if (reaction) {
+            [self removeReactionsForProperty:reaction.keyPath];
+        }
     }
 }
 
@@ -500,7 +502,6 @@ static const char *getPropertyType(objc_property_t property) {
     NSArray *actions = [self getActionsOfProperty:property
                                            target:target];
     if ([actions count] == 0) return;
-    [_actions removeObjectsInArray:actions];
     [self removeActions:actions
      observerForKeyPath:property];
 }
@@ -539,9 +540,11 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllActions {
-    NSArray *actions = [_actions copy];
-    for (SModelAction *action in actions) {
-        [self removeActionsForProperty:action.keyPath];
+    while ([_actions count] > 0) {
+        SModelAction *action = [_actions firstObject];
+        if (action) {
+            [self removeActionsForProperty:action.keyPath];
+        }
     }
 }
 
