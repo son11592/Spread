@@ -39,7 +39,6 @@ pod "Spread", "~> 1.1.1"
 ```swift
 
 class Model: SModel {
-
   dynamic var objectId: String!
   dynamic var name: String!
 }

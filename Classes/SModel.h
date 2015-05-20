@@ -244,5 +244,6 @@ typedef NS_ENUM(NSInteger, SModelEvent){
  *  @return Initial state.
  */
 - (BOOL)isInitiated;
+- (BOOL)isFetching;
 
 @end

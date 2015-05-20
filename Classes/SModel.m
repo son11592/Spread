@@ -203,7 +203,7 @@ static const char *getPropertyType(objc_property_t property) {
                 [mutableDictionary setObject:[self dictionarySerialization:value]
                                       forKey:propertyNameStrippedUnderscore];
             } else {
-                [mutableDictionary setValue:value
+                [mutableDictionary setValue:[self valueSerialization:value]
                                      forKey:propertyNameStrippedUnderscore];
             }
         }
@@ -226,7 +226,7 @@ static const char *getPropertyType(objc_property_t property) {
             [mutableDictionary setObject:[self dictionarySerialization:value]
                                   forKey:key];
         } else {
-            [mutableDictionary setObject:value
+            [mutableDictionary setObject:[self valueSerialization:value]
                                   forKey:key];
         }
     }
@@ -247,6 +247,10 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     return [mutableArray copy];
+}
+
+- (id)valueSerialization:(id)value {
+    return value;
 }
 
 // HELPER FUNCTION.
@@ -314,8 +318,8 @@ static const char *getPropertyType(objc_property_t property) {
     NSMutableArray *actions = [NSMutableArray array];
     NSArray *allActions = [_actions copy];
     for (SModelAction *action in allActions) {
-        if (!action.target || ([action.keyPath isEqualToString:property]
-                               && [action.target isEqual:target])) {
+        if ([action.keyPath isEqualToString:property]
+            && [action.target isEqual:target]) {
             [actions addObject:action];
         }
     }
@@ -410,7 +414,7 @@ static const char *getPropertyType(objc_property_t property) {
                            selector:selector
                             onEvent:event] count] > 0) {
 #ifdef DEBUG
-        NSLog(@"Duplicated register.");
+        NSLog(@"Duplicated register keyPath: %@", property);
 #endif
         return;
     }
@@ -629,6 +633,10 @@ static const char *getPropertyType(objc_property_t property) {
 
 - (BOOL)isInitiated {
     return _initiated;
+}
+
+- (BOOL)isFetching {
+    return _fetching;
 }
 
 - (void)dealloc {
