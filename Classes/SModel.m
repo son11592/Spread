@@ -203,7 +203,7 @@ static const char *getPropertyType(objc_property_t property) {
                 [mutableDictionary setObject:[self dictionarySerialization:value]
                                       forKey:propertyNameStrippedUnderscore];
             } else {
-                [mutableDictionary setValue:value
+                [mutableDictionary setValue:[self valueSerialization:value]
                                      forKey:propertyNameStrippedUnderscore];
             }
         }
@@ -226,7 +226,7 @@ static const char *getPropertyType(objc_property_t property) {
             [mutableDictionary setObject:[self dictionarySerialization:value]
                                   forKey:key];
         } else {
-            [mutableDictionary setObject:value
+            [mutableDictionary setObject:[self valueSerialization:value]
                                   forKey:key];
         }
     }
@@ -247,6 +247,10 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     return [mutableArray copy];
+}
+
+- (id)valueSerialization:(id)value {
+    return value;
 }
 
 // HELPER FUNCTION.
@@ -314,8 +318,8 @@ static const char *getPropertyType(objc_property_t property) {
     NSMutableArray *actions = [NSMutableArray array];
     NSArray *allActions = [_actions copy];
     for (SModelAction *action in allActions) {
-        if (!action.target || ([action.keyPath isEqualToString:property]
-            && [action.target isEqual:target])) {
+        if ([action.keyPath isEqualToString:property]
+            && [action.target isEqual:target]) {
             [actions addObject:action];
         }
     }
@@ -357,12 +361,35 @@ static const char *getPropertyType(objc_property_t property) {
     }
 }
 
-- (void)removeObserverForKeyPath:(NSString *)keyPath {
-    if ([[self getActionsOfProperty:keyPath] count] == 0
-        && [[self getReactionsOfProperty:keyPath] count] == 0) {
-        [self removeObserver:self
-                  forKeyPath:keyPath
-                     context:SPreadContext];
+- (void)removeActions:(NSArray *)actions
+   observerForKeyPath:(NSString *)keyPath {
+    @synchronized(self) {
+        NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
+        [[self getReactionsOfProperty:keyPath] count];
+        if (observerCount == 0) return;
+        [_actions removeObjectsInArray:actions];
+        if ([[self getActionsOfProperty:keyPath] count] == 0
+            && [[self getReactionsOfProperty:keyPath] count] == 0) {
+            [self removeObserver:self
+                      forKeyPath:keyPath
+                         context:SPreadContext];
+        }
+    }
+}
+
+- (void)removeReactions:(NSArray *)reactions
+     observerForKeyPath:(NSString *)keyPath {
+    @synchronized(self) {
+        NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
+        [[self getReactionsOfProperty:keyPath] count];
+        if (observerCount == 0) return;
+        [_reactions removeObjectsInArray:reactions];
+        if ([[self getActionsOfProperty:keyPath] count] == 0
+            && [[self getReactionsOfProperty:keyPath] count] == 0) {
+            [self removeObserver:self
+                      forKeyPath:keyPath
+                         context:SPreadContext];
+        }
     }
 }
 
@@ -387,7 +414,7 @@ static const char *getPropertyType(objc_property_t property) {
                            selector:selector
                             onEvent:event] count] > 0) {
 #ifdef DEBUG
-        NSLog(@"Duplicated register.");
+        NSLog(@"Duplicated register keyPath: %@", property);
 #endif
         return;
     }
@@ -427,15 +454,15 @@ static const char *getPropertyType(objc_property_t property) {
     NSArray *reactions = [self getReactionsOfProperty:property
                                               onEvent:event];
     if ([reactions count] == 0) return;
-    [_reactions removeObjectsInArray:reactions];
-    [self removeObserverForKeyPath:property];
+    [self removeReactions:reactions
+       observerForKeyPath:property];
 }
 
 - (void)removeReactionsForProperty:(NSString *)property {
     NSArray *reactions = [self getReactionsOfProperty:property];
     if ([reactions count] == 0) return;
-    [_reactions removeObjectsInArray:reactions];
-    [self removeObserverForKeyPath:property];
+    [self removeReactions:reactions
+       observerForKeyPath:property];
 }
 
 - (void)removeReactionsForProperties:(NSArray *)properties
@@ -453,9 +480,11 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllReactions {
-    NSArray *reactions = [_reactions copy];
-    for (SModelReaction *reaction in reactions) {
-        [self removeReactionsForProperty:reaction.keyPath];
+    while ([_reactions count] > 0) {
+        SModelReaction *reaction = [_reactions firstObject];
+        if (reaction) {
+            [self removeReactionsForProperty:reaction.keyPath];
+        }
     }
 }
 
@@ -468,8 +497,8 @@ static const char *getPropertyType(objc_property_t property) {
                                          selector:selector
                                           onEvent:event];
     if ([actions count] == 0) return;
-    [_actions removeObjectsInArray:actions];
-    [self removeObserverForKeyPath:property];
+    [self removeActions:actions
+     observerForKeyPath:property];
 }
 
 - (void)removeActionsForProperty:(NSString *)property
@@ -477,15 +506,15 @@ static const char *getPropertyType(objc_property_t property) {
     NSArray *actions = [self getActionsOfProperty:property
                                            target:target];
     if ([actions count] == 0) return;
-    [_actions removeObjectsInArray:actions];
-    [self removeObserverForKeyPath:property];
+    [self removeActions:actions
+     observerForKeyPath:property];
 }
 
 - (void)removeActionsForProperty:(NSString *)property {
     NSArray *actions = [self getActionsOfProperty:property];
     if ([actions count] == 0) return;
-    [_actions removeObjectsInArray:actions];
-    [self removeObserverForKeyPath:property];
+    [self removeActions:actions
+     observerForKeyPath:property];
 }
 
 - (void)removeActionsForProperties:(NSArray *)properties
@@ -515,9 +544,11 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllActions {
-    NSArray *actions = [_actions copy];
-    for (SModelAction *action in actions) {
-        [self removeActionsForProperty:action.keyPath];
+    while ([_actions count] > 0) {
+        SModelAction *action = [_actions firstObject];
+        if (action) {
+            [self removeActionsForProperty:action.keyPath];
+        }
     }
 }
 

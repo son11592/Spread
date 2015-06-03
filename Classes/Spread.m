@@ -63,7 +63,7 @@
     if ([pools count] > self.capacity - 1) {
         for (SPool *spool in pools) {
             if (!spool.keep) {
-                [[self pools] removeObject:spool];
+                [_pools removeObject:spool];
                 break;
             }
         }
@@ -120,7 +120,6 @@
         }
     }
     [[[self sharedInstance] poolActions] removeObjectsInArray:actionToRemove];
-    
     // Remove pool.
     SPool *pool = [self getPool:identifier];
     [[[self sharedInstance] pools] removeObject:pool];
