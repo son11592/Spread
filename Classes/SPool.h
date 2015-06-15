@@ -143,4 +143,6 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
             selector:(SEL)selector
              onEvent:(SPoolEvent)event;
 
+- (void)triggerForEvent:(SPoolEvent)event;
+
 @end

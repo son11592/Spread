@@ -74,7 +74,8 @@ completionHandler:(void(^)(id, NSError *))completion {
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset]
    forHTTPHeaderField:@"Content-Type"];
     [request setHTTPMethod:method];
-    if (parameters && ([method isEqualToString:@"POST"]
+    if (parameters && ([method isEqualToString:@"GET"]
+                       || [method isEqualToString:@"POST"]
                        || [method isEqualToString:@"PUT"]
                        || [method isEqualToString:@"DELETE"])) {
         [request setHTTPBody:[self getPOSTParameters:parameters]];
