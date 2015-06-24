@@ -68,8 +68,6 @@ static const char *getPropertyType(objc_property_t property) {
 
 @interface SModel()
 
-@property (nonatomic, copy) NSString *sourceUrl;
-@property (nonatomic, copy) NSString *sourceKeyPath;
 @property (nonatomic, getter=isFetching) BOOL fetching;
 @property (nonatomic, getter=isInitiated) BOOL initiated;
 
@@ -124,8 +122,6 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)commonInit {
-    _sourceKeyPath = @"";
-    _sourceUrl = nil;
     _fetching = NO;
     _initiated = NO;
 }
@@ -558,9 +554,6 @@ static const char *getPropertyType(objc_property_t property) {
                        context:(void *)context {
     id oldValue = change[@"old"];
     id newValue = change[@"new"];
-    if (context != SPreadContext) {
-        return;
-    }
     SModelEvent event = SModelEventOnChange;
     NSArray *reactions = [self getReactionsOfProperty:keyPath
                                               onEvent:event];
@@ -572,21 +565,20 @@ static const char *getPropertyType(objc_property_t property) {
     NSMutableArray *actionsToDelete = [NSMutableArray array];
     NSArray *actions = [self getActionsOfProperty:keyPath
                                           onEvent:event];
-    for (SModelAction *action in actions) {
-        if (action.target) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [NSThread detachNewThreadSelector:action.selector
-                                         toTarget:action.target
-                                       withObject:self];
-            });
-        } else {
-            [actionsToDelete addObject:action];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        for (SModelAction *action in actions) {
+            if (action.target) {
+                ((void (*)(id, SEL))[action.target methodForSelector:action.selector])(action.target,
+                                                                                       action.selector);
+            } else {
+                [actionsToDelete addObject:action];
+            }
         }
-    }
-    for (SModelAction *action in actionsToDelete) {
-        [self removeActionsForProperty:action.keyPath
-                                target:action.target];
-    }
+        for (SModelAction *action in actionsToDelete) {
+            [self removeActionsForProperty:action.keyPath
+                                    target:action.target];
+        }
+    }];
 }
 
 - (void)fetchInBackground {
@@ -600,7 +592,7 @@ static const char *getPropertyType(objc_property_t property) {
     _fetching = YES;
     __weak SModel *weakSelf = self;
     [SUtils request:[self getSourceUrl]
-             method:@"GET"
+             method:[self getSourceMethod]
          parameters:nil
   completionHandler:^(id response, NSError *error) {
       _fetching = NO;
@@ -615,20 +607,16 @@ static const char *getPropertyType(objc_property_t property) {
   }];
 }
 
-- (void)setSourceKeyPath:(NSString *)sourceKeyPath {
-    _sourceKeyPath = sourceKeyPath;
-}
-
-- (void)setSourceUrl:(NSString *)sourceUrl {
-    _sourceUrl = sourceUrl;
-}
-
 - (NSString *)getSourceKeyPath {
-    return _sourceKeyPath;
+    return @"";
 }
 
 - (NSString *)getSourceUrl {
-    return _sourceUrl;
+    return @"";
+}
+
+- (NSString *)getSourceMethod {
+    return @"GET";
 }
 
 - (BOOL)isInitiated {
@@ -642,6 +630,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)dealloc {
     [self removeAllActions];
     [self removeAllReactions];
+    SPreadContext = nil;
 }
 
 @end

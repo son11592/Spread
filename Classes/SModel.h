@@ -201,25 +201,13 @@ typedef NS_ENUM(NSInteger, SModelEvent){
 - (void)removeAllActions;
 
 /**
- *  Set source url for model.
- *
- *  @param sourceUrl The source url.
- */
-- (void)setSourceUrl:(NSString *)sourceUrl;
-
-/**
  *  Get source url.
  *
  *  @return The source url.
  */
 - (NSString *)getSourceUrl;
 
-/**
- *  Set key path for data source fetch from source url.
- *
- *  @param sourceKeyPath The source key path.
- */
-- (void)setSourceKeyPath:(NSString *)sourceKeyPath;
+- (NSString *)getSourceMethod;
 
 /**
  *  Get data key path.

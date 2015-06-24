@@ -110,17 +110,14 @@ class ViewController: UIViewController {
     let pool3 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool3Indentifier)
         
     pool3.onEvent(SPoolEvent.OnChange, reaction: { (data) -> Void in
-      
       NSLog("Pool reaction on init.")
     })
     
     pool3.onEvent(SPoolEvent.OnChange, reaction: { (data) -> Void in
-      
       NSLog("Pool reaction change.")
     })
     
     pool3.onEvent(SPoolEvent.OnRemoveModel, reaction: { (data) -> Void in
-      
       NSLog("Pool reaction on remove.")
     })
     
@@ -150,21 +147,22 @@ class ViewController: UIViewController {
     let carrotData = ["name": "One", "objectId": "one"]
     
     // Add object to pool and setup reaction.
-    let carrotInPool1: Carrot? = Spread.addObject(carrotData, toPool: self.pool1Indentifier) as? Carrot
+    let carrotInPool1 = Spread.addObject(carrotData, toPool: self.pool1Indentifier) as? Carrot
 
     carrotInPool1?.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+      carrotInPool1?.name = "name"
       self.carrot1Label.text = newValue as? String
     }
     
-    let carrotInPool2: Carrot? = Spread.addObject(carrotData, toPool: self.pool2Indentifier) as? Carrot
+    let carrotInPool2 = Spread.addObject(carrotData, toPool: self.pool2Indentifier) as? Carrot
     carrotInPool2?.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
       self.carrot2Label.text = newValue as? String
     }
     
-    let carrotInPool3: Carrot? = Spread.addObject(carrotData, toPool: self.pool3Indentifier) as? Carrot
+    let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier) as? Carrot
     
     NSLog("\(carrotInPool3?.toDictionary())")
-    
+
     carrotInPool3?.property("name", target: self, selector: "textChange", onEvent: SModelEvent.OnChange)
   }
   

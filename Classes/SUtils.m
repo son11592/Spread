@@ -64,6 +64,14 @@
      parameters:(NSDictionary *)parameters
 completionHandler:(void(^)(id, NSError *))completion {
     NSURL *requestUrl = nil;
+    NSString *requestMethod = [method uppercaseString];
+    if (![requestMethod isEqualToString:@"GET"] &&
+        ![requestMethod isEqualToString:@"POST"] &&
+        ![requestMethod isEqualToString:@"PUT"] &&
+        ![requestMethod isEqualToString:@"DELETE"]) {
+        NSLog(@"Unsupport method %@", method);
+        return;
+    }
     if ([method isEqualToString:@"GET"] && parameters) {
         requestUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@?%@", url, [self getGETParametersString:parameters]]];
     } else {
@@ -73,11 +81,8 @@ completionHandler:(void(^)(id, NSError *))completion {
     NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset]
    forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPMethod:method];
-    if (parameters && ([method isEqualToString:@"GET"]
-                       || [method isEqualToString:@"POST"]
-                       || [method isEqualToString:@"PUT"]
-                       || [method isEqualToString:@"DELETE"])) {
+    [request setHTTPMethod:requestMethod];
+    if (parameters) {
         [request setHTTPBody:[self getPOSTParameters:parameters]];
     }
     [request setTimeoutInterval:API_TIMEOUT_INTERVAL];

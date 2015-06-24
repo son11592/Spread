@@ -279,21 +279,20 @@
 - (void)triggerTargetForEvent:(SPoolEvent)event {
     NSMutableArray *dataToRemove = [NSMutableArray array];
     NSArray *actions = [_actions copy];
-    for (SPoolAction *action in actions) {
-        if (action.target) {
-            if (action.event == SPoolEventOnChange
-                || action.event == event) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [NSThread detachNewThreadSelector:action.selector
-                                             toTarget:action.target
-                                           withObject:self];
-                });
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        for (SPoolAction *action in actions) {
+            if (action.target) {
+                if (action.event == SPoolEventOnChange
+                    || action.event == event) {
+                    ((void (*)(id, SEL, id))[action.target methodForSelector:action.selector])(action.target,
+                                                                                               action.selector, self);
+                }
+            } else {
+                [dataToRemove addObject:action];
             }
-        } else {
-            [dataToRemove addObject:action];
         }
-    }
-    [_actions removeObjectsInArray:dataToRemove];
+        [_actions removeObjectsInArray:dataToRemove];
+    }];
 }
 
 - (void)removeTarget:(id)target
