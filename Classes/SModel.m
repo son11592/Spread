@@ -350,10 +350,15 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)registerObserverForKeyPath:(NSString *)keyPath {
     if ([[self getActionsOfProperty:keyPath] count] == 0
         && [[self getReactionsOfProperty:keyPath] count] == 0) {
+      @try {
         [self addObserver:self
                forKeyPath:keyPath
                   options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
                   context:SPreadContext];
+      }
+      @catch (NSException *exception) {
+        NSLog(@"Something went wrong, please notice the author about this warning");
+      }
     }
 }
 
@@ -366,9 +371,14 @@ static const char *getPropertyType(objc_property_t property) {
         [_actions removeObjectsInArray:actions];
         if ([[self getActionsOfProperty:keyPath] count] == 0
             && [[self getReactionsOfProperty:keyPath] count] == 0) {
+          @try {
             [self removeObserver:self
                       forKeyPath:keyPath
                          context:SPreadContext];
+          }
+          @catch (NSException *exception) {
+            NSLog(@"Something went wrong, please notice the author about this warning");
+          }
         }
     }
 }
@@ -382,9 +392,14 @@ static const char *getPropertyType(objc_property_t property) {
         [_reactions removeObjectsInArray:reactions];
         if ([[self getActionsOfProperty:keyPath] count] == 0
             && [[self getReactionsOfProperty:keyPath] count] == 0) {
+          @try {
             [self removeObserver:self
                       forKeyPath:keyPath
                          context:SPreadContext];
+          }
+          @catch (NSException *exception) {
+            NSLog(@"Something went wrong, please notice the author about this warning");
+          }
         }
     }
 }
