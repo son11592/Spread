@@ -122,6 +122,8 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)commonInit {
+    _actions = nil;
+    _reactions = nil;
     _fetching = NO;
     _initiated = NO;
 }
@@ -348,17 +350,19 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath {
-    if ([[self getActionsOfProperty:keyPath] count] == 0
-        && [[self getReactionsOfProperty:keyPath] count] == 0) {
-      @try {
-        [self addObserver:self
-               forKeyPath:keyPath
-                  options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
-                  context:SPreadContext];
-      }
-      @catch (NSException *exception) {
-        NSLog(@"Something went wrong, please notice the author about this warning");
-      }
+    @synchronized(self) {
+        if ([[self getActionsOfProperty:keyPath] count] == 0
+            && [[self getReactionsOfProperty:keyPath] count] == 0) {
+            @try {
+                [self addObserver:self
+                       forKeyPath:keyPath
+                          options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
+                          context:SPreadContext];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"[Register] Exception: %@", exception);
+            }
+        }
     }
 }
 
@@ -371,14 +375,14 @@ static const char *getPropertyType(objc_property_t property) {
         [_actions removeObjectsInArray:actions];
         if ([[self getActionsOfProperty:keyPath] count] == 0
             && [[self getReactionsOfProperty:keyPath] count] == 0) {
-          @try {
-            [self removeObserver:self
-                      forKeyPath:keyPath
-                         context:SPreadContext];
-          }
-          @catch (NSException *exception) {
-            NSLog(@"Something went wrong, please notice the author about this warning");
-          }
+            @try {
+                [self removeObserver:self
+                          forKeyPath:keyPath
+                             context:SPreadContext];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"[Remove action] Exception: %@", exception);
+            }
         }
     }
 }
@@ -392,14 +396,14 @@ static const char *getPropertyType(objc_property_t property) {
         [_reactions removeObjectsInArray:reactions];
         if ([[self getActionsOfProperty:keyPath] count] == 0
             && [[self getReactionsOfProperty:keyPath] count] == 0) {
-          @try {
-            [self removeObserver:self
-                      forKeyPath:keyPath
-                         context:SPreadContext];
-          }
-          @catch (NSException *exception) {
-            NSLog(@"Something went wrong, please notice the author about this warning");
-          }
+            @try {
+                [self removeObserver:self
+                          forKeyPath:keyPath
+                             context:SPreadContext];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"[Remove reaction] Exception: %@", exception);
+            }
         }
     }
 }
