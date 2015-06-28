@@ -3,6 +3,9 @@
 
 Spread is a data flow control. It changes the way you manage your data.
 
+[For more detail here](http://huypham.me/su-dung-spread-quan-li-data-flow-cho-ung-dung-ios)
+
+
 ## Features
 
 - [x] Create, mapping dictionary to model and model to dictionary, manage data model automatic.
