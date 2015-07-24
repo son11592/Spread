@@ -80,6 +80,9 @@ static const char *getPropertyType(objc_property_t property) {
     
     // Store action with target.
     NSMutableArray *_actions;
+    
+    // Store keyobserver.
+    NSMutableArray *_keyPaths;
 }
 
 // Lazy initial array to store reaction.
@@ -100,6 +103,15 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
     return _actions;
+}
+
+- (NSMutableArray *)keyPaths {
+    @synchronized(self) {
+        if (!_keyPaths) {
+            _keyPaths = [NSMutableArray array];
+        }
+    }
+    return _keyPaths;
 }
 
 
@@ -253,6 +265,32 @@ static const char *getPropertyType(objc_property_t property) {
 
 // HELPER FUNCTION.
 
+// Check keys path existed
+- (BOOL)keyPathExisted:(NSString *)keyPath {
+    NSArray *keyPaths = [_keyPaths copy];
+    for (NSString *key in keyPaths) {
+        if ([key isEqualToString:keyPath]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)addKeyPath:(NSString *)keyPath {
+    [[self keyPaths] addObject:[keyPath copy]];
+}
+
+- (void)removeKeyPath:(NSString *)keyPath {
+    NSArray *keyPaths = [_keyPaths copy];
+    NSMutableArray *keysToDelete = [NSMutableArray array];
+    for (NSString *key in keyPaths) {
+        if ([key isEqualToString:keyPath]) {
+            [keysToDelete addObject:key];
+        }
+    }
+    [_keyPaths removeObjectsInArray:keysToDelete];
+}
+
 // Get reaction of property on event.
 - (NSArray *)getReactionsOfProperty:(NSString *)property
                             onEvent:(SModelEvent)event {
@@ -350,14 +388,15 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath {
-    NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
-    [[self getReactionsOfProperty:keyPath] count];
-    if (observerCount == 0) {
+    if (![self keyPathExisted:keyPath]) {
         @try {
-            [self addObserver:self
-                   forKeyPath:keyPath
-                      options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
-                      context:SPreadContext];
+            @synchronized(self) {
+                [self addKeyPath:keyPath];
+                [self addObserver:self
+                       forKeyPath:keyPath
+                          options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
+                          context:SPreadContext];
+            }
         }
         @catch (NSException *exception) {
             NSLog(@"[Register] Exception: %@", exception);
@@ -366,16 +405,33 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeObserverForKeyPath:(NSString *)keyPath {
-    NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
-    [[self getReactionsOfProperty:keyPath] count];
-    if (observerCount == 0) {
+    if ([self keyPathExisted:keyPath]) {
         @try {
-            [self removeObserver:self
-                      forKeyPath:keyPath
-                         context:SPreadContext];
+            @synchronized(self) {
+                [self removeKeyPath:keyPath];
+                [self removeObserver:self
+                          forKeyPath:keyPath
+                             context:SPreadContext];
+            }
         }
         @catch (NSException *exception) {
             NSLog(@"[Remove action] Exception: %@", exception);
+        }
+    }
+}
+
+- (void)removeAllObservers {
+    @synchronized(self) {
+        NSArray *keyPaths = [_keyPaths copy];
+        for (NSString *keyPath in keyPaths) {
+            @try {
+                [self removeObserver:self
+                          forKeyPath:keyPath
+                             context:SPreadContext];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"[Remove action] Exception: %@", exception);
+            }
         }
     }
 }
@@ -641,8 +697,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)dealloc {
-    [self removeAllActions];
-    [self removeAllReactions];
+    [self removeAllObservers];
     SPreadContext = nil;
 }
 
