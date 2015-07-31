@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
-static void * SPreadContext = &SPreadContext;
+static void * const SPreadContext = (void*)&SPreadContext;
 
 #import "SModel.h"
 
@@ -698,7 +698,6 @@ static const char *getPropertyType(objc_property_t property) {
 
 - (void)dealloc {
     [self removeAllObservers];
-    SPreadContext = nil;
 }
 
 @end
