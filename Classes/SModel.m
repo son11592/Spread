@@ -181,7 +181,9 @@ static const char *getPropertyType(objc_property_t property) {
                 if ([self respondsToSelector:selector]) {
                     ((void (*)(id, SEL))[self methodForSelector:selector])(self, selector);
                 } else {
-                    if ([instanceType respondsToSelector:@selector(init)]) {
+                    if ([instanceType respondsToSelector:@selector(initWithDictionary:)]) {
+                        [self setValue:[instanceType initWithDictionary:@{}] forKey:propertyName];
+                    } else if ([instanceType respondsToSelector:@selector(init)]) {
                         [self setValue:[instanceType init] forKey:propertyName];
                     }
                 }
