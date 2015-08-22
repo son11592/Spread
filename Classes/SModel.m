@@ -8,9 +8,7 @@
 
 static void * const SPreadContext = (void*)&SPreadContext;
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
 #import "SModel.h"
 #import "SUtils.h"
 #import <objc/runtime.h>
