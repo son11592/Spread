@@ -8,8 +8,10 @@
 
 static void * const SPreadContext = (void*)&SPreadContext;
 
-#import "SModel.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
+#import "SModel.h"
 #import "SUtils.h"
 #import <objc/runtime.h>
 
@@ -83,6 +85,9 @@ static const char *getPropertyType(objc_property_t property) {
     
     // Store keyobserver.
     NSMutableArray *_keyPaths;
+    
+    // Store attributes and type.
+    NSMutableDictionary *_attributes;
 }
 
 // Lazy initial array to store reaction.
@@ -138,6 +143,7 @@ static const char *getPropertyType(objc_property_t property) {
     _reactions = nil;
     _fetching = NO;
     _initiated = NO;
+    _attributes = [NSMutableDictionary dictionary];
 }
 
 // Return name tripped underscore
@@ -166,8 +172,10 @@ static const char *getPropertyType(objc_property_t property) {
                                                         encoding:NSUTF8StringEncoding];
             NSString *propertyType = [NSString stringWithCString:propType
                                                         encoding:NSUTF8StringEncoding];
+            NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
+            [_attributes setValue:propertyType forKey:propertyNameStrippedUnderscore];
             id instanceType = [NSClassFromString(propertyType) alloc];
-            id value = [dictionary valueForKey:[self getPropertyNameStrippedUnderscore:propertyName]];
+            id value = [dictionary valueForKey:propertyNameStrippedUnderscore];
             if (value && value != [NSNull null]) {
                 if ([instanceType respondsToSelector:@selector(initWithDictionary:)]) {
                     [self setValue:[instanceType initWithDictionary:value] forKey:propertyName];
@@ -209,13 +217,14 @@ static const char *getPropertyType(objc_property_t property) {
                 [mutableDictionary setObject:[value toDictionary]
                                       forKey:propertyNameStrippedUnderscore];
             } else if ([value isKindOfClass:[NSArray class]]) {
-                [mutableDictionary setObject:[self arraySerialization:value]
+                [mutableDictionary setObject:[self arraySerializer:value]
                                       forKey:propertyNameStrippedUnderscore];
             } else if ([value isKindOfClass:[NSDictionary class]]) {
-                [mutableDictionary setObject:[self dictionarySerialization:value]
+                [mutableDictionary setObject:[self dictionarySerializer:value]
                                       forKey:propertyNameStrippedUnderscore];
             } else {
-                [mutableDictionary setValue:[self valueSerialization:value]
+                [mutableDictionary setValue:[self valueSerializer:value
+                                                              key:propertyNameStrippedUnderscore]
                                      forKey:propertyNameStrippedUnderscore];
             }
         }
@@ -224,7 +233,7 @@ static const char *getPropertyType(objc_property_t property) {
     return [mutableDictionary copy];
 }
 
-- (NSDictionary *)dictionarySerialization:(NSDictionary *)dictionary {
+- (NSDictionary *)dictionarySerializer:(NSDictionary *)dictionary {
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionary];
     for (NSString *key in [dictionary allKeys]) {
         id value = [dictionary valueForKey:key];
@@ -232,28 +241,29 @@ static const char *getPropertyType(objc_property_t property) {
             [mutableDictionary setObject:[value toDictionary]
                                   forKey:key];
         } else if ([value isKindOfClass:[NSArray class]]){
-            [mutableDictionary setObject:[self arraySerialization:value]
+            [mutableDictionary setObject:[self arraySerializer:value]
                                   forKey:key];
         } else if ([value isKindOfClass:[NSDictionary class]]) {
-            [mutableDictionary setObject:[self dictionarySerialization:value]
+            [mutableDictionary setObject:[self dictionarySerializer:value]
                                   forKey:key];
         } else {
-            [mutableDictionary setObject:[self valueSerialization:value]
+            [mutableDictionary setObject:[self valueSerializer:value
+                                                           key:key]
                                   forKey:key];
         }
     }
     return [mutableDictionary copy];
 }
 
-- (NSArray *)arraySerialization:(NSArray *)array {
+- (NSArray *)arraySerializer:(NSArray *)array {
     NSMutableArray *mutableArray = [NSMutableArray array];
     for (id value in array) {
         if ([[value class] isSubclassOfClass:[SModel class]]) {
             [mutableArray addObject:[value toDictionary]];
         } else if ([value isKindOfClass:[NSArray class]]){
-            [mutableArray addObject:[self arraySerialization:value]];
+            [mutableArray addObject:[self arraySerializer:value]];
         } else if ([value isKindOfClass:[NSDictionary class]]) {
-            [mutableArray addObject:[self dictionarySerialization:value]];
+            [mutableArray addObject:[self dictionarySerializer:value]];
         } else {
             [mutableArray addObject:value];
         }
@@ -261,7 +271,71 @@ static const char *getPropertyType(objc_property_t property) {
     return [mutableArray copy];
 }
 
-- (id)valueSerialization:(id)value {
+- (id)valueSerializer:(id)value key:(NSString *)key {
+    NSString *type  = [_attributes valueForKey:key];
+    if ([type isEqualToString:@"q"]) {
+        NSInteger integerValue = [value integerValue];
+        return @(integerValue);
+    }
+    if ([type isEqualToString:@"Q"]) {
+        NSUInteger uintegerValue = [value integerValue];
+        return @(uintegerValue);
+    }
+    
+    if ([type isEqualToString:@"B"]) {
+        BOOL boolValue = [value boolValue];
+        return @(boolValue);
+    }
+    
+    if ([type isEqualToString:@"C"]) {
+        Boolean boolValue = [value boolValue];
+        return @(boolValue);
+    }
+    
+    if ([type isEqualToString:@"d"]) {
+        double floatValue = [value floatValue];
+        return @(floatValue);
+    }
+    
+    if ([type isEqualToString:@"{CGSize=dd}"]) {
+        CGSize size = [value CGSizeValue];
+        NSMutableDictionary *sizeDictionary = [NSMutableDictionary dictionary];
+        [sizeDictionary setValue:@(size.width) forKey:@"width"];
+        [sizeDictionary setValue:@(size.height) forKey:@"height"];
+        return [sizeDictionary copy];
+    }
+    
+    if ([type isEqualToString:@"{CGRect={CGPoint=dd}{CGSize=dd}}"]) {
+        CGRect rect = [value CGRectValue];
+        NSMutableDictionary *rectDictionary = [NSMutableDictionary dictionary];
+        
+        NSMutableDictionary *sizeDictionary = [NSMutableDictionary dictionary];
+        [sizeDictionary setValue:@(rect.size.width) forKey:@"width"];
+        [sizeDictionary setValue:@(rect.size.height) forKey:@"height"];
+        
+        NSMutableDictionary *originDictionary = [NSMutableDictionary dictionary];
+        [originDictionary setValue:@(rect.origin.x) forKey:@"x"];
+        [originDictionary setValue:@(rect.origin.y) forKey:@"y"];
+        
+        [rectDictionary setValue:[sizeDictionary copy] forKey:@"size"];
+        [rectDictionary setValue:[originDictionary copy] forKey:@"origin"];
+        return [rectDictionary copy];
+    }
+    
+    if ([type isEqualToString:@"{CGPoint=dd}"]) {
+        CGPoint point = [value CGPointValue];
+        NSMutableDictionary *pointDictionary = [NSMutableDictionary dictionary];
+        [pointDictionary setValue:@(point.x) forKey:@"x"];
+        [pointDictionary setValue:@(point.y) forKey:@"y"];
+        return [pointDictionary copy];
+    }
+    
+    if ([type isEqualToString:@"NSString"]) {
+        return value;
+    }
+    
+    // Add more value serializer here.
+    
     return value;
 }
 

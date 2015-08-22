@@ -15,6 +15,7 @@
 		11004B3F1AC43D8200013372 /* SModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 11004B3E1AC43D8200013372 /* SModel.m */; };
 		11004B421AC45CF500013372 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B411AC45CF500013372 /* Networking.swift */; };
 		11004B451AC4608700013372 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B441AC4608700013372 /* Carrot.swift */; };
+		1109151C1B88FA63006CC848 /* Milk.m in Sources */ = {isa = PBXBuildFile; fileRef = 1109151B1B88FA63006CC848 /* Milk.m */; };
 		110E2C011ADD8358004F5764 /* SRemoteTaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 110E2C001ADD8358004F5764 /* SRemoteTaskManager.m */; };
 		110E2C041ADD83F8004F5764 /* SRemoteTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 110E2C031ADD83F8004F5764 /* SRemoteTask.m */; };
 		110E2C091ADDA8FB004F5764 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110E2C081ADDA8FB004F5764 /* Task.swift */; };
@@ -52,6 +53,8 @@
 		11004B3E1AC43D8200013372 /* SModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SModel.m; path = Classes/SModel.m; sourceTree = "<group>"; };
 		11004B411AC45CF500013372 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Networking.swift; path = Spread/Utils/Networking.swift; sourceTree = "<group>"; };
 		11004B441AC4608700013372 /* Carrot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Carrot.swift; path = Models/Carrot.swift; sourceTree = "<group>"; };
+		1109151A1B88FA63006CC848 /* Milk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Milk.h; path = Models/Milk.h; sourceTree = "<group>"; };
+		1109151B1B88FA63006CC848 /* Milk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Milk.m; path = Models/Milk.m; sourceTree = "<group>"; };
 		110E2BFF1ADD8358004F5764 /* SRemoteTaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRemoteTaskManager.h; path = Classes/SRemoteTaskManager.h; sourceTree = "<group>"; };
 		110E2C001ADD8358004F5764 /* SRemoteTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRemoteTaskManager.m; path = Classes/SRemoteTaskManager.m; sourceTree = "<group>"; };
 		110E2C021ADD83F8004F5764 /* SRemoteTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRemoteTask.h; path = Classes/SRemoteTask.h; sourceTree = "<group>"; };
@@ -175,6 +178,8 @@
 			isa = PBXGroup;
 			children = (
 				11004B441AC4608700013372 /* Carrot.swift */,
+				1109151A1B88FA63006CC848 /* Milk.h */,
+				1109151B1B88FA63006CC848 /* Milk.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -290,6 +295,7 @@
 				11004B181AC4252100013372 /* ViewController.swift in Sources */,
 				11004B3F1AC43D8200013372 /* SModel.m in Sources */,
 				110E2C041ADD83F8004F5764 /* SRemoteTask.m in Sources */,
+				1109151C1B88FA63006CC848 /* Milk.m in Sources */,
 				110E2C091ADDA8FB004F5764 /* Task.swift in Sources */,
 				11004B161AC4252100013372 /* AppDelegate.swift in Sources */,
 				110E2C011ADD8358004F5764 /* SRemoteTaskManager.m in Sources */,

@@ -10,6 +10,6 @@ import UIKit
 
 class Carrot: SModel {
   
-  dynamic var objectId: String!
-  dynamic var name: String!
+  dynamic var objectId: NSString!
+  dynamic var name: NSString!
 }

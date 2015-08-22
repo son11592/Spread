@@ -137,10 +137,12 @@ class ViewController: UIViewController {
     
     // Create dummies data.
     let carrotData = ["name": "One", "objectId": "one"]
+    let milk = Milk(dictionary: [NSObject : AnyObject]())
+    NSLog("%@", milk.toDictionary())
     
     // Add object to pool and setup reaction.
     let carrotInPool1 = Spread.addObject(carrotData, toPool: self.pool1Indentifier) as? Carrot
-
+    
     carrotInPool1?.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
       self.carrot1Label.text = newValue as? String
     }
