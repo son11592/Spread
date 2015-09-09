@@ -145,4 +145,6 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 
 - (void)triggerForEvent:(SPoolEvent)event;
 
+@property (nonatomic, strong) NSDictionary *info;
+
 @end
