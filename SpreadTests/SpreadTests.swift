@@ -138,10 +138,10 @@ class SpreadTests: XCTestCase {
     
     func testPerformance() {
         self.measureBlock() {
-            for i in 1...1000 {
+            for _ in 1...1000 {
                 Spread.addObject(self.model4Data, toPool: self.pool4Identifier)
             }
-            for i in 1...2 {
+            for _ in 1...2 {
                 Spread.outEvent(self.poolChangeNameEvent,
                     value: ["name": "A new name", "objectId": "match all object id"])
             }

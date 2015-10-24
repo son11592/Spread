@@ -102,8 +102,8 @@ class ViewController: UIViewController {
     SRemoteTaskManager.addTask(task6)
     
     // Config Spread pools.
-    let pool1 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier, keep: true)
-    let pool2 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
+    Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool1Indentifier, keep: true)
+    Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool2Indentifier)
     let pool3 = Spread.registerClass(Carrot.classForCoder(), forPoolIdentifier: self.pool3Indentifier)
         
     pool3.onEvent(SPoolEvent.OnChange, reaction: { (data) -> Void in
@@ -184,7 +184,7 @@ class ViewController: UIViewController {
   func textViewDidChange(textField: UITextField) {
     let text = textField.text
     Spread.outEvent(self.action1Identifier,
-      value: ["name": text, "objectId": "one"])
+      value: ["name": text!, "objectId": "one"])
   }
 }
 
