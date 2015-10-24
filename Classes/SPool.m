@@ -119,6 +119,12 @@
     return dataToAdd;
 }
 
+- (NSArray *)replaceByObjects:(NSArray *)objects {
+  NSArray *dataToReplace = [self modelSerializer:objects];
+  [self replaceByModels:dataToReplace];
+  return dataToReplace;
+}
+
 - (id)insertObject:(NSDictionary *)object
            atIndex:(NSUInteger)index {
     if (!object) return nil;
@@ -153,6 +159,17 @@
     if ([models count] == 0) return;
     [_data addObjectsFromArray:models];
     [self triggerForEvent:SPoolEventOnAddModel];
+}
+
+- (void)replaceByModels:(NSArray *)models {
+#ifdef DEBUG
+    for (id model in models) {
+      NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+    }
+#endif
+    [_data removeAllObjects];
+    [_data addObjectsFromArray:models];
+    [self triggerForEvent:SPoolEventOnChange];
 }
 
 - (void)insertModels:(NSArray *)models

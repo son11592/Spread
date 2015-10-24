@@ -58,6 +58,8 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
  */
 - (NSArray *)addObjects:(NSArray *)objects;
 
+- (NSArray *)replaceByObjects:(NSArray *)objects;
+
 - (id)insertObject:(NSDictionary *)object
            atIndex:(NSUInteger)index;
 
@@ -67,6 +69,8 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 - (void)addModel:(id)model;
 
 - (void)addModels:(NSArray *)models;
+
+- (void)replaceByModels:(NSArray *)models;
 
 - (void)insertModel:(id)model
             atIndex:(NSInteger)index;
