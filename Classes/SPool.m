@@ -335,9 +335,6 @@
 - (void)dealloc {
     [_actions removeAllObjects];
     [_reactions removeAllObjects];
-#ifdef DEBUG
-    NSLog(@"Pool release.");
-#endif
 }
 
 @end
