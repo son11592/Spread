@@ -27,7 +27,7 @@ class OtherTask: SRemoteTask {
     return "www.google.com"
   }
   
-  override func dequeueCondtion(executingTask: SRemoteTask!) -> Bool {
+  override func dequeue(executingTask: SRemoteTask!) -> Bool {
     let task = executingTask as! OtherTask
     if self.objectId != task.objectId {
       return true
@@ -35,7 +35,7 @@ class OtherTask: SRemoteTask {
     return false
   }
   
-  override func enqueueCondtion(penddingTask: SRemoteTask!) -> Bool {
+  override func enqueue(penddingTask: SRemoteTask!) -> Bool {
     let task = penddingTask as! OtherTask
     if self.objectId == task.objectId
       && self.nameSpace == task.nameSpace {

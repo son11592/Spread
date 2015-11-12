@@ -51,11 +51,11 @@
 }
 
 
-- (BOOL)dequeueCondtion:(SRemoteTask *)executingTask {
+- (BOOL)dequeue:(SRemoteTask *)executingTask {
     return YES;
 }
 
-- (BOOL)enqueueCondtion:(SRemoteTask *)penddingTask {
+- (BOOL)enqueue:(SRemoteTask *)penddingTask {
     return YES;
 }
 

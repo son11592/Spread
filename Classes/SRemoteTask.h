@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, SRemoteTaskMethod){
  *  @param executingTask Executing task object in queue.
  *  @return task will dequeue or not.
  */
-- (BOOL)dequeueCondtion:(SRemoteTask *)executingTask;
+- (BOOL)dequeue:(SRemoteTask *)executingTask;
 
 /**
  *  Enqueue condition for task object.
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, SRemoteTaskMethod){
  *  @param penddingTask Pendding task object in queue.
  *  @return task in pending queue will remove or not.
  */
-- (BOOL)enqueueCondtion:(SRemoteTask *)penddingTask;
+- (BOOL)enqueue:(SRemoteTask *)penddingTask;
 
 - (void)addHanlder:(void (^)(id, NSError *))handler;
 - (NSString *)getRequestUrl;

@@ -32,7 +32,6 @@
 - (void)commonInit {
     _pendingTasks = [[NSMutableArray alloc] init];
     _executingTasks = [[NSMutableArray alloc] init];
-    
     NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
     [queue addObserver:self
             forKeyPath:@"operations"
@@ -76,7 +75,6 @@
         if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
             return;
         }
-        
         for (SRemoteTask *pendingTask in [_pendingTasks copy]) {
             if ([self checkDequeueCondtion:pendingTask]) {
                 [_executingTasks addObject:pendingTask];
@@ -98,7 +96,7 @@
         return YES;
     }
     NSArray *tasks = [executingTasksWithKind filter:^BOOL(SRemoteTask *element) {
-        return ![task dequeueCondtion:element];
+        return ![task dequeue:element];
     }];
     if ([tasks count] == 0) {
         return YES;
@@ -117,7 +115,7 @@
                                    return [task isKindOfClass:[element class]];
                                }]
                               filter:^BOOL(id element) {
-                                  return ![task enqueueCondtion:element];
+                                  return ![task enqueue:element];
                               }];
     [pendingTasks removeObjectsInArray:tasksToRemove];
     [pendingTasks addObject:task];
