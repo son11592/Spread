@@ -233,5 +233,6 @@ typedef NS_ENUM(NSInteger, SModelEvent){
  */
 - (BOOL)isInitiated;
 - (BOOL)isFetching;
+- (void)setIsInitiated:(BOOL)initiated;
 
 @end

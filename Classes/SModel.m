@@ -766,6 +766,10 @@ static const char *getPropertyType(objc_property_t property) {
     return _initiated;
 }
 
+- (void)setIsInitiated:(BOOL)initiated {
+    _initiated = initiated;
+}
+
 - (BOOL)isFetching {
     return _fetching;
 }
