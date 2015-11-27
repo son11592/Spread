@@ -172,8 +172,14 @@ static const char *getPropertyType(objc_property_t property) {
                                                         encoding:NSUTF8StringEncoding];
             NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
             [_attributes setValue:propertyType forKey:propertyNameStrippedUnderscore];
-            id instanceType = [NSClassFromString(propertyType) alloc];
+            id instanceType = [self valueForKey:propertyName];
             id value = [dictionary valueForKey:propertyNameStrippedUnderscore];
+            if ((instanceType == nil) || ![NSClassFromString(propertyType) isSubclassOfClass:[SModel class]]) {
+                instanceType = [NSClassFromString(propertyType) alloc];
+            } else {
+               [instanceType initData:value];
+               continue;
+            }
             if (value && value != [NSNull null]) {
                 if ([instanceType respondsToSelector:@selector(initWithDictionary:)]) {
                     [self setValue:[instanceType initWithDictionary:value] forKey:propertyName];
