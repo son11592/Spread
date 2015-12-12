@@ -9,6 +9,7 @@
 #define API_TIMEOUT_INTERVAL 20.0
 
 #import "SUtils.h"
+#import "Spread.h"
 
 @implementation SUtils
 
@@ -79,6 +80,17 @@ completionHandler:(void(^)(id, NSError *))completion {
     }
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestUrl];
     NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+    NSDictionary *headers = [Spread getNetworkHeaders];
+    for (NSString *key in [headers allKeys]) {
+        NSString *value = [headers valueForKey:key];
+        if (!value) {
+            continue;
+        }
+        if (![value isEqualToString:@""]) {
+            [request setValue:value
+           forHTTPHeaderField:key];
+        }
+    }
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset]
    forHTTPHeaderField:@"Content-Type"];
     [request setHTTPMethod:requestMethod];

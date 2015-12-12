@@ -18,6 +18,10 @@
  */
 + (instancetype)sharedInstance;
 
++ (void)setNetworkHeader:(NSDictionary *)headers;
+
++ (NSDictionary *)getNetworkHeaders;
+
 /**
  *  Register class for pools.
  *

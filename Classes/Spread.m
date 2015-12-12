@@ -28,6 +28,7 @@
 
 @property (nonatomic, strong) NSMutableArray *pools;
 @property (nonatomic, strong) NSMutableArray *poolActions;
+@property (nonatomic, strong) NSDictionary *networkHeader;
 @property (nonatomic) NSInteger capacity;
 
 @end
@@ -41,6 +42,14 @@
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;
+}
+
++ (void)setNetworkHeader:(NSDictionary *)headers {
+    [[self sharedInstance] setNetworkHeader:headers];
+}
+
++ (NSDictionary *)getNetworkHeaders {
+    return [[self sharedInstance] networkHeader];
 }
 
 - (instancetype)init {
