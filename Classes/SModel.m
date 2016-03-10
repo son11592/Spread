@@ -716,9 +716,10 @@ static const char *getPropertyType(objc_property_t property) {
                                           onEvent:event];
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         for (SModelAction *action in actions) {
-            if (action.target) {
-                ((void (*)(id, SEL))[action.target methodForSelector:action.selector])(action.target,
-                                                                                       action.selector);
+            id target = action.target;
+            if (target) {
+                ((void (*)(id, SEL))[target methodForSelector:action.selector])(target,
+                                                                                action.selector);
             } else {
                 [actionsToDelete addObject:action];
             }

@@ -298,11 +298,12 @@
     NSArray *actions = [_actions copy];
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         for (SPoolAction *action in actions) {
-            if (action.target) {
+            id target = action.target;
+            if (target) {
                 if (action.event == SPoolEventOnChange
                     || action.event == event) {
-                    ((void (*)(id, SEL, id))[action.target methodForSelector:action.selector])(action.target,
-                                                                                               action.selector, self);
+                    ((void (*)(id, SEL, id))[target methodForSelector:action.selector])(target,
+                                                                                        action.selector, self);
                 }
             } else {
                 [dataToRemove addObject:action];
