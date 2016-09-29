@@ -17,23 +17,23 @@ class Model: SModel {
 }
 
 class SpreadTests: XCTestCase {
-    private let pool1Identifier = "pool1Identifier"
-    private let pool2Identifier = "pool2Identifier"
-    private let pool3Identifier = "pool3Identifier"
-    private let pool4Identifier = "pool4Identifier"
+    fileprivate let pool1Identifier = "pool1Identifier"
+    fileprivate let pool2Identifier = "pool2Identifier"
+    fileprivate let pool3Identifier = "pool3Identifier"
+    fileprivate let pool4Identifier = "pool4Identifier"
     
-    private var model1Name = ""
-    private var model2Name = ""
-    private var model3Name = ""
+    fileprivate var model1Name = ""
+    fileprivate var model2Name = ""
+    fileprivate var model3Name = ""
     
     // Init data.
-    private let model1Data = ["name": "One", "objectId": "match all object id"]
-    private let model2Data = ["name": "Two", "objectId": "match all object id"]
-    private let model3Data = ["name": "Three", "objectId": "match all object id"]
-    private let model4Data = ["name": "Four", "objectId": "match all object id"]
-    private let model5Data = ["name": "Five", "objectId": "match all object id"]
+    fileprivate let model1Data = ["name": "One", "objectId": "match all object id"]
+    fileprivate let model2Data = ["name": "Two", "objectId": "match all object id"]
+    fileprivate let model3Data = ["name": "Three", "objectId": "match all object id"]
+    fileprivate let model4Data = ["name": "Four", "objectId": "match all object id"]
+    fileprivate let model5Data = ["name": "Five", "objectId": "match all object id"]
     
-    private let poolChangeNameEvent = "ChangeName"
+    fileprivate let poolChangeNameEvent = "ChangeName"
     
     override func setUp() {
         super.setUp()
@@ -51,8 +51,8 @@ class SpreadTests: XCTestCase {
                 self.pool3Identifier,
                 self.pool4Identifier]) { (value, spool) -> Void in
                     
-                    let objectId = (value as! NSDictionary).valueForKey("objectId") as! String
-                    let newName = (value as! NSDictionary).valueForKey("name") as! String
+                    let objectId = (value as! NSDictionary).value(forKey: "objectId") as! String
+                    let newName = (value as! NSDictionary).value(forKey: "name") as! String
                     let models = spool.allModels().filter({ (model) -> Bool in
                         return (model as! Model).objectId == objectId
                     })
@@ -64,17 +64,17 @@ class SpreadTests: XCTestCase {
         
         // Add data to pool and binding data.
         let model1 = Spread.addObject(model1Data, toPool: self.pool1Identifier)
-        model1.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+        model1.property("name", on: SModelEvent.onChange) { (oldValue, newValue) -> Void in
             self.model1Name = newValue as! String
         }
         Spread.addObject(model5Data, toPool: self.pool1Identifier)
         
         let model2 = Spread.addObject(model2Data, toPool: self.pool2Identifier)
-        model2.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+        model2.property("name", on: SModelEvent.onChange) { (oldValue, newValue) -> Void in
             self.model2Name = newValue as! String
         }
         let model3 = Spread.addObject(model3Data, toPool: self.pool3Identifier)
-        model3.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+        model3.property("name", on: SModelEvent.onChange) { (oldValue, newValue) -> Void in
             self.model3Name = newValue as! String
         }
     }
@@ -137,7 +137,7 @@ class SpreadTests: XCTestCase {
     }
     
     func testPerformance() {
-        self.measureBlock() {
+        self.measure() {
             for _ in 1...1000 {
                 Spread.addObject(self.model4Data, toPool: self.pool4Identifier)
             }
@@ -149,7 +149,7 @@ class SpreadTests: XCTestCase {
     }
     
     func testRemovePool() {
-        Spread.removePoolWithIdentifier(self.pool2Identifier)
+        Spread.removePool(withIdentifier: self.pool2Identifier)
         let pool: SPool? = Spread.getPool(self.pool2Identifier)
         XCTAssertNil(pool, "Must be nil")
     }

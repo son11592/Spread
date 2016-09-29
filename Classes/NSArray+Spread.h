@@ -8,8 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSArray (Spread)
 
 - (NSArray *)filter:(BOOL (^)(id))filter;
 
 @end
+
+NS_ASSUME_NONNULL_END

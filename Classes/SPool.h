@@ -8,6 +8,8 @@
 
 #import "NSArray+Spread.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  Spool event.
  */
@@ -152,3 +154,5 @@ typedef NS_ENUM(NSInteger, SPoolEvent){
 @property (nonatomic, strong) NSDictionary *info;
 
 @end
+
+NS_ASSUME_NONNULL_END

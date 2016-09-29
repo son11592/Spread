@@ -9,6 +9,8 @@
 #import "SModel.h"
 #import "SPool.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Spread : NSObject
 
 /**
@@ -164,3 +166,5 @@
 + (void)setCapacity:(NSInteger)capacity;
 
 @end
+
+NS_ASSUME_NONNULL_END

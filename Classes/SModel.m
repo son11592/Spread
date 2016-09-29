@@ -732,7 +732,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)fetchInBackground {
-    [self fetchInBackground:nil];
+    [self fetchInBackground: nil];
 }
 
 - (void)fetchInBackground:(void (^)(id, NSError *))completion {

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  SModel events description.
  */
@@ -224,7 +226,7 @@ typedef NS_ENUM(NSInteger, SModelEvent){
 /**
  *  Fetch data in background and handle data when fetch data completed.
  */
-- (void)fetchInBackground:(void(^)(id response, NSError *error))completion;
+- (void)fetchInBackground:(nullable void(^)(id response, NSError *error))completion;
 
 /**
  *  Object initial status.
@@ -236,3 +238,5 @@ typedef NS_ENUM(NSInteger, SModelEvent){
 - (void)setIsInitiated:(BOOL)initiated;
 
 @end
+
+NS_ASSUME_NONNULL_END

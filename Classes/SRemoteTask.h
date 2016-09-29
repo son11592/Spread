@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  SRemoteTask method description.
  */
@@ -60,3 +62,5 @@ typedef NS_ENUM(NSInteger, SRemoteTaskMethod){
 - (NSString *)getMethodString;
 
 @end
+
+NS_ASSUME_NONNULL_END
