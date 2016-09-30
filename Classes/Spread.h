@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return           Pool object.
  */
-+ (SPool *)getPool:(NSString *)identifier;
++ (nullable SPool *)getPool:(NSString *)identifier;
 
 /**
  *  Add an object to pool.

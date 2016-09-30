@@ -85,15 +85,15 @@ class SpreadTests: XCTestCase {
     
     func testCountingAddAndRemoveObejct() {
         let pool4 = Spread.getPool(self.pool4Identifier)
-        let numberObjectBeforeAdd = pool4.allModels().count
+        let numberObjectBeforeAdd = pool4?.allModels().count
         
         let model = Spread.addObject(model4Data, toPool: self.pool4Identifier)
-        let numberObjectAfterAdded = pool4.allModels().count
-        XCTAssertEqual(numberObjectBeforeAdd, numberObjectAfterAdded - 1)
+        let numberObjectAfterAdded = pool4?.allModels().count
+        XCTAssertEqual(numberObjectBeforeAdd, numberObjectAfterAdded! - 1)
 
         Spread.removeModel(model, fromPool: self.pool4Identifier)
-        let numberObjectAfterRemove = pool4.allModels().count
-        XCTAssertEqual(numberObjectAfterAdded, numberObjectAfterRemove + 1)
+        let numberObjectAfterRemove = pool4?.allModels().count
+        XCTAssertEqual(numberObjectAfterAdded, numberObjectAfterRemove! + 1)
     }
     
     func testReactionWhenMatchObjectId() {
