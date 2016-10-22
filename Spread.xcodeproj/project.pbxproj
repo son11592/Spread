@@ -66,7 +66,7 @@
 		1170D2101AD6D3E900924E72 /* SUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUtils.m; path = Classes/SUtils.m; sourceTree = "<group>"; };
 		11B1E1961AD22E9100765C35 /* NSArray+Spread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Spread.h"; path = "Classes/NSArray+Spread.h"; sourceTree = "<group>"; };
 		11B1E1971AD22E9100765C35 /* NSArray+Spread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Spread.m"; path = "Classes/NSArray+Spread.m"; sourceTree = "<group>"; };
-		E599A3081DBB179A00DB48DE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		E599A3081DBB179A00DB48DE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +90,6 @@
 		11004B071AC4252100013372 = {
 			isa = PBXGroup;
 			children = (
-				E599A3081DBB179A00DB48DE /* Default-568h@2x.png */,
 				11004B351AC4252F00013372 /* Classes */,
 				11004B121AC4252100013372 /* Spread */,
 				11004B281AC4252100013372 /* SpreadTests */,
@@ -124,6 +123,7 @@
 		11004B131AC4252100013372 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				E599A3081DBB179A00DB48DE /* Default-568h@2x.png */,
 				11004B361AC4255200013372 /* Spread-Bridging-Header.h */,
 				11004B141AC4252100013372 /* Info.plist */,
 			);

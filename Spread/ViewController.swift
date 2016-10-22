@@ -40,12 +40,11 @@ class ViewController: UIViewController {
     NSLog("Magic is here...")
     
     let task1 = Task(objectId: "1", nameSpace: "Carrot 1")
-    
-    // This one will be cancel.
     let task2 = Task(objectId: "1", nameSpace: "Carrot 2")
     
+    // This one will be cancel.
     let task3 = Task(objectId: "1", nameSpace: "Carrot 2")
-  
+    
     let task4 = Task(objectId: "1", nameSpace: "Carrot 4")
     let task5 = Task(objectId: "1", nameSpace: "Carrot 5")
     let task6 = Task(objectId: "1", nameSpace: "Carrot 6")
@@ -71,10 +70,10 @@ class ViewController: UIViewController {
     
     let otherTask1 = OtherTask(objectId: "1", nameSpace: "Carrot 2")
     
-    // This one will be remove.
+    // This tasks will not be enqueued (because of spam)
     let otherTask2 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
     let otherTask3 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
-    
+
     let otherTask4 = OtherTask(objectId: "1", nameSpace: "Carrot 1")
 
     otherTask1.addHanlder { (response, error) -> Void in
@@ -140,8 +139,8 @@ class ViewController: UIViewController {
     
     // Create dummies data.
     let carrotData = ["name": "One", "objectId": "one"]
-    let milk = Milk(dictionary: [AnyHashable: Any]())
-    print("%@", milk.toDictionary())
+//    let milk = Milk(dictionary: [AnyHashable: Any]())
+//    print("%@", milk.toDictionary())
     
     // Add object to pool and setup reaction.
     let carrotInPool1 = Spread.addObject(carrotData, toPool: self.pool1Indentifier) as! Carrot
