@@ -63,45 +63,50 @@
 }
 
 - (void)processOperation {
-    @synchronized(self) {
-        
-        // There are no task in queue.
-        if ([_pendingTasks count] == 0) {
-            return;
-        }
-        NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
-        
-        // Queue is max concurrent.
-        if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
-            return;
-        }
-        for (SRemoteTask *pendingTask in [_pendingTasks copy]) {
-            if ([self checkDequeueCondtion:pendingTask]) {
-                [_executingTasks addObject:pendingTask];
-                [_pendingTasks removeObject:pendingTask];
-                [self processTask:pendingTask];
+    @synchronized(_executingTasks) {
+        @synchronized (_pendingTasks) {
+            // There are no task in queue.
+            if ([_pendingTasks count] == 0) {
+                return;
             }
+            NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
+            
+            // Queue is max concurrent.
+            if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
+                return;
+            }
+            NSMutableArray *taskToRemove = [NSMutableArray array];
+            for (SRemoteTask *pendingTask in _pendingTasks) {
+                if ([self checkDequeueCondtion:pendingTask]) {
+                    [_executingTasks addObject:pendingTask];
+                    [taskToRemove addObject:pendingTask];
+                    [self processTask:pendingTask];
+                }
+            }
+            [_pendingTasks removeObjectsInArray:taskToRemove];
         }
     }
 }
 
 - (BOOL)checkDequeueCondtion:(SRemoteTask *)task {
-    if ([_executingTasks count] == 0) {
-        return YES;
+    @synchronized (_executingTasks) {
+        if ([_executingTasks count] == 0) {
+            return YES;
+        }
+        NSArray *executingTasksWithKind = [_executingTasks filter:^BOOL(id element) {
+            return [task isKindOfClass:[element class]];
+        }];
+        if ([executingTasksWithKind count] == 0) {
+            return YES;
+        }
+        NSArray *tasks = [executingTasksWithKind filter:^BOOL(SRemoteTask *element) {
+            return ![task dequeue:element];
+        }];
+        if ([tasks count] == 0) {
+            return YES;
+        }
+        return NO;
     }
-    NSArray *executingTasksWithKind = [[_executingTasks copy] filter:^BOOL(id element) {
-        return [task isKindOfClass:[element class]];
-    }];
-    if ([executingTasksWithKind count] == 0) {
-        return YES;
-    }
-    NSArray *tasks = [executingTasksWithKind filter:^BOOL(SRemoteTask *element) {
-        return ![task dequeue:element];
-    }];
-    if ([tasks count] == 0) {
-        return YES;
-    }
-    return NO;
 }
 
 + (void)addTask:(SRemoteTask *)task {
@@ -110,16 +115,18 @@
         return;
     }
     NSMutableArray *pendingTasks = [[self sharedInstance] pendingTasks];
-    NSArray *tasksToRemove = [[[pendingTasks copy]
-                               filter:^BOOL(id element) {
-                                   return [task isKindOfClass:[element class]];
-                               }]
-                              filter:^BOOL(id element) {
-                                  return ![task enqueue:element];
-                              }];
-    [pendingTasks removeObjectsInArray:tasksToRemove];
-    [pendingTasks addObject:task];
-    [[self sharedInstance] processOperation];
+    @synchronized (pendingTasks) {
+        NSArray *tasksToRemove = [[pendingTasks
+                                   filter:^BOOL(id element) {
+                                       return [task isKindOfClass:[element class]];
+                                   }]
+                                  filter:^BOOL(id element) {
+                                      return ![task enqueue:element];
+                                  }];
+        [pendingTasks removeObjectsInArray:tasksToRemove];
+        [pendingTasks addObject:task];
+        [[self sharedInstance] processOperation];
+    }
 }
 
 - (void)processTask:(SRemoteTask *)task {

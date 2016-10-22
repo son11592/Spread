@@ -23,6 +23,7 @@
 		1147AC511AC72C30009C8BF2 /* SpreadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B2B1AC4252100013372 /* SpreadTests.swift */; };
 		1170D2111AD6D3E900924E72 /* SUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1170D2101AD6D3E900924E72 /* SUtils.m */; };
 		11B1E1981AD22E9100765C35 /* NSArray+Spread.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B1E1971AD22E9100765C35 /* NSArray+Spread.m */; };
+		E599A3091DBB179A00DB48DE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E599A3081DBB179A00DB48DE /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 		1170D2101AD6D3E900924E72 /* SUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUtils.m; path = Classes/SUtils.m; sourceTree = "<group>"; };
 		11B1E1961AD22E9100765C35 /* NSArray+Spread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Spread.h"; path = "Classes/NSArray+Spread.h"; sourceTree = "<group>"; };
 		11B1E1971AD22E9100765C35 /* NSArray+Spread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Spread.m"; path = "Classes/NSArray+Spread.m"; sourceTree = "<group>"; };
+		E599A3081DBB179A00DB48DE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 		11004B071AC4252100013372 = {
 			isa = PBXGroup;
 			children = (
+				E599A3081DBB179A00DB48DE /* Default-568h@2x.png */,
 				11004B351AC4252F00013372 /* Classes */,
 				11004B121AC4252100013372 /* Spread */,
 				11004B281AC4252100013372 /* SpreadTests */,
@@ -244,7 +247,7 @@
 				TargetAttributes = {
 					11004B0F1AC4252100013372 = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = X6C82A6M55;
+						DevelopmentTeam = 9VAW5FX4JN;
 						LastSwiftMigration = 0800;
 					};
 					11004B241AC4252100013372 = {
@@ -279,6 +282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11004B1D1AC4252100013372 /* Images.xcassets in Resources */,
+				E599A3091DBB179A00DB48DE /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,11 +424,10 @@
 		11004B301AC4252100013372 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9VAW5FX4JN;
 				INFOPLIST_FILE = Spread/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -440,11 +443,10 @@
 		11004B311AC4252100013372 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9VAW5FX4JN;
 				INFOPLIST_FILE = Spread/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

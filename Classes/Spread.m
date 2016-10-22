@@ -68,23 +68,26 @@
 }
 
 - (void)addPool:(SPool *)pool {
-    NSArray *pools = [[self pools] copy];
-    if ([pools count] > self.capacity - 1) {
-        for (SPool *spool in pools) {
-            if (!spool.keep) {
-                [_pools removeObject:spool];
-                break;
+    @synchronized(_pools) {
+        if ([_pools count] > self.capacity - 1) {
+            for (SPool *spool in _pools) {
+                if (!spool.keep) {
+                    [_pools removeObject:spool];
+                    break;
+                }
             }
         }
+        [[self pools] addObject:pool];
     }
-    [[self pools] addObject:pool];
 }
 
 + (SPool *)getPool:(NSString *)identifier {
-    NSArray *pools = [[[self sharedInstance] pools] copy];
-    for (SPool *pool in pools) {
-        if ([pool.identifier isEqualToString:identifier]) {
-            return pool;
+    NSArray *pools = [[self sharedInstance] pools];
+    @synchronized(pools) {
+        for (SPool *pool in pools) {
+            if ([pool.identifier isEqualToString:identifier]) {
+                return pool;
+            }
         }
     }
     return nil;
@@ -101,7 +104,7 @@
        forPoolIdentifier:(NSString *)identifier
                     keep:(BOOL)keep {
     SPool *pool = [self getPool:identifier];
-    @synchronized(self) {
+    @synchronized([[self sharedInstance] pools]) {
         if (!pool) {
             pool = [[SPool alloc] init];
             pool.identifier = identifier;
@@ -121,17 +124,19 @@
 
 + (void)removePoolWithIdentifier:(NSString *)identifier {
     // Remove pool action.
-    NSArray *actions = [[[self sharedInstance] poolActions] copy];
+    NSMutableArray *actions = [[self sharedInstance] poolActions];
     NSMutableArray *actionToRemove = [NSMutableArray array];
-    for (SpreadAction *action in actions) {
-        if ([action.poolIdentifier isEqualToString:identifier]) {
-            [actionToRemove addObject:action];
+    @synchronized (actions) {
+        for (SpreadAction *action in actions) {
+            if ([action.poolIdentifier isEqualToString:identifier]) {
+                [actionToRemove addObject:action];
+            }
         }
+        [actions removeObjectsInArray:actionToRemove];
+        // Remove pool.
+        SPool *pool = [self getPool:identifier];
+        [[[self sharedInstance] pools] removeObject:pool];
     }
-    [[[self sharedInstance] poolActions] removeObjectsInArray:actionToRemove];
-    // Remove pool.
-    SPool *pool = [self getPool:identifier];
-    [[[self sharedInstance] pools] removeObject:pool];
 }
 
 + (NSInteger)countIndentifer:(NSString *)identifier inArray:(NSArray *)array {
@@ -163,26 +168,30 @@
 
 + (void)removeEvent:(NSString *)event
     poolIdentifiers:(NSArray *)poolIdentifiers {
-    NSArray *actions = [[[self sharedInstance] poolActions] copy];
+    NSMutableArray *actions = [[self sharedInstance] poolActions];
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (SpreadAction *action in actions) {
-        if ([action.event isEqualToString:event]
-            && [self countIndentifer:action.poolIdentifier inArray:poolIdentifiers] > 0) {
-            [actionsToDelete addObject:action];
+    @synchronized (actions) {
+        for (SpreadAction *action in actions) {
+            if ([action.event isEqualToString:event]
+                && [self countIndentifer:action.poolIdentifier inArray:poolIdentifiers] > 0) {
+                [actionsToDelete addObject:action];
+            }
         }
+        [actions removeObjectsInArray:actionsToDelete];
     }
-    [[[self sharedInstance] poolActions] removeObjectsInArray:actionsToDelete];
 }
 
 + (void)removeEvent:(NSString *)event {
-    NSArray *actions = [[[self sharedInstance] poolActions] copy];
+    NSMutableArray *actions = [[self sharedInstance] poolActions];
     NSMutableArray *actionsToDelete = [NSMutableArray array];
-    for (SpreadAction *action in actions) {
-        if ([action.event isEqualToString:event]) {
-            [actionsToDelete addObject:action];
+    @synchronized (actions) {
+        for (SpreadAction *action in actions) {
+            if ([action.event isEqualToString:event]) {
+                [actionsToDelete addObject:action];
+            }
         }
+        [actions removeObjectsInArray:actionsToDelete];
     }
-    [[[self sharedInstance] poolActions] removeObjectsInArray:actionsToDelete];
 }
 
 + (void)removeAllEvent {
@@ -261,14 +270,16 @@
 
 + (void)outEvent:(NSString *)event
            value:(NSDictionary *)value {
-    NSArray *actions = [[[self sharedInstance] poolActions] copy];
-    for (SpreadAction *poolAction in actions) {
-        if ([poolAction.event isEqualToString:event]) {
-            SPool *pool = [self getPool:poolAction.poolIdentifier];
-            if (pool) {
-                poolAction.action(value, pool);
-            } else {
-                [[[self sharedInstance] poolActions] removeObject:poolAction];
+    NSMutableArray *actions = [[self sharedInstance] poolActions];
+    @synchronized (actions) {
+        for (SpreadAction *poolAction in actions) {
+            if ([poolAction.event isEqualToString:event]) {
+                SPool *pool = [self getPool:poolAction.poolIdentifier];
+                if (pool) {
+                    poolAction.action(value, pool);
+                } else {
+                    [[[self sharedInstance] poolActions] removeObject:poolAction];
+                }
             }
         }
     }

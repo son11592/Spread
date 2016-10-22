@@ -120,9 +120,9 @@
 }
 
 - (NSArray *)replaceByObjects:(NSArray *)objects {
-  NSArray *dataToReplace = [self modelSerializer:objects];
-  [self replaceByModels:dataToReplace];
-  return dataToReplace;
+    NSArray *dataToReplace = [self modelSerializer:objects];
+    [self replaceByModels:dataToReplace];
+    return dataToReplace;
 }
 
 - (id)insertObject:(NSDictionary *)object
@@ -164,7 +164,7 @@
 - (void)replaceByModels:(NSArray *)models {
 #ifdef DEBUG
     for (id model in models) {
-      NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
+        NSAssert([[model class] isSubclassOfClass:self.modelClass], @"Model class was not registed.");
     }
 #endif
     [_data removeAllObjects];
@@ -269,13 +269,14 @@
     poolAction.target = target;
     poolAction.selector = selector;
     poolAction.event = event;
-    NSArray *actions = [_actions copy];
-    for (SPoolAction *action in actions) {
-        if ([poolAction compareWith:action] ) {
-            return;
+    @synchronized (_actions) {
+        for (SPoolAction *action in _actions) {
+            if ([poolAction compareWith:action] ) {
+                return;
+            }
         }
+        [_actions addObject:poolAction];
     }
-    [_actions addObject:poolAction];
 }
 
 - (void)triggerForEvent:(SPoolEvent)event {
@@ -284,48 +285,51 @@
 }
 
 - (void)triggerReactionsForEvent:(SPoolEvent)event {
-    NSArray *reactions = [_reactions copy];
-    for (SPoolReaction *reaction in reactions) {
-        if (reaction.event == SPoolEventOnChange
-            || reaction.event == event) {
-            reaction.reaction([_data copy]);
+    @synchronized (_reactions) {
+        for (SPoolReaction *reaction in _reactions) {
+            if (reaction.event == SPoolEventOnChange
+                || reaction.event == event) {
+                reaction.reaction([_data copy]);
+            }
         }
     }
 }
 
 - (void)triggerTargetForEvent:(SPoolEvent)event {
     NSMutableArray *dataToRemove = [NSMutableArray array];
-    NSArray *actions = [_actions copy];
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        for (SPoolAction *action in actions) {
+    @synchronized (_actions) {
+        for (SPoolAction *action in _actions) {
             id target = action.target;
             if (target) {
                 if (action.event == SPoolEventOnChange
                     || action.event == event) {
-                    ((void (*)(id, SEL, id))[target methodForSelector:action.selector])(target,
-                                                                                        action.selector, self);
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        ((void (*)(id, SEL, id))[target methodForSelector:action.selector])(target,
+                                                                                            action.selector, self);
+                    }];
                 }
             } else {
                 [dataToRemove addObject:action];
             }
         }
         [_actions removeObjectsInArray:dataToRemove];
-    }];
+    }
 }
 
 - (void)removeTarget:(id)target
             selector:(SEL)selector
              onEvent:(SPoolEvent)event {
     NSMutableArray *dataToRemove = [NSMutableArray array];
-    NSArray *actions = [_actions copy];
-    for (SPoolAction *poolAction in actions) {
-        if ([poolAction compareWithTarget:target
-                                 selector:selector
-                                    event:event]) {
-            [dataToRemove addObject:poolAction];
+    @synchronized (_actions) {
+        for (SPoolAction *poolAction in _actions) {
+            if ([poolAction compareWithTarget:target
+                                     selector:selector
+                                        event:event]) {
+                [dataToRemove addObject:poolAction];
+            }
         }
+        [_actions removeObjectsInArray:dataToRemove];
     }
-    [_actions removeObjectsInArray:dataToRemove];
 }
 
 - (void)removeModelMatch:(BOOL (^)(id))filter {

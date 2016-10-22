@@ -90,7 +90,7 @@ static const char *getPropertyType(objc_property_t property) {
 
 // Lazy initial array to store reaction.
 - (NSMutableArray *)reactions {
-    @synchronized(self) {
+    @synchronized(_reactions) {
         if (!_reactions) {
             _reactions = [NSMutableArray array];
         }
@@ -100,7 +100,7 @@ static const char *getPropertyType(objc_property_t property) {
 
 // Lazy initial array to store action.
 - (NSMutableArray *)actions {
-    @synchronized(self) {
+    @synchronized(_actions) {
         if (!_actions) {
             _actions = [NSMutableArray array];
         }
@@ -109,7 +109,7 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (NSMutableArray *)keyPaths {
-    @synchronized(self) {
+    @synchronized(_keyPaths) {
         if (!_keyPaths) {
             _keyPaths = [NSMutableArray array];
         }
@@ -177,8 +177,8 @@ static const char *getPropertyType(objc_property_t property) {
             if ((instanceType == nil) || ![NSClassFromString(propertyType) isSubclassOfClass:[SModel class]]) {
                 instanceType = [NSClassFromString(propertyType) alloc];
             } else {
-               [instanceType initData:value];
-               continue;
+                [instanceType initData:value];
+                continue;
             }
             if (value && value != [NSNull null]) {
                 if ([instanceType respondsToSelector:@selector(initWithDictionary:)]) {
@@ -347,13 +347,14 @@ static const char *getPropertyType(objc_property_t property) {
 
 // Check keys path existed
 - (BOOL)keyPathExisted:(NSString *)keyPath {
-    NSArray *keyPaths = [_keyPaths copy];
-    for (NSString *key in keyPaths) {
-        if ([key isEqualToString:keyPath]) {
-            return YES;
+    @synchronized (_keyPaths) {
+        for (NSString *key in _keyPaths) {
+            if ([key isEqualToString:keyPath]) {
+                return YES;
+            }
         }
+        return NO;
     }
-    return NO;
 }
 
 - (void)addKeyPath:(NSString *)keyPath {
@@ -361,40 +362,43 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeKeyPath:(NSString *)keyPath {
-    NSArray *keyPaths = [_keyPaths copy];
-    NSMutableArray *keysToDelete = [NSMutableArray array];
-    for (NSString *key in keyPaths) {
-        if ([key isEqualToString:keyPath]) {
-            [keysToDelete addObject:key];
+    @synchronized (_keyPaths) {
+        NSMutableArray *keysToDelete = [NSMutableArray array];
+        for (NSString *key in _keyPaths) {
+            if ([key isEqualToString:keyPath]) {
+                [keysToDelete addObject:key];
+            }
         }
+        [_keyPaths removeObjectsInArray:keysToDelete];
     }
-    [_keyPaths removeObjectsInArray:keysToDelete];
 }
 
 // Get reaction of property on event.
 - (NSArray *)getReactionsOfProperty:(NSString *)property
                             onEvent:(SModelEvent)event {
     NSMutableArray *reactions = [NSMutableArray array];
-    NSArray *allReactions = [_reactions copy];
-    for (SModelReaction *reaction in allReactions) {
-        if ([reaction.keyPath isEqualToString:property]
-            && reaction.event == event) {
-            [reactions addObject:reaction];
+    @synchronized (_reactions) {
+        for (SModelReaction *reaction in _reactions) {
+            if ([reaction.keyPath isEqualToString:property]
+                && reaction.event == event) {
+                [reactions addObject:reaction];
+            }
         }
+        return reactions;
     }
-    return reactions;
 }
 
 // Get reactions of property.
 - (NSArray *)getReactionsOfProperty:(NSString *)property {
     NSMutableArray *reactions = [NSMutableArray array];
-    NSArray *allReactions = [_reactions copy];
-    for (SModelReaction *reaction in allReactions) {
-        if ([reaction.keyPath isEqualToString:property]) {
-            [reactions addObject:reaction];
+    @synchronized (_reactions) {
+        for (SModelReaction *reaction in _reactions) {
+            if ([reaction.keyPath isEqualToString:property]) {
+                [reactions addObject:reaction];
+            }
         }
+        return reactions;
     }
-    return reactions;
 }
 
 - (NSArray *)getActionsOfProperty:(NSString *)property
@@ -402,75 +406,80 @@ static const char *getPropertyType(objc_property_t property) {
                          selector:(SEL)selector
                           onEvent:(SModelEvent)event {
     NSMutableArray *actions = [NSMutableArray array];
-    NSArray *allActions = [_actions copy];
-    for (SModelAction *action in allActions) {
-        if ([action.keyPath isEqualToString:property]
-            && [action.target isEqual:target]
-            && action.selector == selector
-            && action.event == event) {
-            [actions addObject:action];
+    @synchronized (_actions) {
+        for (SModelAction *action in _actions) {
+            if ([action.keyPath isEqualToString:property]
+                && [action.target isEqual:target]
+                && action.selector == selector
+                && action.event == event) {
+                [actions addObject:action];
+            }
         }
+        return actions;
     }
-    return actions;
 }
 
 - (NSArray *)getActionsOfProperty:(NSString *)property
                            target:(id)target
                          selector:(SEL)selector {
     NSMutableArray *actions = [NSMutableArray array];
-    NSArray *allActions = [_actions copy];
-    for (SModelAction *action in allActions) {
-        if ([action.keyPath isEqualToString:property]
-            && [action.target isEqual:target]
-            && action.selector == selector) {
-            [actions addObject:action];
+    @synchronized (_actions) {
+        for (SModelAction *action in _actions) {
+            if ([action.keyPath isEqualToString:property]
+                && [action.target isEqual:target]
+                && action.selector == selector) {
+                [actions addObject:action];
+            }
         }
+        return actions;
     }
-    return actions;
 }
 
 - (NSArray *)getActionsOfProperty:(NSString *)property
                            target:(id)target {
     NSMutableArray *actions = [NSMutableArray array];
-    NSArray *allActions = [_actions copy];
-    for (SModelAction *action in allActions) {
-        if ([action.keyPath isEqualToString:property]
-            && [action.target isEqual:target]) {
-            [actions addObject:action];
+    @synchronized (_actions) {
+        for (SModelAction *action in _actions) {
+            if ([action.keyPath isEqualToString:property]
+                && [action.target isEqual:target]) {
+                [actions addObject:action];
+            }
         }
+        return actions;
     }
-    return actions;
 }
 
 - (NSArray *)getActionsOfProperty:(NSString *)property
                           onEvent:(SModelEvent)event {
     NSMutableArray *actions = [NSMutableArray array];
-    NSArray *allActions = [_actions copy];
-    for (SModelAction *action in allActions) {
-        if ([action.keyPath isEqualToString:property]
-            && action.event == event) {
-            [actions addObject:action];
+    @synchronized (_actions) {
+        for (SModelAction *action in _actions) {
+            if ([action.keyPath isEqualToString:property]
+                && action.event == event) {
+                [actions addObject:action];
+            }
         }
+        return actions;
     }
-    return actions;
 }
 
 // Get action of property.
 - (NSArray *)getActionsOfProperty:(NSString *)property {
     NSMutableArray *actions = [NSMutableArray array];
-    NSArray *allActions = [_actions copy];
-    for (SModelAction *action in allActions) {
-        if ([action.keyPath isEqualToString:property]) {
-            [actions addObject:action];
+    @synchronized (_actions) {
+        for (SModelAction *action in _actions) {
+            if ([action.keyPath isEqualToString:property]) {
+                [actions addObject:action];
+            }
         }
+        return actions;
     }
-    return actions;
 }
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath {
     if (![self keyPathExisted:keyPath]) {
         @try {
-            @synchronized(self) {
+            @synchronized(_keyPaths) {
                 [self addKeyPath:keyPath];
                 [self addObserver:self
                        forKeyPath:keyPath
@@ -487,7 +496,7 @@ static const char *getPropertyType(objc_property_t property) {
 - (void)removeObserverForKeyPath:(NSString *)keyPath {
     if ([self keyPathExisted:keyPath]) {
         @try {
-            @synchronized(self) {
+            @synchronized(_keyPaths) {
                 [self removeKeyPath:keyPath];
                 [self removeObserver:self
                           forKeyPath:keyPath
@@ -501,9 +510,8 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 - (void)removeAllObservers {
-    @synchronized(self) {
-        NSArray *keyPaths = [_keyPaths copy];
-        for (NSString *keyPath in keyPaths) {
+    @synchronized(_keyPaths) {
+        for (NSString *keyPath in _keyPaths) {
             @try {
                 [self removeObserver:self
                           forKeyPath:keyPath
@@ -518,24 +526,20 @@ static const char *getPropertyType(objc_property_t property) {
 
 - (void)removeActions:(NSArray *)actions
    observerForKeyPath:(NSString *)keyPath {
-    @synchronized(self) {
-        NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
-        [[self getReactionsOfProperty:keyPath] count];
-        if (observerCount == 0) return;
-        [_actions removeObjectsInArray:actions];
-        [self removeObserverForKeyPath:keyPath];
-    }
+    NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
+    [[self getReactionsOfProperty:keyPath] count];
+    if (observerCount == 0) return;
+    [_actions removeObjectsInArray:actions];
+    [self removeObserverForKeyPath:keyPath];
 }
 
 - (void)removeReactions:(NSArray *)reactions
      observerForKeyPath:(NSString *)keyPath {
-    @synchronized(self) {
-        NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
-        [[self getReactionsOfProperty:keyPath] count];
-        if (observerCount == 0) return;
-        [_reactions removeObjectsInArray:reactions];
-        [self removeObserverForKeyPath:keyPath];
-    }
+    NSInteger observerCount = [[self getActionsOfProperty:keyPath] count] +
+    [[self getReactionsOfProperty:keyPath] count];
+    if (observerCount == 0) return;
+    [_reactions removeObjectsInArray:reactions];
+    [self removeObserverForKeyPath:keyPath];
 }
 
 // IMPLEMENT

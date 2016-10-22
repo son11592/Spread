@@ -120,14 +120,17 @@ class ViewController: UIViewController {
     Spread.registerEvent(self.action1Identifier,
       poolIdentifiers: [self.pool1Indentifier, self.pool2Indentifier, self.pool3Indentifier])
       { (data, pool) -> Void in
+        
         // Get new name and id.
         let newName = (data as! NSDictionary).value(forKey: "name") as! String
         let objctId = (data as! NSDictionary).value(forKey: "objectId") as! String
+        
         // Select carrots in pool.
         let carrots = pool.allModels().filter({ (item) -> Bool in
           let carrot = item as! Carrot
           return (carrot.objectId == objctId as NSString)
         })
+        
         // Change carrots name.
         for item in carrots {
           let carrot = item as! Carrot
