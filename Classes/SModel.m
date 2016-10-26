@@ -24,9 +24,7 @@ static const char *getPropertyType(objc_property_t property) {
             NSString *name = [[NSString alloc] initWithBytes:attribute + 1
                                                       length:strlen(attribute) - 1
                                                     encoding:NSASCIIStringEncoding];
-            @autoreleasepool {
-                return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
-            }
+            return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
         }
         else if (attribute[0] == 'T' && attribute[1] == '@' && strlen(attribute) == 2) {
             return "id";
@@ -35,14 +33,11 @@ static const char *getPropertyType(objc_property_t property) {
             NSString *name = [[NSString alloc] initWithBytes:attribute + 3
                                                       length:strlen(attribute) - 4
                                                     encoding:NSASCIIStringEncoding];
-            @autoreleasepool {
-                return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
-            }
+            return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
         }
     }
     return "";
 }
-
 
 @interface SModelReaction : NSObject
 
@@ -174,14 +169,14 @@ static const char *getPropertyType(objc_property_t property) {
         objc_property_t property = properties[i];
         const char *propName = property_getName(property);
         if (propName) {
-            const char *propType = getPropertyType(property);
-            NSString *propertyName = [NSString stringWithCString:propName
-                                                        encoding:NSUTF8StringEncoding];
-            NSString *propertyType = [NSString stringWithCString:propType
-                                                        encoding:NSUTF8StringEncoding];
-            NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
-            [_attributes setValue:propertyType forKey:propertyNameStrippedUnderscore];
             @autoreleasepool {
+                const char *propType = getPropertyType(property);
+                NSString *propertyName = [NSString stringWithCString:propName
+                                                            encoding:NSUTF8StringEncoding];
+                NSString *propertyType = [NSString stringWithCString:propType
+                                                            encoding:NSUTF8StringEncoding];
+                NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
+                [_attributes setValue:propertyType forKey:propertyNameStrippedUnderscore];
                 id value = [dictionary objectForKey:propertyNameStrippedUnderscore];
                 [self setProperty:propertyName
                      propertyType:propertyType
@@ -215,9 +210,10 @@ static const char *getPropertyType(objc_property_t property) {
             instanceType = [NSDictionary alloc];
         } else if ([instanceType isKindOfClass:[NSMutableDictionary class]]) {
             instanceType = [NSMutableDictionary alloc];
+        } else if ([instanceType isKindOfClass:[NSString class]]) {
+            instanceType = [NSString alloc];
         }
     }
-    
     if (value && value != [NSNull null]) {
         if ([propertyType respondsToSelector:@selector(initData:)]) {
             [instanceType initData:value];
