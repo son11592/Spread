@@ -24,7 +24,9 @@ static const char *getPropertyType(objc_property_t property) {
             NSString *name = [[NSString alloc] initWithBytes:attribute + 1
                                                       length:strlen(attribute) - 1
                                                     encoding:NSASCIIStringEncoding];
-            return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
+            @autoreleasepool {
+                return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
+            }
         }
         else if (attribute[0] == 'T' && attribute[1] == '@' && strlen(attribute) == 2) {
             return "id";
@@ -33,11 +35,14 @@ static const char *getPropertyType(objc_property_t property) {
             NSString *name = [[NSString alloc] initWithBytes:attribute + 3
                                                       length:strlen(attribute) - 4
                                                     encoding:NSASCIIStringEncoding];
-            return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
+            @autoreleasepool {
+                return (const char *)[name cStringUsingEncoding:NSASCIIStringEncoding];
+            }
         }
     }
     return "";
 }
+
 
 @interface SModelReaction : NSObject
 
@@ -177,10 +182,12 @@ static const char *getPropertyType(objc_property_t property) {
                                                         encoding:NSUTF8StringEncoding];
             NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
             [_attributes setValue:propertyType forKey:propertyNameStrippedUnderscore];
-            id value = [dictionary valueForKey:propertyNameStrippedUnderscore];
-            [self setProperty:propertyName
-                 propertyType:propertyType
-                        value:value];
+            @autoreleasepool {
+                id value = [dictionary valueForKey:propertyNameStrippedUnderscore];
+                [self setProperty:propertyName
+                     propertyType:propertyType
+                            value:value];
+            }
         }
     }
     free(properties);
