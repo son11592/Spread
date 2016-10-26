@@ -204,10 +204,20 @@ static const char *getPropertyType(objc_property_t property) {
             instanceType = [[NSClassFromString(propertyType) alloc] initWithDictionary:value];
             [self setValue:instanceType forKey:propertyName];
             return;
-        } else {
-            instanceType = [NSClassFromString(propertyType) alloc];
+        }
+        instanceType = [NSClassFromString(propertyType) alloc];
+    } else {
+        if ([instanceType isKindOfClass:[NSArray class]]) {
+            instanceType = [NSArray alloc];
+        } else if ([instanceType isKindOfClass:[NSMutableArray class]]){
+            instanceType = [NSMutableArray alloc];
+        } else if ([instanceType isKindOfClass:[NSDictionary class]]) {
+            instanceType = [NSDictionary alloc];
+        } else if ([instanceType isKindOfClass:[NSMutableDictionary class]]) {
+            instanceType = [NSMutableDictionary alloc];
         }
     }
+    
     if (value && value != [NSNull null]) {
         if ([propertyType respondsToSelector:@selector(initData:)]) {
             [instanceType initData:value];
