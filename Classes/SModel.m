@@ -167,7 +167,6 @@ static const char *getPropertyType(objc_property_t property) {
     return property;
 }
 
-
 - (void)initData:(NSDictionary *)dictionary {
     unsigned int outCount;
     objc_property_t *properties = class_copyPropertyList([self class], &outCount);
@@ -183,7 +182,7 @@ static const char *getPropertyType(objc_property_t property) {
             NSString *propertyNameStrippedUnderscore = [self getPropertyNameStrippedUnderscore:propertyName];
             [_attributes setValue:propertyType forKey:propertyNameStrippedUnderscore];
             @autoreleasepool {
-                id value = [dictionary valueForKey:propertyNameStrippedUnderscore];
+                id value = [dictionary objectForKey:propertyNameStrippedUnderscore];
                 [self setProperty:propertyName
                      propertyType:propertyType
                             value:value];
@@ -228,7 +227,6 @@ static const char *getPropertyType(objc_property_t property) {
         }
     }
 }
-
 
 - (NSDictionary *)toDictionary {
     NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionary];
