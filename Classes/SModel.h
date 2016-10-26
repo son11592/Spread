@@ -37,14 +37,14 @@ typedef NS_ENUM(NSInteger, SModelEvent){
  *
  *  @return Object mapping.
  */
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+- (instancetype)initWithDictionary:(nullable NSDictionary *)dictionary;
 
 /**
  *  Auto mapping properties object with dictionary/json.
  *
  *  @param dictionary Data to mapping.
  */
-- (void)initData:(NSDictionary *)dictionary;
+- (void)initData:(nullable NSDictionary *)dictionary;
 
 /**
  *  Convert object to dictionary.

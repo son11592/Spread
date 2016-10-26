@@ -12,7 +12,7 @@ class Task: SRemoteTask {
   
   var objectId: String!
   var nameSpace: String!
-  
+    
   init(objectId: String, nameSpace: String) {
     super.init()
     self.objectId = objectId
