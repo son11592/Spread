@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Spread"
-  s.version      = "1.2.0"
+  s.version      = "1.2.1"
   s.summary      = "Spread is a data flow control, inspire from: When the shit hit the fan, it will be spread all over."
   s.homepage     = "http://huypham.me"
   s.license      = "MIT"
