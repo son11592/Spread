@@ -134,10 +134,12 @@
              method:[task getMethodString]
          parameters:[task getRequestParameters]
   completionHandler:^(id response, NSError *error) {
-      if (task.handler) {
-          task.handler(response, error);
+      @synchronized (_executingTasks) {
+          if (task.handler) {
+              task.handler(response, error);
+          }
+          [_executingTasks removeObject:task];
       }
-      [_executingTasks removeObject:task];
   }];
 }
 
