@@ -150,13 +150,13 @@ class ViewController: UIViewController {
 
     // Add object to pool and setup reaction.
     let carrotInPool1 = Spread.addObject(carrotData, toPool: self.pool1Indentifier) as! Carrot
-    carrotInPool1.property("name", on: SModelEvent.onChange) { (oldValue, newValue) -> Void in
-      self.carrot1Label.text = newValue as? String
+    carrotInPool1.property("name", on: SModelEvent.onChange) { [weak self] (oldValue, newValue) -> Void in
+      self?.carrot1Label.text = newValue as? String
     }
-        
+    
     let carrotInPool2 = Spread.addObject(carrotData, toPool: self.pool2Indentifier) as! Carrot
-    carrotInPool2.property("name", on: SModelEvent.onChange) { (oldValue, newValue) -> Void in
-      self.carrot2Label.text = newValue as? String
+    carrotInPool2.property("name", on: SModelEvent.onChange) { [weak self] (oldValue, newValue) -> Void in
+      self?.carrot2Label.text = newValue as? String
     }
     
     let carrotInPool3 = Spread.addObject(carrotData, toPool: self.pool3Indentifier) as! Carrot
