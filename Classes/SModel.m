@@ -306,12 +306,12 @@ static const char *getPropertyType(objc_property_t property) {
 - (id)valueSerializer:(id)value key:(NSString *)key {
     NSString *type  = [_attributes valueForKey:key];
     if ([type isEqualToString:@"q"]) {
-      long long longValue = (long long)[value longLongValue];
-      return @(longValue);
+        long long longValue = (long long)[value longLongValue];
+        return @(longValue);
     }
     if ([type isEqualToString:@"Q"]) {
-      unsigned long long ulongValue = [value unsignedLongValue];
-      return @(ulongValue);
+        unsigned long long ulongValue = [value unsignedLongValue];
+        return @(ulongValue);
     }
 
     if ([type isEqualToString:@"B"]) {
