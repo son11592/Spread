@@ -12,7 +12,6 @@
 		11004B1D1AC4252100013372 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11004B1C1AC4252100013372 /* Images.xcassets */; };
 		11004B391AC4255300013372 /* Spread.m in Sources */ = {isa = PBXBuildFile; fileRef = 11004B381AC4255300013372 /* Spread.m */; };
 		11004B3C1AC42FBC00013372 /* SPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 11004B3B1AC42FBC00013372 /* SPool.m */; };
-		11004B3F1AC43D8200013372 /* SModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 11004B3E1AC43D8200013372 /* SModel.m */; };
 		11004B421AC45CF500013372 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B411AC45CF500013372 /* Networking.swift */; };
 		11004B451AC4608700013372 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B441AC4608700013372 /* Carrot.swift */; };
 		1109151C1B88FA63006CC848 /* Milk.m in Sources */ = {isa = PBXBuildFile; fileRef = 1109151B1B88FA63006CC848 /* Milk.m */; };
@@ -21,8 +20,10 @@
 		110E2C091ADDA8FB004F5764 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110E2C081ADDA8FB004F5764 /* Task.swift */; };
 		110E2C0F1ADE08BB004F5764 /* OtherTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110E2C0E1ADE08BB004F5764 /* OtherTask.swift */; };
 		1147AC511AC72C30009C8BF2 /* SpreadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11004B2B1AC4252100013372 /* SpreadTests.swift */; };
-		1170D2111AD6D3E900924E72 /* SUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1170D2101AD6D3E900924E72 /* SUtils.m */; };
 		11B1E1981AD22E9100765C35 /* NSArray+Spread.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B1E1971AD22E9100765C35 /* NSArray+Spread.m */; };
+		E597CBC21E25F0D900E5C045 /* Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = E597CBBD1E25F0D900E5C045 /* Decoder.m */; };
+		E597CBC31E25F0D900E5C045 /* Mapper.m in Sources */ = {isa = PBXBuildFile; fileRef = E597CBBF1E25F0D900E5C045 /* Mapper.m */; };
+		E597CBC41E25F0D900E5C045 /* MapperUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E597CBC11E25F0D900E5C045 /* MapperUtils.m */; };
 		E599A3091DBB179A00DB48DE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E599A3081DBB179A00DB48DE /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
@@ -50,8 +51,6 @@
 		11004B381AC4255300013372 /* Spread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Spread.m; path = Classes/Spread.m; sourceTree = "<group>"; };
 		11004B3A1AC42FBC00013372 /* SPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPool.h; path = Classes/SPool.h; sourceTree = "<group>"; };
 		11004B3B1AC42FBC00013372 /* SPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SPool.m; path = Classes/SPool.m; sourceTree = "<group>"; };
-		11004B3D1AC43D8200013372 /* SModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SModel.h; path = Classes/SModel.h; sourceTree = "<group>"; };
-		11004B3E1AC43D8200013372 /* SModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SModel.m; path = Classes/SModel.m; sourceTree = "<group>"; };
 		11004B411AC45CF500013372 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Networking.swift; path = Spread/Utils/Networking.swift; sourceTree = "<group>"; };
 		11004B441AC4608700013372 /* Carrot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Carrot.swift; path = Models/Carrot.swift; sourceTree = "<group>"; };
 		1109151A1B88FA63006CC848 /* Milk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Milk.h; path = Models/Milk.h; sourceTree = "<group>"; };
@@ -62,10 +61,14 @@
 		110E2C031ADD83F8004F5764 /* SRemoteTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRemoteTask.m; path = Classes/SRemoteTask.m; sourceTree = "<group>"; };
 		110E2C081ADDA8FB004F5764 /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Task.swift; path = Tasks/Task.swift; sourceTree = "<group>"; };
 		110E2C0E1ADE08BB004F5764 /* OtherTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OtherTask.swift; path = Tasks/OtherTask.swift; sourceTree = "<group>"; };
-		1170D20F1AD6D3E900924E72 /* SUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUtils.h; path = Classes/SUtils.h; sourceTree = "<group>"; };
-		1170D2101AD6D3E900924E72 /* SUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUtils.m; path = Classes/SUtils.m; sourceTree = "<group>"; };
 		11B1E1961AD22E9100765C35 /* NSArray+Spread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Spread.h"; path = "Classes/NSArray+Spread.h"; sourceTree = "<group>"; };
 		11B1E1971AD22E9100765C35 /* NSArray+Spread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Spread.m"; path = "Classes/NSArray+Spread.m"; sourceTree = "<group>"; };
+		E597CBBC1E25F0D900E5C045 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Decoder.h; path = Classes/Decoder.h; sourceTree = "<group>"; };
+		E597CBBD1E25F0D900E5C045 /* Decoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Decoder.m; path = Classes/Decoder.m; sourceTree = "<group>"; };
+		E597CBBE1E25F0D900E5C045 /* Mapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mapper.h; path = Classes/Mapper.h; sourceTree = "<group>"; };
+		E597CBBF1E25F0D900E5C045 /* Mapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Mapper.m; path = Classes/Mapper.m; sourceTree = "<group>"; };
+		E597CBC01E25F0D900E5C045 /* MapperUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapperUtils.h; path = Classes/MapperUtils.h; sourceTree = "<group>"; };
+		E597CBC11E25F0D900E5C045 /* MapperUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapperUtils.m; path = Classes/MapperUtils.m; sourceTree = "<group>"; };
 		E599A3081DBB179A00DB48DE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -150,16 +153,18 @@
 		11004B351AC4252F00013372 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E597CBBC1E25F0D900E5C045 /* Decoder.h */,
+				E597CBBD1E25F0D900E5C045 /* Decoder.m */,
+				E597CBBE1E25F0D900E5C045 /* Mapper.h */,
+				E597CBBF1E25F0D900E5C045 /* Mapper.m */,
+				E597CBC01E25F0D900E5C045 /* MapperUtils.h */,
+				E597CBC11E25F0D900E5C045 /* MapperUtils.m */,
 				11004B371AC4255300013372 /* Spread.h */,
 				11004B381AC4255300013372 /* Spread.m */,
 				11004B3A1AC42FBC00013372 /* SPool.h */,
 				11004B3B1AC42FBC00013372 /* SPool.m */,
-				11004B3D1AC43D8200013372 /* SModel.h */,
-				11004B3E1AC43D8200013372 /* SModel.m */,
 				11B1E1961AD22E9100765C35 /* NSArray+Spread.h */,
 				11B1E1971AD22E9100765C35 /* NSArray+Spread.m */,
-				1170D20F1AD6D3E900924E72 /* SUtils.h */,
-				1170D2101AD6D3E900924E72 /* SUtils.m */,
 				110E2BFF1ADD8358004F5764 /* SRemoteTaskManager.h */,
 				110E2C001ADD8358004F5764 /* SRemoteTaskManager.m */,
 				110E2C021ADD83F8004F5764 /* SRemoteTask.h */,
@@ -300,9 +305,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1170D2111AD6D3E900924E72 /* SUtils.m in Sources */,
+				E597CBC41E25F0D900E5C045 /* MapperUtils.m in Sources */,
+				E597CBC31E25F0D900E5C045 /* Mapper.m in Sources */,
 				11004B181AC4252100013372 /* ViewController.swift in Sources */,
-				11004B3F1AC43D8200013372 /* SModel.m in Sources */,
+				E597CBC21E25F0D900E5C045 /* Decoder.m in Sources */,
 				110E2C041ADD83F8004F5764 /* SRemoteTask.m in Sources */,
 				1109151C1B88FA63006CC848 /* Milk.m in Sources */,
 				110E2C091ADDA8FB004F5764 /* Task.swift in Sources */,

@@ -8,7 +8,7 @@
 
 #import "SRemoteTaskManager.h"
 
-#import "SUtils.h"
+#import "MapperUtils.h"
 #import "NSArray+Spread.h"
 
 @interface SRemoteTaskManager ()
@@ -32,7 +32,7 @@
 - (void)commonInit {
     _pendingTasks = [[NSMutableArray alloc] init];
     _executingTasks = [[NSMutableArray alloc] init];
-    NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
+    NSOperationQueue *queue = [[MapperUtils sharedInstance] operationQueue];
     [queue addObserver:self
             forKeyPath:@"operations"
                options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
@@ -69,7 +69,7 @@
             if ([_pendingTasks count] == 0) {
                 return;
             }
-            NSOperationQueue *queue = [[SUtils sharedInstance] operationQueue];
+            NSOperationQueue *queue = [[MapperUtils sharedInstance] operationQueue];
             
             // Queue is max concurrent.
             if ([queue operationCount] >= [queue maxConcurrentOperationCount]) {
@@ -130,17 +130,18 @@
 }
 
 - (void)processTask:(SRemoteTask *)task {
-    [SUtils request:[task getRequestUrl]
-             method:[task getMethodString]
-         parameters:[task getRequestParameters]
-  completionHandler:^(id response, NSError *error) {
-      @synchronized (_executingTasks) {
-          if (task.handler) {
-              task.handler(response, error);
-          }
-          [_executingTasks removeObject:task];
-      }
-  }];
+    [MapperUtils request:[task getRequestUrl]
+                  method:[task getMethodString]
+              parameters:[task getRequestParameters]
+                 headers: nil
+       completionHandler:^(id response, NSError *error) {
+           @synchronized (_executingTasks) {
+               if (task.handler) {
+                   task.handler(response, error);
+               }
+               [_executingTasks removeObject:task];
+           }
+       }];
 }
 
 @end

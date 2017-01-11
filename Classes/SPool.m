@@ -7,7 +7,7 @@
 //
 
 #import "SPool.h"
-#import "SModel.h"
+#import "Mapper.h"
 
 @interface SPoolReaction : NSObject
 
@@ -213,8 +213,8 @@
 
 - (NSArray *)diffModels:(NSArray *)models
                    keys:(NSArray *)keys {
-    NSArray *result = [models filter:^BOOL(SModel *model) {
-        for (SModel *element in self.allModels) {
+    NSArray *result = [models filter:^BOOL(Mapper *model) {
+        for (Mapper *element in self.allModels) {
             if ([self compareModel:model
                          withModel:element
                             byKeys:keys]) {
@@ -233,8 +233,8 @@
                        keys:keys];
 }
 
-- (BOOL)compareModel:(SModel *)targetModel
-           withModel:(SModel *)model
+- (BOOL)compareModel:(Mapper *)targetModel
+           withModel:(Mapper *)model
               byKeys:(NSArray *)keys {
     for (NSString *key in keys) {
         id targetModelValue = [targetModel valueForKey:key];

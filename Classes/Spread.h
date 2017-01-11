@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Katana. All rights reserved.
 //
 
-#import "SModel.h"
+#import "Mapper.h"
 #import "SPool.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return           Spread model.
  */
-+ (SModel *)addObject:(NSDictionary *)object
++ (Mapper *)addObject:(NSDictionary *)object
                toPool:(NSString *)identifier;
 
 /**
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray *)addObjects:(NSArray *)objects
                  toPool:(NSString *)identifier;
 
-+ (SModel *)insertObject:(NSDictionary *)object
++ (Mapper *)insertObject:(NSDictionary *)object
                  atIndex:(NSInteger)index
                   toPool:(NSString *)identifier;
 

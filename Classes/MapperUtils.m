@@ -1,6 +1,6 @@
 //
-//  SUtils.m
-//  Spread
+//  MapperUtils.m
+//  Mapper
 //
 //  Created by Huy Pham on 4/9/15.
 //  Copyright (c) 2015 Katana. All rights reserved.
@@ -8,10 +8,9 @@
 
 #define API_TIMEOUT_INTERVAL 20.0
 
-#import "SUtils.h"
-#import "Spread.h"
+#import "MapperUtils.h"
 
-@implementation SUtils
+@implementation MapperUtils
 
 - (instancetype)init {
     self = [super init];
@@ -63,6 +62,7 @@
 + (void)request:(NSString *)url
          method:(NSString *)method
      parameters:(NSDictionary *)parameters
+        headers:(NSDictionary *)headers
 completionHandler:(void(^)(id, NSError *))completion {
     NSURL *requestUrl = nil;
     NSString *requestMethod = [method uppercaseString];
@@ -79,8 +79,6 @@ completionHandler:(void(^)(id, NSError *))completion {
         requestUrl = [NSURL URLWithString:url];
     }
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:requestUrl];
-    NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-    NSDictionary *headers = [Spread getNetworkHeaders];
     for (NSString *key in [headers allKeys]) {
         NSString *value = [headers valueForKey:key];
         if (!value) {
@@ -91,6 +89,7 @@ completionHandler:(void(^)(id, NSError *))completion {
            forHTTPHeaderField:key];
         }
     }
+    NSString *charset = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset]
    forHTTPHeaderField:@"Content-Type"];
     [request setHTTPMethod:requestMethod];
@@ -98,29 +97,35 @@ completionHandler:(void(^)(id, NSError *))completion {
         [request setHTTPBody:[self getPOSTParameters:parameters]];
     }
     [request setTimeoutInterval:API_TIMEOUT_INTERVAL];
-    [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] operationQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               if (connectionError) {
-                                   completion(nil, connectionError);
-                               } else {
-                                   NSError *error;
-                                   NSDictionary *jsonObj = [NSJSONSerialization JSONObjectWithData:data
-                                                                                           options:NSJSONReadingAllowFragments
-                                                                                             error:&error];
-                                   completion(jsonObj, nil);
-                               }
-                           }];
+    NSURLSession *session = [NSURLSession sharedSession];
+    [[session dataTaskWithRequest:request
+                completionHandler:^(NSData *data,
+                                    NSURLResponse *response,
+                                    NSError *error) {
+                    if (error) {
+                        completion(nil, error);
+                    } else {
+                        NSError *error;
+                        NSDictionary *jsonObj = [NSJSONSerialization JSONObjectWithData:data
+                                                                                options:NSJSONReadingAllowFragments
+                                                                                  error:&error];
+                        completion(jsonObj, nil);
+                    }
+                }] resume];
 }
 
 + (NSDictionary *)getDataFrom:(NSDictionary *)data
                   WithKeyPath:(NSString *)keyPath {
-    if (!keyPath || [keyPath isEqualToString:@""]) {
+    if ([keyPath isEqualToString:@""]) {
         return data;
     }
     NSArray *arrayOfKeyPath = [keyPath componentsSeparatedByString:@"/"];
     NSDictionary *value = data;
     for (NSString *path in arrayOfKeyPath) {
         value = [value valueForKey:path];
+        if ([value isKindOfClass:[NSArray class]]) {
+            return nil;
+        }
     }
     return value;
 }
