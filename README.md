@@ -33,11 +33,11 @@ pod "Spread", "~> 1.2.1"
 
 ```
 
-#### Create a class sub class SModel
+#### Create a class sub class Mapper
 
 ```swift
 
-class Model: SModel {
+class Model: Mapper {
   dynamic var objectId: String!
   dynamic var name: String!
 }
@@ -77,7 +77,7 @@ Spread.registerEvent("TheEvent",
 let model = Spread.addObject(["name": "Some name", "objectId": "123"],
   toPool: self.pool1Identifier)
 
-model.property("name", onEvent: SModelEvent.OnChange) { (oldValue, newValue) -> Void in
+model.property("name", onEvent: .OnChange) { (oldValue, newValue) -> Void in
   aTextField.text = newValue as String
 }
 
