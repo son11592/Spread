@@ -109,7 +109,7 @@ completionHandler:(void(^)(id, NSError *))completion {
                         NSDictionary *jsonObj = [NSJSONSerialization JSONObjectWithData:data
                                                                                 options:NSJSONReadingAllowFragments
                                                                                   error:&error];
-                        completion(jsonObj, nil);
+                        completion(jsonObj, error);
                     }
                 }] resume];
 }
