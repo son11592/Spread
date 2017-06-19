@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, SRemoteTaskMethod){
 @interface SRemoteTask : NSObject
 
 // Task handler when completed.
-@property (nonatomic, copy) void (^handler)(id, NSError *);
+@property (nonatomic, copy) void (^handler)(id, NSError * _Nullable);
 
 // Task network method.
 @property (nonatomic) SRemoteTaskMethod method;
@@ -56,7 +56,7 @@ typedef NS_ENUM(NSInteger, SRemoteTaskMethod){
  */
 - (BOOL)enqueue:(SRemoteTask *)penddingTask;
 
-- (void)addHanlder:(void (^)(id, NSError *))handler;
+- (void)addHanlder:(void (^)(id, NSError * _Nullable))handler;
 - (NSString *)getRequestUrl;
 - (NSDictionary *)getRequestParameters;
 - (NSString *)getMethodString;

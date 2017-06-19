@@ -46,7 +46,7 @@
     }
 }
 
-- (void)addHanlder:(void (^)(id, NSError *))handler {
+- (void)addHanlder:(void (^)(id, NSError * _Nullable))handler {
     _handler = handler;
 }
 
