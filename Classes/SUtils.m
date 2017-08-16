@@ -100,15 +100,21 @@ completionHandler:(void(^)(id, NSError *))completion {
     [request setTimeoutInterval:API_TIMEOUT_INTERVAL];
     [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] operationQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               if (connectionError) {
-                                   completion(nil, connectionError);
-                               } else {
-                                   NSError *error;
-                                   NSDictionary *jsonObj = [NSJSONSerialization JSONObjectWithData:data
-                                                                                           options:NSJSONReadingAllowFragments
-                                                                                             error:&error];
-                                   completion(jsonObj, nil);
-                               }
+                             NSHTTPURLResponse *httpResponse = (NSURLResponse *)response;
+                             if (httpResponse && httpResponse.statusCode != 200) {
+                               NSError *error = [NSError errorWithDomain:NSURLErrorDomain
+                                                                    code:httpResponse.statusCode
+                                                                userInfo:NULL];
+                               completion(nil, error);
+                             } else if (connectionError) {
+                               completion(nil, connectionError);
+                             } else {
+                               NSError *error;
+                               NSDictionary *jsonObj = [NSJSONSerialization JSONObjectWithData:data
+                                                                                       options:NSJSONReadingAllowFragments
+                                                                                         error:&error];
+                               completion(jsonObj, error);
+                             }
                            }];
 }
 
