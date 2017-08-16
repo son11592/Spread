@@ -100,7 +100,7 @@ completionHandler:(void(^)(id, NSError *))completion {
     [request setTimeoutInterval:API_TIMEOUT_INTERVAL];
     [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] operationQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                             NSHTTPURLResponse *httpResponse = (NSURLResponse *)response;
+                             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                              if (httpResponse && httpResponse.statusCode != 200) {
                                NSError *error = [NSError errorWithDomain:NSURLErrorDomain
                                                                     code:httpResponse.statusCode
