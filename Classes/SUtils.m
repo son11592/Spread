@@ -101,7 +101,7 @@ completionHandler:(void(^)(id, NSError *))completion {
     [NSURLConnection sendAsynchronousRequest:request queue:[[self sharedInstance] operationQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                             if (httpResponse && httpResponse.statusCode != 200) {
+                             if (httpResponse && httpResponse.statusCode >= 300) {
                                NSError *error = [NSError errorWithDomain:NSURLErrorDomain
                                                                     code:httpResponse.statusCode
                                                                 userInfo:NULL];
